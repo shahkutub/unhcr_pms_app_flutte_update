@@ -117,6 +117,11 @@ class DatabaseHelper {
     return await db.delete(table_drugs);
   }
 
+  Future<int> deleteALlDispatch() async {
+    Database db = await instance.database;
+    return await db.delete(table_item_dispatch);
+  }
+
 
   Future<List<Map<String, dynamic>>> queryAllDrugRows() async {
     Database db = await instance.database;

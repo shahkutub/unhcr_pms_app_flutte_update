@@ -45,7 +45,7 @@ class after_login_controller extends GetxController {
   final druglistResonse = MedicineListResponse().obs;
 
   final navigatorKey = GlobalKey<NavigatorState>();
-  final List<DispatchItem> drugList = <DispatchItem>[];
+  final List<DispatchItem> dispatchDrugList = <DispatchItem>[];
   //final List<ItemDispatchModel> itemList = <ItemDispatchModel>[].obs;
 
   @override
@@ -148,26 +148,27 @@ class after_login_controller extends GetxController {
 
   }
 
-  get_drug_list(BuildContext context) async {
-    drugList.clear();
-    var localdataSize2 = await dbHelper.queryAllDrugRows();
+  get_dispatch_submit_list(BuildContext context) async {
+    dispatchDrugList.clear();
+    //var localdataSize2 = await dbHelper.queryAllDrugRows();
+    var localdataSize2 = await dbHelper.get_tem_dispatch();
+
     print('localdataDrugSize: ${localdataSize2.length}');
     for (var i = 0; i < localdataSize2.length; i++) {
       Map<String, dynamic> map = localdataSize2[i];
       var drug_info = DispatchItem();
-      drug_info.drug_name = map[DatabaseHelper.drug_name];
-      drug_info.drug_id = map[DatabaseHelper.drug_id];
-      drug_info.generic_id = map[DatabaseHelper.drug_generic_id];
-      drug_info.generic_name = map[DatabaseHelper.drug_generic_name];
-      drug_info.available_stock = map[DatabaseHelper.drug_available_stock];
-      drug_info.receive_stock = map[DatabaseHelper.drug_stock_receive];
-      drug_info.lose_stock = map[DatabaseHelper.drug_stock_lose];
-      drug_info.dispatch_stock = map[DatabaseHelper.drug_stock_consume];
-      //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
-      drugList.add(drug_info);
+      drug_info.drug_name = map[DatabaseHelper.item_dispatch_medicine_name];
+      drug_info.drug_id = map[DatabaseHelper.item_dispatch_medicine_id].toString();
+      drug_info.dispatch_stock = map[DatabaseHelper.item_dispatch_quantity].toString();
+      dispatchDrugList.add(drug_info);
     }
-    print("drugList: "+drugList.length.toString());
-    submit_dispatch(context);
+    print("drugList: "+dispatchDrugList.length.toString());
+    if(dispatchDrugList.length > 0){
+      submit_dispatch(context);
+    }else{
+      Utils.showToast('No data found');
+    }
+
   }
 
   submit_dispatch(BuildContext context){
@@ -179,7 +180,7 @@ class after_login_controller extends GetxController {
 
     List<MedicineModel> medicineDetails = [];
 
-    drugList.forEach((element) {
+    dispatchDrugList.forEach((element) {
       MedicineModel medicineModel = MedicineModel(int.parse(element.drug_id.toString()),int.parse(element.dispatch_stock.toString()),);
       medicineDetails.add(medicineModel);
     });
@@ -211,8 +212,19 @@ class after_login_controller extends GetxController {
         headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
         body: data
     );
+
     print("${response.statusCode}");
     print("${response.body}");
+
+    var jsoObj = jsonDecode(response.body);
+
+    var status = jsoObj['status'];
+    print("status:${status}");
+    if(status == 'success'){
+      Utils.showToast('Data sync successful');
+      dbHelper.deleteALlDrugs();
+      dbHelper.deleteALlDispatch();
+    }
 
     Navigator.of(context).pop();
 

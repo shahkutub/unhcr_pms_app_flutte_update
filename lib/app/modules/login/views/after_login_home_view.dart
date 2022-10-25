@@ -94,8 +94,7 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
           currentIndex: 0,
           onTap: (int index) {
             if(index == 2){
-
-              controller.get_drug_list( context);
+              controller.get_dispatch_submit_list( context);
             }
             },
           selectedItemColor: Colors.white,
