@@ -123,11 +123,33 @@ class CurrentStockView extends GetView<CurrentStockController>{
                                       child: Text(''+data!.drug_name.toString()),
                                     ),
                                     SizedBox(height: 5,),
-                                    // Row(
-                                    //   children: [
                                     Text('Available Stock: '+data!.available_stock.toString(),style: TextStyle(fontSize: 12),),
                                     SizedBox(height: 5,),
-                                    Text('Stock Request: 0',style: TextStyle(fontSize: 12),),
+                                    Text('Stock Receive: '+data!.receive_stock.toString(),style: TextStyle(fontSize: 12),),
+                                    SizedBox(height: 5,),
+                                    Text('Dispatch: '+data!.dispatch_stock.toString(),style: TextStyle(fontSize: 12),),
+
+                                    // Stack(
+                                    //   children: [
+                                    //     Align(
+                                    //       alignment: Alignment.centerRight,
+                                    //       child:
+                                    //
+                                    //     ),
+                                    //     Align(
+                                    //       alignment: Alignment.centerLeft,
+                                    //       child:Container(
+                                    //         child: Row(
+                                    //           children: [
+                                    //             Text('Stock Receive: '+data!.receive_stock.toString(),style: TextStyle(fontSize: 12),),
+                                    //             SizedBox(width: 10,),
+                                    //             Text('Dispatch: '+data!.dispatch_stock.toString(),style: TextStyle(fontSize: 12),),
+                                    //
+                                    //           ],
+                                    //         ),
+                                    //       )
+                                    //
+                                    //     ),
                                     //   ],
                                     // )
                                   ],

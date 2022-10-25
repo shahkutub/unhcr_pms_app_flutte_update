@@ -33,6 +33,9 @@ class DatabaseHelper {
   static final drug_pstrength_name = 'drug_pstrength_name';
   static final drug_pstrength_id = 'drug_pstrength_id';
   static final drug_available_stock = 'available_stock';
+  static final drug_stock_receive = 'stock_receive';
+  static final drug_stock_consume = 'stock_consume';
+  static final drug_stock_lose = 'stock_lose';
 
 
   // make this a singleton class
@@ -93,6 +96,9 @@ class DatabaseHelper {
             $drug_generic_id TEXT NOT NULL,
             $drug_pstrength_name TEXT NOT NULL,
             $drug_available_stock TEXT NOT NULL,
+            $drug_stock_receive TEXT NOT NULL,
+            $drug_stock_consume TEXT NOT NULL,
+            $drug_stock_lose TEXT NOT NULL,
             $drug_pstrength_id TEXT NOT NULL
             
           )

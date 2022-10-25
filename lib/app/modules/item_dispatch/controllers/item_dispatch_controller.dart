@@ -162,7 +162,7 @@ class ItemDispatchController extends GetxController{
 
   }
 
-  void updateDrugAvailableQty(int id,int qty) async {
+  void updateDrugAvailableQty(int id,int qty ,int qtyConsume) async {
 
     // get a reference to the database
     // because this is an expensive operation we use async and await
@@ -170,7 +170,8 @@ class ItemDispatchController extends GetxController{
 
     // row to update
     Map<String, dynamic> row = {
-      DatabaseHelper.drug_available_stock  : qty
+      DatabaseHelper.drug_available_stock  : qty.toString(),
+      DatabaseHelper.drug_stock_consume  : qtyConsume.toString()
     };
 
     await db.update(
@@ -208,6 +209,7 @@ class ItemDispatchController extends GetxController{
       drug_info.generic_id = map[DatabaseHelper.drug_generic_id];
       drug_info.generic_name = map[DatabaseHelper.drug_generic_name];
       drug_info.available_stock = map[DatabaseHelper.drug_available_stock];
+      drug_info.dispatch_stock = map[DatabaseHelper.drug_stock_consume];
       //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
       drugList.add(drug_info);
     }

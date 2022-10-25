@@ -27,6 +27,9 @@ class MedicineListResponse {
 
 class DispatchItem {
     String? available_stock;
+    String? receive_stock;
+    String? dispatch_stock;
+    String? lose_stock;
     String? batch_no;
     String? category_id;
     String? category_name;
@@ -49,7 +52,7 @@ class DispatchItem {
     String? strength_name;
     String? therapeutic_name;
 
-    DispatchItem({this.available_stock, this.batch_no, this.category_id, this.category_name, this.code_no, this.dispensary_id, this.dispensary_name, this.drug_id, this.drug_name, this.facility_id, this.facility_name, this.generic_id, this.generic_name, this.group_id, this.group_name, this.partner_id, this.partner_name, this.pstrength_id, this.ptype, this.ptype_id, this.strength_name, this.therapeutic_name});
+    DispatchItem({this.available_stock,this.receive_stock,this.dispatch_stock,this.lose_stock, this.batch_no, this.category_id, this.category_name, this.code_no, this.dispensary_id, this.dispensary_name, this.drug_id, this.drug_name, this.facility_id, this.facility_name, this.generic_id, this.generic_name, this.group_id, this.group_name, this.partner_id, this.partner_name, this.pstrength_id, this.ptype, this.ptype_id, this.strength_name, this.therapeutic_name});
 
     factory DispatchItem.fromJson(Map<String, dynamic> json) {
         return DispatchItem(

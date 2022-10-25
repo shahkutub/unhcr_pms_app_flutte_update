@@ -41,31 +41,5 @@ class AuthRepository {
     }
   }
 
-  Future allProd() async {
-    print('allProdapi: allProdapi');
-    Map data = {
-      'display_type': "list",
-      'page': "1",
-    };
-    APIManager _manager = APIManager();
-    var response;
-    try {
-      response = await _manager.postAPICall(ApiClient.allproducts_v3, data);
-      print('responseAllProd: ${response}');
-
-      if (response != null) {
-        AllProdResponse res =  AllProdResponse.fromJson(response);
-        var pordname = res.data![0].items_in_category!.data![0].name;
-        print('pordname: ${pordname}');
-
-        return AllProdResponse.fromJson(response);
-      } else {
-        return 'Unauthorised';
-      }
-    } catch (e) {
-      print('error:$e');
-      return 'Unauthorised';
-    }
-  }
 
 }

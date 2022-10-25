@@ -468,8 +468,9 @@ class ItemDispatchView extends GetView<ItemDispatchController>{
                       print('drug_id'+element2.drug_id.toString());
                       print('medicine_id'+deductData.medicine_id.toString());
                       int deductQty = int.parse(element2.available_stock!) - deductData.medicine_qty;
+                      int dispatch = int.parse(element2.dispatch_stock!) + deductData.medicine_qty;
 
-                      controller.updateDrugAvailableQty(deductData.medicine_id,deductQty);
+                      controller.updateDrugAvailableQty(deductData.medicine_id,deductQty,dispatch);
                     }
 
                   });

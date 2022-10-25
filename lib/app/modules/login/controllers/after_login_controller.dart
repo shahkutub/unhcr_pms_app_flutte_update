@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:brac_arna/app/database_helper/offline_database_helper.dart';
 import 'package:brac_arna/app/models/drug_list_response.dart';
@@ -11,9 +12,14 @@ import 'package:brac_arna/common/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
+import '../../../api_providers/api_url.dart';
 import '../../../models/MedicineListResponse.dart';
 import '../../../services/auth_service.dart';
+import 'package:http/http.dart' as http;
+
+import '../../consumption_tally/controllers/consumption_tally_controller.dart';
 
 class after_login_controller extends GetxController {
   //TODO: Implement LoginController
@@ -39,7 +45,9 @@ class after_login_controller extends GetxController {
   final druglistResonse = MedicineListResponse().obs;
 
   final navigatorKey = GlobalKey<NavigatorState>();
-  final List<DrugInfo> drugList = <DrugInfo>[].obs;
+  final List<DispatchItem> drugList = <DispatchItem>[];
+  //final List<ItemDispatchModel> itemList = <ItemDispatchModel>[].obs;
+
   @override
   void onInit() {
     print('after login home vie');
@@ -140,117 +148,105 @@ class after_login_controller extends GetxController {
 
   }
 
-  get_drug_listFromLocalDb() async {
+  get_drug_list(BuildContext context) async {
+    drugList.clear();
     var localdataSize2 = await dbHelper.queryAllDrugRows();
     print('localdataDrugSize: ${localdataSize2.length}');
     for (var i = 0; i < localdataSize2.length; i++) {
       Map<String, dynamic> map = localdataSize2[i];
-      var drug_info = DrugInfo();
-      drug_info.name = map[DatabaseHelper.drug_name];
-      drug_info.id = map[DatabaseHelper.drug_id];
+      var drug_info = DispatchItem();
+      drug_info.drug_name = map[DatabaseHelper.drug_name];
+      drug_info.drug_id = map[DatabaseHelper.drug_id];
       drug_info.generic_id = map[DatabaseHelper.drug_generic_id];
       drug_info.generic_name = map[DatabaseHelper.drug_generic_name];
-      //drug_info.pstrength_name = map[DatabaseHelper.drug_pstrength_name];
-      drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
+      drug_info.available_stock = map[DatabaseHelper.drug_available_stock];
+      drug_info.receive_stock = map[DatabaseHelper.drug_stock_receive];
+      drug_info.lose_stock = map[DatabaseHelper.drug_stock_lose];
+      drug_info.dispatch_stock = map[DatabaseHelper.drug_stock_consume];
+      //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
       drugList.add(drug_info);
     }
     print("drugList: "+drugList.length.toString());
+    submit_dispatch(context);
   }
 
-  get_drug_list(BuildContext context) async {
-    //Get.focusScope!.unfocus();
+  submit_dispatch(BuildContext context){
+    var now = new DateTime.now();
+    var formatter = new DateFormat('yyyy-MM-dd');
+    String formattedDate = formatter.format(now);
+    print(formattedDate);
 
 
-    if(!await (Utils.checkConnection() as Future<bool>)){
-      debugPrint('No internet connection');
-      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
-    }else{
-      Ui.customLoaderDialogWithMessage();
-      InformationRepository().get_drug_list().then((resp) async {
-        druglistResonse.value = resp;
-        print(druglistResonse.value);
-        if(druglistResonse.value != null){
-         Navigator.pop(context);
-          showCircle.value = false;
-          print(druglistResonse.value.dispatch_items);
-          // Get.toNamed(Routes.LOGIN);
-          await dbHelper.deleteALlDrugs();
-          druglistResonse.value.dispatch_items!.forEach((element) async {
-            Map<String, dynamic> row = {
-              DatabaseHelper.drug_name: ''+element.drug_name.toString(),
-              DatabaseHelper.drug_id: element.drug_id,
-              DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
-              DatabaseHelper.drug_pstrength_id: element.pstrength_id,
-              DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
-              DatabaseHelper.drug_generic_id: element.generic_id,
-              DatabaseHelper.drug_available_stock: element.available_stock,
-              //DatabaseHelper.drug_stock: element.generic_id,
-            };
+    List<MedicineModel> medicineDetails = [];
 
-            await dbHelper.insert_drug(row);
-          });
+    drugList.forEach((element) {
+      MedicineModel medicineModel = MedicineModel(int.parse(element.drug_id.toString()),int.parse(element.dispatch_stock.toString()),);
+      medicineDetails.add(medicineModel);
+    });
 
-          var localdataSize = await dbHelper.queryAllDrugRows();
-          print('localdataDrugSize: ${localdataSize.length}');
+    //MedicineModel medicineModel = MedicineModel(1,15);
+    //List<MedicineModel> medicineDetails = [MedicineModel(1,15),MedicineModel(1,15),MedicineModel(1,15)];
+    // String jsonTags = jsonEncode(medicineDetails);
+    // print(jsonTags);
 
-          showCircle.value = false;
-
-         // Navigator.of(context);
-        }else{
-          //Navigator.of(context);
-          Get.toNamed(Routes.LOGIN);
-        }
-      });
-    }
-
-
+    //SubmitDispatchModel submitDispatchModel = SubmitDispatchModel("1", "1", "1", "2022-05-06", medicineDetails);
+    SubmitDispatchModel submitDispatchModel = SubmitDispatchModel( formattedDate, medicineDetails);
+    String jsonTutorial = jsonEncode(submitDispatchModel);
+    print('postjson: '+jsonTutorial.toString());
+    postRequestDispatch(jsonEncode(submitDispatchModel),context);
+    //return jsonTutorial;
   }
 
-  get_drug_listFirst() async {
-    //Get.focusScope!.unfocus();
+  Future<dynamic> postRequestDispatch (String data,BuildContext context) async {
 
-    //Ui.customLoaderDialogWithMessage();
-    if(!await (Utils.checkConnection() as Future<bool>)){
-      debugPrint('No internet connection');
-      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
-    }else{
-      showCircle.value = true;
+    Ui.showLoaderDialog(context);
+   // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
+    print("token: ${token}");
 
-      InformationRepository().get_drug_list().then((resp) async {
-        druglistResonse.value = resp;
-        if(druglistResonse.value != null){
-          showCircle.value = false;
-          print(druglistResonse.value.dispatch_items);
-          // Get.toNamed(Routes.LOGIN);
-          await dbHelper.deleteALlDrugs();
-          druglistResonse.value.dispatch_items!.forEach((element) async {
-            Map<String, dynamic> row = {
-              DatabaseHelper.drug_name: ''+element.drug_name.toString(),
-              DatabaseHelper.drug_id: element.drug_id,
-              DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
-              DatabaseHelper.drug_pstrength_id: element.pstrength_id,
-              DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
-              DatabaseHelper.drug_generic_id: element.generic_id,
-              DatabaseHelper.drug_available_stock: element.available_stock,
-              //DatabaseHelper.drug_stock: element.generic_id,
-            };
+    //var response = await http.post(Uri.parse(ApiClient.submit_dispatch),
+    var response = await http.post(Uri.parse('https://unhcrtestapi.la360host.com/api/dispatch/savedata'),
+        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
+        body: data
+    );
+    print("${response.statusCode}");
+    print("${response.body}");
 
-            await dbHelper.insert_drug(row);
-          });
+    Navigator.of(context).pop();
 
-          var localdataSize = await dbHelper.queryAllDrugRows();
-          print('localdataDrugSize: ${localdataSize.length}');
-
-          showCircle.value = false;
-
-          //Navigator.of(context).pop();
-        }else{
-          //Navigator.of(context).pop();
-          Get.toNamed(Routes.LOGIN);
-        }
-      });
-    }
-
-
+    return response;
   }
+
+
+}
+
+class MedicineModel{
+  var item_id = 0;
+  var dispatch_qty = 0;
+  MedicineModel(this.item_id, this.dispatch_qty);
+  Map toJson() => {
+    'item_id': item_id,
+    'dispatch_qty': dispatch_qty,
+  };
+
+}
+
+class SubmitDispatchModel{
+
+  var dispatch_date = "";
+  //var medicineDetails = "";
+  List<MedicineModel> medicineDetails = [];
+
+  SubmitDispatchModel(
+      this.dispatch_date, this.medicineDetails);
+
+  Map toJson() => {
+
+    'dispatch_date': dispatch_date,
+    'dispatchDetails': medicineDetails,
+
+  };
+
 }

@@ -62,6 +62,9 @@ class StockReceiveController extends GetxController{
               DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
               DatabaseHelper.drug_generic_id: element.generic_id,
               DatabaseHelper.drug_available_stock: element.available_stock,
+              DatabaseHelper.drug_stock_receive: element.available_stock,
+              DatabaseHelper.drug_stock_consume: '0',
+              DatabaseHelper.drug_stock_lose: '0',
               //DatabaseHelper.drug_stock: element.generic_id,
             };
 

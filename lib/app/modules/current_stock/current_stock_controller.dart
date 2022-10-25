@@ -90,6 +90,9 @@ class CurrentStockController extends GetxController{
       drug_info.generic_id = map[DatabaseHelper.drug_generic_id];
       drug_info.generic_name = map[DatabaseHelper.drug_generic_name];
       drug_info.available_stock = map[DatabaseHelper.drug_available_stock];
+      drug_info.receive_stock = map[DatabaseHelper.drug_stock_receive];
+      drug_info.lose_stock = map[DatabaseHelper.drug_stock_lose];
+      drug_info.dispatch_stock = map[DatabaseHelper.drug_stock_consume];
       //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
       drugList.add(drug_info);
     }
