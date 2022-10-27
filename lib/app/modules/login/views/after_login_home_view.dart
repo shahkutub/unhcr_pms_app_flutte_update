@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../../../services/auth_service.dart';
 import '../controllers/after_login_controller.dart';
 
 class AfterLoginHomeView extends GetView<after_login_controller> {
@@ -30,8 +31,15 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                       ),
                     ),
                   ),
+
+
                   Align(alignment: Alignment.centerRight,
-                      child: Icon(Icons.account_circle_sharp)
+                      child: InkWell(
+                        onTap: (){
+                          showAlertDialog(context);
+                        },
+                        child: Icon(Icons.account_circle_sharp),
+                      )
                   ),
 
                 ],
@@ -124,7 +132,7 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
           body:Scaffold(
             body:Center(
               child: SingleChildScrollView(
-                reverse: true,
+                //reverse: true,
                 child:Container(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -824,6 +832,44 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
 
       );
     }
+
+  showAlertDialog(BuildContext context) {
+
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed:  () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Continue"),
+      onPressed:  () {
+        //Get.find<AuthService>().setUser(null);
+        Get.find<AuthService>().removeCurrentUser();
+        Get.offAllNamed(Routes.LOGIN);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Logout"),
+      content: Text("Would you like to Logout?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   }
 
 
