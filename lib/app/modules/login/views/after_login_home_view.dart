@@ -172,7 +172,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                     ),
                                     child: Container(
                                       padding: EdgeInsets.all(10),
-                                      width: 110,
+                                      width: context.width/3.5,
+                                      height: context.width/4,
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -223,7 +224,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                     ),
                                     child: Container(
                                       padding: EdgeInsets.all(10),
-                                      width: 110,
+                                      width: context.width/3.5,
+                                      height: context.width/4,
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -267,7 +269,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                     ),
                                     child: Container(
                                       padding: EdgeInsets.all(10),
-                                      width: 110,
+                                      width: context.width/3.5,
+                                      height: context.width/4,
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -334,7 +337,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                   ),
                                   child: Container(
                                     padding: EdgeInsets.all(10),
-                                    width: 110,
+                                    width: context.width/3.5,
+                                    height: context.width/4,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -343,7 +347,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
 
                                         Text(
                                           'Internal Request',
-                                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                                          //overflow: TextOverflow.ellipsis,
                                         ),
 
                                         SizedBox(
@@ -379,7 +384,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                   ),
                                   child: Container(
                                     padding: EdgeInsets.all(10),
-                                    width: 110,
+                                    width: context.width/3.5,
+                                    height: context.width/4,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -423,7 +429,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                   ),
                                   child: Container(
                                     padding: EdgeInsets.all(10),
-                                    width: 110,
+                                    width: context.width/3.5,
+                                    height: context.width/4,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -489,7 +496,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                   ),
                                   child: Container(
                                     padding: EdgeInsets.all(10),
-                                    width: 110,
+                                    width: context.width/3.5,
+                                    height: context.width/4,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -535,7 +543,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                   ),
                                   child: Container(
                                     padding: EdgeInsets.all(10),
-                                    width: 110,
+                                    width: context.width/3.5,
+                                    height: context.width/4,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -581,7 +590,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                   ),
                                   child: Container(
                                     padding: EdgeInsets.all(10),
-                                    width: 110,
+                                    width: context.width/3.5,
+                                    height: context.width/4,
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -843,11 +853,11 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
       },
     );
     Widget continueButton = TextButton(
-      child: Text("Continue"),
+      child: Text("Logout"),
       onPressed:  () {
         //Get.find<AuthService>().setUser(null);
-        Get.find<AuthService>().removeCurrentUser();
-        Get.offAllNamed(Routes.LOGIN);
+        controller.logout();
+
       },
     );
 

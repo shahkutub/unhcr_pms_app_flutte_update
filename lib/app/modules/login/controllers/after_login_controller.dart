@@ -231,6 +231,15 @@ class after_login_controller extends GetxController {
     return response;
   }
 
+  void logout() {
+    Get.find<AuthService>().removeCurrentUser();
+    dbHelper.deleteALlDrugs();
+    dbHelper.deleteALlDispatch();
+    dbHelper.deletePserial();
+    Get.offAllNamed(Routes.LOGIN);
+
+  }
+
 
 }
 

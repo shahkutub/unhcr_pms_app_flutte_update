@@ -176,6 +176,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           // Add your onPressed code here!
+          controller.approveStockReceive(context);
         },
         label: Text('Approve'),
         //icon: Icon(Icons.thumb_up),

@@ -18,6 +18,17 @@ class Utils {
     );
   }
 
+  static showToastWithTitle(String title,String msg) {
+    Get.snackbar(
+        ""+title,
+        ""+msg,
+        icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white
+    );
+  }
+
   static Future<bool> checkConnection() async{
 
     ConnectivityResult connectivityResult = await (new Connectivity().checkConnectivity());
