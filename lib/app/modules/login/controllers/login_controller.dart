@@ -62,7 +62,7 @@ class LoginController extends GetxController {
 
       Ui.customLoaderDialogWithMessage();
       AuthRepository().userLogin(userData.value).then((response) {
-        //print('logindata'+response);
+       // print('logindata'+response);
 
 
         if(response != null){

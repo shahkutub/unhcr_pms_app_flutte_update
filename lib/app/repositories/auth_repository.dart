@@ -9,6 +9,8 @@ import 'package:brac_arna/app/models/user_model.dart';
 import 'package:brac_arna/app/services/auth_service.dart';
 import 'package:get/get.dart';
 
+import '../models/LoginResponseDept.dart';
+
 class AuthRepository {
   ///User Login api call
   Future userLogin(UserModel userData) async {
@@ -30,8 +32,8 @@ class AuthRepository {
 
       if (response != null) {
 
-        Get.find<AuthService>().setUser(LoginDataResponse.fromJson(response));
-        return LoginDataResponse.fromJson(response);
+        Get.find<AuthService>().setUser(LoginResponseDept.fromJson(response));
+        return LoginResponseDept.fromJson(response);
       } else {
         return 'Unauthorised';
       }

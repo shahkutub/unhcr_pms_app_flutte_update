@@ -319,12 +319,7 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                             //   child:
                             GestureDetector(
                                 onTap: () {
-                                  // if(controller.drugList.length == 0){
-                                  //   //controller.get_drug_list(context);
-                                  //   Ui.defaultSnackBar(message: 'Medicine data empty,please Sync');
-                                  // }else{
-                                  //   Get.toNamed(Routes.ITEM_DISPATCH);
-                                  // }
+                                  Get.toNamed(Routes.INTERNAL_REQUEST);
 
                                 },
                                 child: Card(
@@ -417,7 +412,7 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                             //child:
                             GestureDetector(
                                 onTap: () {
-                                  Get.toNamed(Routes.INTERNAL_REQUEST);
+
                                 },
                                 child: Card(
                                   elevation: 5,

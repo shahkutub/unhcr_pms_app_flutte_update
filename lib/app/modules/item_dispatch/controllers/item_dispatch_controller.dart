@@ -24,19 +24,6 @@ class ItemDispatchController extends GetxController{
 
   static ItemDispatchController get i => Get.find();
 
-  var itemlist = [
-    "Medicine 1",
-    "Medicine 2",
-    "Medicine 3",
-    "Medicine 4",
-    "Medicine 5",
-    "Medicine 6",
-    "Medicine 7",
-    "Medicine 7",
-    "Medicine 8",
-    "Medicine 9",
-    "Medicine 10"
-  ];
 
   final List<ItemDispatchModel> itemList = <ItemDispatchModel>[].obs;
   final List<DispatchItem> drugList = <DispatchItem>[].obs;

@@ -375,7 +375,7 @@ class ItemDispatchView extends GetView<ItemDispatchController>{
                 Obx(() {
                   if(controller.itemList.length>0){
                     return
-                      GestureDetector(
+                      InkWell(
                         onTap: () {
 
                           // controller.submit_dispatch(context);

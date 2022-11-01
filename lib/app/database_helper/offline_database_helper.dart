@@ -38,12 +38,24 @@ class DatabaseHelper {
   static final drug_stock_lose = 'stock_lose';
 
 
+  // table_internal_request
+  static final table_internal_request = 'table_internal_request';
+
+  static final internal_req_date = 'internal_req_date';
+  static final internal_req_med_name = 'internal_req_med_name';
+  static final internal_req_med_id = 'internal_req_med_id';
+  static final internal_req_qty = 'internal_req_qty';
+  static final internal_req_remark = 'internal_req_remark';
+
+
   // make this a singleton class
   DatabaseHelper._privateConstructor();
+
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
   // only have a single app-wide reference to the database
   static Database? _database;
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     // lazily instantiate the db the first time it is accessed
@@ -56,7 +68,8 @@ class DatabaseHelper {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     print(path);
-    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(
+        path, version: _databaseVersion, onCreate: _onCreate);
   }
 
   // SQL code to create the database table
@@ -103,14 +116,28 @@ class DatabaseHelper {
             
           )
           ''');
+
+
+    await db.execute('''
+          CREATE TABLE $table_internal_request (
+            $columnId INTEGER PRIMARY KEY,
+            $internal_req_date TEXT NOT NULL,
+            $internal_req_med_name TEXT NOT NULL,
+            $internal_req_med_id INT NOT NULL,
+            $internal_req_qty INT NOT NULL,
+            $internal_req_remark TEXT NOT NULL
+          )
+          ''');
   }
 
   // insert drug
   Future<int> insert_drug(Map<String, dynamic> row) async {
     Database db = await instance.database;
 
-    return await db.insert(table_drugs, row, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert(
+        table_drugs, row, conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
 
   Future<int> deleteALlDrugs() async {
     Database db = await instance.database;
@@ -158,7 +185,8 @@ class DatabaseHelper {
   //Get all records which are unsynched
   Future<List<Map<String, dynamic>>> queryUnsynchedRecords() async {
     Database db = await instance.database;
-    return await db.rawQuery('SELECT id,name,status FROM $table WHERE status = 0');
+    return await db.rawQuery(
+        'SELECT id,name,status FROM $table WHERE status = 0');
   }
 
   Future<List<Map<String, dynamic>>> queryAllRecords() async {
@@ -170,7 +198,8 @@ class DatabaseHelper {
   // raw SQL commands. This method uses a raw query to give the row count.
   Future<int?> queryRowCount() async {
     Database db = await instance.database;
-    return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $table'));
+    return Sqflite.firstIntValue(
+        await db.rawQuery('SELECT COUNT(*) FROM $table'));
   }
 
   // We are assuming here that the id column in the map is set. The other
@@ -197,7 +226,8 @@ class DatabaseHelper {
 
   Future<int?> getAllPatientSerialCount() async {
     Database db = await instance.database;
-    return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $table_patient_serial'));
+    return Sqflite.firstIntValue(
+        await db.rawQuery('SELECT COUNT(*) FROM $table_patient_serial'));
   }
 
   Future<List<Map<String, dynamic>>> getAllPatientSerial() async {
@@ -207,7 +237,8 @@ class DatabaseHelper {
 
   Future<int> deleteSerial(String datedata) async {
     Database db = await instance.database;
-    return await db.delete(table_patient_serial, where: '$date != ?', whereArgs: [datedata]);
+    return await db.delete(
+        table_patient_serial, where: '$date != ?', whereArgs: [datedata]);
   }
 
   //item dispatch add
@@ -216,9 +247,22 @@ class DatabaseHelper {
     return await db.insert(table_item_dispatch, row);
   }
 
-  Future<List<Map<String, dynamic>>>   get_tem_dispatch() async {
+  Future<List<Map<String, dynamic>>> get_tem_dispatch() async {
     Database db = await instance.database;
     return await db.query(table_item_dispatch);
+  }
+
+  // insert internal request
+  Future<int> insert_internal_request(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+
+    return await db.insert(table_internal_request, row,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<Map<String, dynamic>>> get_internal_request() async {
+    Database db = await instance.database;
+    return await db.query(table_internal_request);
   }
 
 }

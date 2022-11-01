@@ -4,11 +4,12 @@ import 'package:brac_arna/app/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../models/LoginResponseDept.dart';
 import 'settings_service.dart';
 
 class AuthService extends GetxService {
   //final currentUser = LoginResponse().obs;
-  final currentUser = LoginDataResponse().obs;
+  final currentUser = LoginResponseDept().obs;
   late GetStorage _box;
 
   AuthService() {
@@ -40,7 +41,7 @@ class AuthService extends GetxService {
   //   await getCurrentUser();
   // }
 
-  void setUser(LoginDataResponse user) async {
+  void setUser(LoginResponseDept user) async {
     _box.write('current_user', user.toJson());
 
     await getCurrentUser();
@@ -48,7 +49,7 @@ class AuthService extends GetxService {
 
   Future getCurrentUser() async {
     if (_box.hasData('current_user')) {
-      currentUser.value = LoginDataResponse.fromJson(await _box.read('current_user'));
+      currentUser.value = LoginResponseDept.fromJson(await _box.read('current_user'));
     }
     //print('customer data: ${currentUser.value.data?.user!.username}');
   }
@@ -61,7 +62,7 @@ class AuthService extends GetxService {
   // }
 
   Future removeCurrentUser() async {
-    currentUser.value = LoginDataResponse();
+    currentUser.value = LoginResponseDept();
     await _box.remove('current_user');
   }
 
