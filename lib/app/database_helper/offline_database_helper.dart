@@ -260,9 +260,18 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+ // get internal request
   Future<List<Map<String, dynamic>>> get_internal_request() async {
     Database db = await instance.database;
     return await db.query(table_internal_request);
   }
+
+  // delete internal request
+  Future<int> delete_internal_request() async {
+    Database db = await instance.database;
+    return await db.delete(table_internal_request);
+  }
+
+
 
 }

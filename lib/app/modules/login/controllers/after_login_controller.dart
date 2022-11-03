@@ -46,6 +46,12 @@ class after_login_controller extends GetxController {
 
   final navigatorKey = GlobalKey<NavigatorState>();
   final List<DispatchItem> dispatchDrugList = <DispatchItem>[];
+  final List<InternalItemModel> internalRequestSubmitList = <InternalItemModel>[];
+
+  var dispensaryId = "";
+  var facilityId = '';
+  var partnerId = '';
+
   //final List<ItemDispatchModel> itemList = <ItemDispatchModel>[].obs;
 
   @override
@@ -56,6 +62,9 @@ class after_login_controller extends GetxController {
     navigatorKey: navigatorKey;
     userNAme.value = Get.find<AuthService>().currentUser.value.data!.users!.username!.toString();
     userRole.value = Get.find<AuthService>().currentUser.value.data!.roles![0].role_name!;
+    dispensaryId = Get.find<AuthService>().currentUser.value.data!.employee_info!.dispensary_id!;
+    facilityId = Get.find<AuthService>().currentUser.value.data!.employee_info!.facility_id!;
+    partnerId = Get.find<AuthService>().currentUser.value.data!.employee_info!.facility_id!;
 
     //get_drug_list();
     //getLocationPermission();
@@ -207,8 +216,7 @@ class after_login_controller extends GetxController {
     //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
     print("token: ${token}");
 
-    //var response = await http.post(Uri.parse(ApiClient.submit_dispatch),
-    var response = await http.post(Uri.parse('https://unhcrtestapi.la360host.com/api/dispatch/savedata'),
+    var response = await http.post(Uri.parse(ApiClient.submit_dispatch),
         headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
         body: data
     );
@@ -231,6 +239,39 @@ class after_login_controller extends GetxController {
     return response;
   }
 
+  Future<dynamic> postInternalRequest(String data,BuildContext context) async {
+
+    Ui.showLoaderDialog(context);
+    // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
+    print("token: ${token}");
+
+    var response = await http.post(Uri.parse(ApiClient.submit_internal_request),
+        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
+        body: data
+    );
+
+    print("${response.statusCode}");
+    print("${response.body}");
+
+    var jsoObj = jsonDecode(response.body);
+
+    var status = jsoObj['status'];
+    print("status:${status}");
+    if(status == 'success'){
+      Utils.showToast('Internal request upload successful');
+      dbHelper.delete_internal_request();
+
+    }
+
+    Navigator.of(context).pop();
+
+    return response;
+  }
+
+
   void logout() {
     Get.find<AuthService>().removeCurrentUser();
     dbHelper.deleteALlDrugs();
@@ -241,7 +282,74 @@ class after_login_controller extends GetxController {
   }
 
 
+ get_internal_request_list(BuildContext context) async {
+   internalRequestSubmitList.clear();
+   var now = new DateTime.now();
+   var formatter = new DateFormat('yyyy-MM-dd');
+   String formattedDate = formatter.format(now);
+   print(formattedDate);
+    //var localdataSize2 = await dbHelper.queryAllDrugRows();
+    var internalReqSize = await dbHelper.get_internal_request();
+
+    print('internalReqSize: ${internalReqSize.length}');
+    for (var i = 0; i < internalReqSize.length; i++) {
+      Map<String, dynamic> map = internalReqSize[i];
+      var drug_info = InternalItemModel(map[DatabaseHelper.internal_req_med_id],
+          map[DatabaseHelper.internal_req_qty],
+          map[DatabaseHelper.internal_req_remark],
+          map[DatabaseHelper.internal_req_date]);
+      internalRequestSubmitList.add(drug_info);
+    }
+    print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
+
+   InternalRequestSubmitModel submitDispatchModel = InternalRequestSubmitModel( int.parse(dispensaryId ), int.parse(facilityId),int.parse(partnerId),formattedDate,internalRequestSubmitList);
+   String jsonData = jsonEncode(submitDispatchModel);
+   print('internalRequestjson: '+jsonData.toString());
+
+   postInternalRequest( jsonData,context);
+
+  }
+
 }
+
+
+
+class InternalRequestSubmitModel {
+
+  var  dispensary_id = 0;
+  var  facility_id = 0;
+  var  partner_id = 0;
+  var  date = "";
+  List<InternalItemModel> itemDetails = [];
+  InternalRequestSubmitModel(this.dispensary_id,this.facility_id,this.partner_id,this.date,this.itemDetails,);
+  Map toJson() => {
+    'dispensary_id': dispensary_id,
+    'facility_id': facility_id,
+    'partner_id': partner_id,
+    'date': date,
+    'itemDetails': itemDetails,
+  };
+
+
+}
+
+class InternalItemModel {
+
+  var item_id = 0;
+  var req_qty = 0;
+  var remark = '';
+  var date = '';
+  InternalItemModel(this.item_id, this.req_qty,this.remark,this.date,);
+  Map toJson() => {
+    'item_id': item_id,
+    'req_qty': req_qty,
+    'remark': remark,
+    'date': date,
+  };
+
+}
+
+
 
 class MedicineModel{
   var item_id = 0;

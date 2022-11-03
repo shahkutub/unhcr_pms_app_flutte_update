@@ -196,49 +196,6 @@ class InternalRequestController extends GetxController{
     print("drugList: "+drugList.length.toString());
   }
 
-  submit_internal_request(BuildContext context){
-    var now = new DateTime.now();
-    var formatter = new DateFormat('yyyy-MM-dd');
-    String formattedDate = formatter.format(now);
-    print(formattedDate);
-
-
-    List<MedicineModel> medicineDetails = [];
-
-    itemList.forEach((element) {
-      MedicineModel medicineModel = MedicineModel(element.medicine_id,element.medicine_qty);
-      medicineDetails.add(medicineModel);
-    });
-
-    //MedicineModel medicineModel = MedicineModel(1,15);
-    //List<MedicineModel> medicineDetails = [MedicineModel(1,15),MedicineModel(1,15),MedicineModel(1,15)];
-    String jsonTags = jsonEncode(medicineDetails);
-    print(jsonTags);
-
-    //SubmitDispatchModel submitDispatchModel = SubmitDispatchModel("1", "1", "1", "2022-05-06", medicineDetails);
-    SubmitDispatchModel submitDispatchModel = SubmitDispatchModel("1", "1", "1", formattedDate, jsonTags);
-    String jsonTutorial = jsonEncode(submitDispatchModel);
-    print(jsonTutorial.toString());
-    postRequestInternalRequest(jsonTutorial,context);
-    //return jsonTutorial;
-  }
-
-  Future<dynamic> postRequestInternalRequest (String data,BuildContext context) async {
-
-    Ui.showLoaderDialog(context);
-    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
-
-    var response = await http.post(Uri.parse(ApiClient.submit_dispatch),
-        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
-        body: data
-    );
-    print("${response.statusCode}");
-    print("${response.body}");
-
-    Navigator.of(context).pop();
-
-    return response;
-  }
 
   @override
   void onReady() {
@@ -265,62 +222,4 @@ class ItemDispatchModel {
       this.remark,
       this.medicine_id,
       this.medicine_qty);
-}
-
-class Country {
-
-  const Country({
-    required this.name,
-    required this.size,
-  });
-
-  final String name;
-  final int size;
-
-  @override
-  String toString() {
-    return '$name ($size)';
-  }
-}
-
-class SubmitDispatchModel{
-  var partner_id = "";
-  var facility_id = "";
-  var dispensary_id = "";
-  var dispatch_date = "";
-  var medicineDetails = "";
-  //List<MedicineModel> medicineDetails = [];
-
-  SubmitDispatchModel(this.partner_id, this.facility_id, this.dispensary_id,
-      this.dispatch_date, this.medicineDetails);
-
-  Map toJson() => {
-    'partner_id': partner_id,
-    'facility_id': facility_id,
-    'dispensary_id': dispensary_id,
-    'dispatch_date': dispatch_date,
-    'medicineDetails': medicineDetails,
-
-  };
-
-}
-
-class MedicineModel{
-  var id = 0;
-  var dispatch_qty = 0;
-  MedicineModel(this.id, this.dispatch_qty);
-  Map toJson() => {
-    'id': id,
-    'dispatch_qty': dispatch_qty,
-  };
-}
-
-class User {
-  String name;
-  int age;
-  User(this.name, this.age);
-  Map toJson() => {
-    'name': name,
-    'age': age,
-  };
 }

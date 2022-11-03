@@ -103,6 +103,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
           onTap: (int index) {
             if(index == 2){
               controller.get_dispatch_submit_list( context);
+              controller.get_internal_request_list( context);
+
             }
             },
           selectedItemColor: Colors.white,
