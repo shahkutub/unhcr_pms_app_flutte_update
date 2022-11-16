@@ -33,6 +33,11 @@ class StockReceiveView extends GetView<StockReceiveController>{
     //   'Eagle',
     //   'Frog'
     // ];
+    var now = DateTime.now();
+    print(DateFormat().format(now));
+    final time = DateTime(now.year, now.month, now.day,now.hour,now.minute+15);
+    print('time+15 : '+DateFormat('HH:mm a').format(time));
+
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
@@ -114,47 +119,101 @@ class StockReceiveView extends GetView<StockReceiveController>{
 
           Obx(() =>
 
-          controller.druglistResonse.value.dispatch_items != null ?
-          controller.druglistResonse.value.dispatch_items!.length! > 0 ?
+          controller.stockReceiveResponse.value.distribution_list != null ?
+          controller.stockReceiveResponse.value.distribution_list!.length! > 0 ?
           Expanded(child: ListView.builder(
-                    itemCount: controller.druglistResonse.value.dispatch_items?.length,
+                    itemCount:  controller.stockReceiveResponse.value.distribution_list?.length,
                     //itemCount: 15,
                     //primary: false,
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
-                      var data = controller.druglistResonse.value.dispatch_items?[index];
+                      var data =  controller.stockReceiveResponse.value.distribution_list?[index];
                       var sl = index+1;
                       return Card(
-                        
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              Text(''+sl.toString()),
-                              SizedBox(width: 10,),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 300,
-                                    child: Text(''+data!.drug_name.toString()),
-                                  ),
-                                  SizedBox(height: 5,),
-                                  // Row(
-                                  //   children: [
-                                  Text('Available Stock: '+data!.available_stock.toString(),style: TextStyle(fontSize: 12),),
-                                  SizedBox(height: 5,),
-                                  Text('Stock Request: 0',style: TextStyle(fontSize: 12),),
-                                  //   ],
-                                  // )
-                                ],
-                              )
+                        margin: EdgeInsets.only(top: 20),
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              children: [
+                               Expanded(
+                                 child: Container(
 
-                            ],
-                          ),
-                        )
+                                   decoration: BoxDecoration(
+                                     border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                   ),
+                                   child: Column(
+                                     children: [
+                                       Text(''+data!.dispensary_name.toString()),
+                                       //Text('15-11-22'),
+                                     ],
+                                   ),
+                                   padding:EdgeInsets.only(right: 10,left: 10) ,
+                               ),flex: 3,),
+
+                                Expanded(child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text('Date:'),
+                                      Text(''+data!.supply_date.toString()),
+                                    ],
+                                  ),
+                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                ),flex: 2,),
+
+                                Expanded(child: Container(
+                                  decoration: BoxDecoration(
+                                    //  border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      InkWell(
+                                        child: Text('Receive'),
+                                        onTap: (){
+                                          showCustomDialog(context);
+                                        },
+                                      )
+
+                                      //Text('15-11-22'),
+                                    ],
+                                  ),
+                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                ),flex: 1,),
+                              ],
+                            ),
+                          )
+                        // child: Container(
+                        //   padding: EdgeInsets.all(10),
+                        //   alignment: Alignment.centerLeft,
+                        //   child: Row(
+                        //     children: [
+                        //       Text(''+sl.toString()),
+                        //       SizedBox(width: 10,),
+                        //       Column(
+                        //         mainAxisAlignment: MainAxisAlignment.start,
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           SizedBox(
+                        //             width: 300,
+                        //             child: Text(''+data!.drug_name.toString()),
+                        //           ),
+                        //           SizedBox(height: 5,),
+                        //           // Row(
+                        //           //   children: [
+                        //           Text('Available Stock: '+data!.available_stock.toString(),style: TextStyle(fontSize: 12),),
+                        //           SizedBox(height: 5,),
+                        //           Text('Stock Request: 0',style: TextStyle(fontSize: 12),),
+                        //           //   ],
+                        //           // )
+                        //         ],
+                        //       )
+                        //
+                        //     ],
+                        //   ),
+                        // )
                       );
                     }),)
               :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
@@ -185,6 +244,14 @@ class StockReceiveView extends GetView<StockReceiveController>{
 
     );
   }
+
+  String formatTimeOfDay(TimeOfDay tod) {
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    final format = DateFormat.jm();  //"6:00 AM"
+    return format.format(dt);
+  }
+
   void _showDialog(BuildContext context, String s) {
     showDialog(
       context: context,
@@ -231,6 +298,179 @@ class StockReceiveView extends GetView<StockReceiveController>{
     print(formattedDate);
     txt.text = formattedDate.toString();
       //});
+  }
+
+  void showCustomDialog(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierLabel: "Barrier",
+      barrierDismissible: true,
+      barrierColor: Colors.white,
+      transitionDuration: Duration(milliseconds: 100),
+      pageBuilder: (_, __, ___) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: PreferredSize(
+            preferredSize: Size(60,55),
+            child:  AppBar(
+              backgroundColor: Colors.blueAccent,
+              elevation: 0,
+              centerTitle: true,
+              //title: Text('Item Dispatch')
+
+              title: Stack(alignment: Alignment.center,
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    //child: Text(AppConstant.pageName),),
+                    child: Text('Stock Receive'),),
+
+                ],
+              ),
+
+            ),
+          ),
+          body: Container(
+
+            height: context.height,
+            width: context.width,
+            child: Obx(() =>
+
+            controller.druglistResonse.value.dispatch_items != null ?
+            controller.druglistResonse.value.dispatch_items!.length! > 0 ?
+            Expanded(child: ListView.builder(
+                itemCount: controller.druglistResonse.value.dispatch_items?.length,
+                //itemCount: 15,
+                //primary: false,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int index) {
+                  var data = controller.druglistResonse.value.dispatch_items?[index];
+                  var sl = index+1;
+                  return Container(
+                   margin: EdgeInsets.only(top: 10),
+                    child: Card(
+                      elevation: 5,
+                      child:Column(
+                        children: [
+                          Container(
+                            color: Colors.grey,
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+
+                                    decoration: BoxDecoration(
+                                        border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(''+data!.drug_name!),
+                                        //Text('15-11-22'),
+                                      ],
+                                    ),
+                                    padding:EdgeInsets.only(right: 10,left: 10) ,
+                                  ),flex: 2,),
+
+                                Expanded(child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text('Req qty:'),
+                                      Text('Rec qty:'),
+                                    ],
+                                  ),
+                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                ),flex: 1,),
+
+                              ],
+                            ),
+                          ),
+                          Container(
+                            color: Colors.white,
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+
+                                    decoration: BoxDecoration(
+                                        border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                    ),
+                                    child: TextField (
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          labelText: 'Receive qty',
+                                          hintText: 'Enter Receive qty'
+                                      ),
+                                    ),
+                                    padding:EdgeInsets.only(right: 10,left: 10) ,
+                                  ),flex: 1,),
+
+                                Expanded(child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                  ),
+                                  child: TextField (
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        labelText: 'Reject qty',
+                                        hintText: 'Reject qty'
+                                    ),
+                                  ),
+                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                ),flex: 1,),
+
+                                Expanded(child: Container(
+                                  decoration: BoxDecoration(
+                                    //  border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      InkWell(
+                                        child: Text('Receive'),
+                                        onTap: (){
+                                          //showCustomDialog(context);
+                                        },
+                                      )
+                                      //Text('15-11-22'),
+                                    ],
+                                  ),
+                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                ),flex: 1,),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    )
+                  );
+                }),)
+                :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
+                :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
+            )
+          ),
+        );
+      },
+      transitionBuilder: (_, anim, __, child) {
+        Tween<Offset> tween;
+        if (anim.status == AnimationStatus.reverse) {
+          tween = Tween(begin: Offset(-1, 0), end: Offset.zero);
+        } else {
+          tween = Tween(begin: Offset(1, 0), end: Offset.zero);
+        }
+
+        return SlideTransition(
+          position: tween.animate(anim),
+          child: FadeTransition(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
+    );
   }
 
 }

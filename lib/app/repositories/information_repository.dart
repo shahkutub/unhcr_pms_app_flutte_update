@@ -4,6 +4,7 @@ import 'package:brac_arna/app/api_providers/api_manager.dart';
 import 'package:brac_arna/app/api_providers/api_url.dart';
 import 'package:brac_arna/app/database_helper/offline_database_helper.dart';
 import 'package:brac_arna/app/models/PostResponse.dart';
+import 'package:brac_arna/app/models/StockReceiveResponse.dart';
 import 'package:brac_arna/app/models/placeDataModel.dart';
 import 'package:brac_arna/app/services/auth_service.dart';
 import 'package:flutter/services.dart';
@@ -134,6 +135,36 @@ class InformationRepository {
       print('error:$e');
       Get.toNamed(Routes.LOGIN);
       return MedicineListResponse.fromJson(response);
+    }
+  }
+
+  Future<StockReceiveResponse> get_stock_receive_list() async {
+
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //var headers = {'Authorization': 'Bearer '};
+    APIManager _manager = APIManager();
+    var response;
+    try {
+      response = await _manager.get(ApiClient.stock_receive_list,headers);
+      print('responsedruglist: ${response}');
+
+      if(response == null){
+        // Get.toNamed(Routes.LOGIN);
+      }
+
+      return StockReceiveResponse.fromJson(response);
+      // return all_division_dis_thanan_model().fromJson(response);
+      //  if (response['IsLoggedIn'] == true) {
+      //    Get.find<AuthService>().setUser(UserModel.fromJson(response));
+      //    return all_division_dis_thanan_model.fromJson(response);
+      //  } else {
+      //    return 'Unauthorised';
+      //  }
+    } catch (e) {
+      print('error:$e');
+      Get.toNamed(Routes.LOGIN);
+      return StockReceiveResponse.fromJson(response);
     }
   }
 
