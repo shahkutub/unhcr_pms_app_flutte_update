@@ -1,6 +1,7 @@
 
 
 import 'package:brac_arna/app/database_helper/offline_database_helper.dart';
+import 'package:brac_arna/app/models/StockReceiveMedicineListResponse.dart';
 import 'package:brac_arna/app/models/StockReceiveResponse.dart';
 import 'package:brac_arna/app/services/auth_service.dart';
 import 'package:brac_arna/common/AppConstant.dart';
@@ -29,13 +30,14 @@ class StockReceiveController extends GetxController{
 
   final druglistResonse = MedicineListResponse().obs;
   final stockReceiveResponse = StockReceiveResponse().obs;
+  final stockReceiveMedicineResponse = StockReceiveMedicineListResponse().obs;
   var showCircle = false.obs;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    //get_drug_listReceive();
+    get_drug_listReceive();
     get_stock_Receive();
   }
 
@@ -54,6 +56,29 @@ class StockReceiveController extends GetxController{
         if(stockReceiveResponse.value != null){
           showCircle.value = false;
           print(druglistResonse.value.dispatch_items);
+
+          showCircle.value = false;
+        }else{
+          Get.toNamed(Routes.LOGIN);
+        }
+      });
+    }
+
+  }
+  get_stock_Receive_medicine(String id) async {
+    //Get.focusScope!.unfocus();
+
+    //Ui.customLoaderDialogWithMessage();
+    if(!await (Utils.checkConnection() as Future<bool>)){
+      debugPrint('No internet connection');
+      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
+    }else{
+      showCircle.value = true;
+
+      InformationRepository().get_stock_receive_medicine_list(id).then((resp) async {
+        stockReceiveMedicineResponse.value = resp;
+        if(stockReceiveMedicineResponse.value != null){
+          showCircle.value = false;
 
           showCircle.value = false;
         }else{

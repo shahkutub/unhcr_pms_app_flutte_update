@@ -3,6 +3,7 @@
 import 'package:brac_arna/app/modules/current_stock/current_stock_controller.dart';
 import 'package:brac_arna/app/modules/stock_receive/stock_receive_controller.dart';
 import 'package:brac_arna/common/AppConstant.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,8 @@ class StockReceiveView extends GetView<StockReceiveController>{
   String date = "";
   DateTime selectedDate = DateTime.now();
   var txt = TextEditingController();
+  var receiveQtyEditControler = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     Get.find<StockReceiveController>();
@@ -126,13 +129,15 @@ class StockReceiveView extends GetView<StockReceiveController>{
                     //itemCount: 15,
                     //primary: false,
                     shrinkWrap: true,
+
                     itemBuilder: (BuildContext context, int index) {
                       var data =  controller.stockReceiveResponse.value.distribution_list?[index];
                       var sl = index+1;
                       return Card(
+                        elevation: 5,
                         margin: EdgeInsets.only(top: 20),
                           child: Container(
-                            padding: EdgeInsets.all(10),
+                           // padding: EdgeInsets.all(10),
                             alignment: Alignment.centerLeft,
                             child: Row(
                               children: [
@@ -148,7 +153,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                        //Text('15-11-22'),
                                      ],
                                    ),
-                                   padding:EdgeInsets.only(right: 10,left: 10) ,
+                                   padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
                                ),flex: 3,),
 
                                 Expanded(child: Container(
@@ -161,26 +166,30 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                       Text(''+data!.supply_date.toString()),
                                     ],
                                   ),
-                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                  padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
                                 ),flex: 2,),
 
                                 Expanded(child: Container(
                                   decoration: BoxDecoration(
                                     //  border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
                                   ),
-                                  child: Column(
-                                    children: [
-                                      InkWell(
-                                        child: Text('Receive'),
-                                        onTap: (){
-                                          showCustomDialog(context);
-                                        },
-                                      )
-
-                                      //Text('15-11-22'),
-                                    ],
+                                  child: Container(
+                                    
+                                    child: InkWell(
+                                      child: Text('Receive',style: TextStyle(fontSize: 10,color: Colors.white),),
+                                      onTap: (){
+                                        controller.get_stock_Receive_medicine(data.id.toString());
+                                        showCustomDialog(context);
+                                      },
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.all(Radius.circular(5))
+                                    ),
+                                    padding: EdgeInsets.all(3),
+                                    alignment: Alignment.center,
                                   ),
-                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                  padding:EdgeInsets.only(right: 5,left: 5,top: 5,bottom: 5) ,
                                 ),flex: 1,),
                               ],
                             ),
@@ -336,15 +345,15 @@ class StockReceiveView extends GetView<StockReceiveController>{
             width: context.width,
             child: Obx(() =>
 
-            controller.druglistResonse.value.dispatch_items != null ?
-            controller.druglistResonse.value.dispatch_items!.length! > 0 ?
+            controller.stockReceiveMedicineResponse.value.medicine_list != null ?
+            controller.stockReceiveMedicineResponse.value.medicine_list!.length! > 0 ?
             Expanded(child: ListView.builder(
-                itemCount: controller.druglistResonse.value.dispatch_items?.length,
+                itemCount: controller.stockReceiveMedicineResponse.value.medicine_list?.length,
                 //itemCount: 15,
                 //primary: false,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
-                  var data = controller.druglistResonse.value.dispatch_items?[index];
+                  var data = controller.stockReceiveMedicineResponse.value.medicine_list?[index];
                   var sl = index+1;
                   return Container(
                    margin: EdgeInsets.only(top: 10),
@@ -378,8 +387,8 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                   ),
                                   child: Column(
                                     children: [
-                                      Text('Req qty:'),
-                                      Text('Rec qty:'),
+                                      Text('Req qty: '+data.facility_requested_qty.toString()),
+                                      Text('App qty: '+data.approved_qty.toString()),
                                     ],
                                   ),
                                   padding:EdgeInsets.only(right: 10,left: 10) ,
@@ -400,6 +409,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                         border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
                                     ),
                                     child: TextField (
+                                      controller: receiveQtyEditControler,
                                       decoration: InputDecoration(
                                           border: InputBorder.none,
                                           labelText: 'Receive qty',
