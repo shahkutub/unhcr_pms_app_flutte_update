@@ -139,7 +139,7 @@ class InformationRepository {
     }
   }
 
-  Future<StockReceiveResponse> get_stock_receive_list() async {
+  Future<StockReceiveResponse> get_stock_receive_list(String url) async {
 
     String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
     var headers = {'Authorization': 'Bearer $token'};
@@ -147,7 +147,7 @@ class InformationRepository {
     APIManager _manager = APIManager();
     var response;
     try {
-      response = await _manager.get(ApiClient.stock_receive_list,headers);
+      response = await _manager.get(ApiClient.stock_receive_list+'/'+url,headers);
       print('responsedruglist: ${response}');
 
       if(response == null){

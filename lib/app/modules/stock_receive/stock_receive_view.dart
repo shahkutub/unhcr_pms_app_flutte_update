@@ -17,6 +17,8 @@ class StockReceiveView extends GetView<StockReceiveController>{
   DateTime selectedDate = DateTime.now();
   var txt = TextEditingController();
   var receiveQtyEditControler = TextEditingController();
+  var rejectQtyEditControler = TextEditingController();
+  var rejectReasonEditControler = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -387,8 +389,9 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                   ),
                                   child: Column(
                                     children: [
-                                      Text('Req qty: '+data.facility_requested_qty.toString()),
-                                      Text('App qty: '+data.approved_qty.toString()),
+                                     // Text('Req qty: '+data.facility_requested_qty.toString()),
+                                      data.stockout_details!.length > 0?
+                                      Text('App qty: '+data.stockout_details![0].approved_supply_qty.toString()):Text(''),
                                     ],
                                   ),
                                   padding:EdgeInsets.only(right: 10,left: 10) ,
@@ -411,45 +414,44 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                     child: TextField (
                                       controller: receiveQtyEditControler,
                                       decoration: InputDecoration(
-                                          border: InputBorder.none,
+                                          border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
                                           labelText: 'Receive qty',
-                                          hintText: 'Enter Receive qty'
+                                          hintText: 'Receive qty'
                                       ),
                                     ),
-                                    padding:EdgeInsets.only(right: 10,left: 10) ,
+                                    padding:EdgeInsets.only(right: 2,left: 2) ,
                                   ),flex: 1,),
 
                                 Expanded(child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
-                                  ),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border(right: BorderSide(color: Colors.black.withOpacity(0.3)))
+                                  // ),
                                   child: TextField (
+                                    controller: rejectQtyEditControler,
                                     decoration: InputDecoration(
-                                        border: InputBorder.none,
+                                        border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
                                         labelText: 'Reject qty',
                                         hintText: 'Reject qty'
                                     ),
                                   ),
-                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                  padding:EdgeInsets.only(right: 2,left: 2) ,
                                 ),flex: 1,),
 
                                 Expanded(child: Container(
-                                  decoration: BoxDecoration(
-                                    //  border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                  child: TextField (
+                                    onChanged: (content) {
+
+                                    },
+                                    controller: rejectReasonEditControler,
+                                    decoration: InputDecoration(
+                                        border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
+                                        labelText: 'Reject Reason',
+                                        hintText: 'Reject Reason'
+                                    ),
                                   ),
-                                  child: Column(
-                                    children: [
-                                      InkWell(
-                                        child: Text('Receive'),
-                                        onTap: (){
-                                          //showCustomDialog(context);
-                                        },
-                                      )
-                                      //Text('15-11-22'),
-                                    ],
-                                  ),
-                                  padding:EdgeInsets.only(right: 10,left: 10) ,
+                                  padding:EdgeInsets.only(right: 2,left: 2) ,
                                 ),flex: 1,),
+
                               ],
                             ),
                           ),

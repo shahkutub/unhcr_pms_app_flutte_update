@@ -38,10 +38,10 @@ class StockReceiveController extends GetxController{
     // TODO: implement onInit
     super.onInit();
     get_drug_listReceive();
-    get_stock_Receive();
+    get_stock_Receive('distribution_approved');
   }
 
-  get_stock_Receive() async {
+  get_stock_Receive(String pendingORreceive) async {
     //Get.focusScope!.unfocus();
 
     //Ui.customLoaderDialogWithMessage();
@@ -51,7 +51,7 @@ class StockReceiveController extends GetxController{
     }else{
       showCircle.value = true;
 
-      InformationRepository().get_stock_receive_list().then((resp) async {
+      InformationRepository().get_stock_receive_list(pendingORreceive).then((resp) async {
         stockReceiveResponse.value = resp;
         if(stockReceiveResponse.value != null){
           showCircle.value = false;

@@ -9,7 +9,7 @@ class ApiClient {
   static String login = '${baseUrl}login';
   //static String drug_list = '${baseUrl}drug/list';
   static String drug_list = '${baseUrl}dispatch/item_list';
-  static String stock_receive_list = '${baseUrl}stockout/list/dispensary_received';
+  static String stock_receive_list = '${baseUrl}stockout/list';
   static String stock_receive_medicine_list = '${baseUrl}stockin/dispensary_medicine_list';
   static String submit_dispatch = '${baseUrl}dispatch/savedata';
   static String submit_internal_request = '${baseUrl}dispensary/internal/request/savedata';

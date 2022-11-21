@@ -32,8 +32,8 @@ class Medicine {
     String? drug_id;
     String? drug_name;
     String? facility_requested_qty;
-
-    Medicine({this.approved_qty, this.category_id, this.drug_id, this.drug_name, this.facility_requested_qty});
+    List<StockoutDetail>? stockout_details;
+    Medicine({this.approved_qty, this.category_id, this.drug_id, this.drug_name, this.facility_requested_qty, this.stockout_details});
 
     factory Medicine.fromJson(Map<String, dynamic> json) {
         return Medicine(
@@ -42,6 +42,8 @@ class Medicine {
             drug_id: json['drug_id'],
             drug_name: json['drug_name'],
             facility_requested_qty: json['facility_requested_qty'],
+            stockout_details: json['stockout_details'] != null ? (json['stockout_details'] as List).map((i) => StockoutDetail.fromJson(i)).toList() : null,
+
         );
     }
 
@@ -52,6 +54,59 @@ class Medicine {
         data['drug_id'] = this.drug_id;
         data['drug_name'] = this.drug_name;
         data['facility_requested_qty'] = this.facility_requested_qty;
+        return data;
+    }
+}
+
+class StockoutDetail {
+    String? approved_supply_qty;
+    String? batch_no;
+    String? category_id;
+    String? drug_id;
+    String? drug_name;
+    String? expire_date;
+    String? facility_stockout_id;
+    String? mfg_date;
+    String? supplied_qty;
+    String? receive_qty;
+    String? reject_qty;
+    String? reject_reason;
+
+    StockoutDetail({this.approved_supply_qty, this.batch_no, this.category_id,
+        this.drug_id, this.drug_name, this.expire_date, this.facility_stockout_id,
+        this.mfg_date, this.supplied_qty ,this.receive_qty,this.reject_qty,this.reject_reason});
+
+    factory StockoutDetail.fromJson(Map<String, dynamic> json) {
+        return StockoutDetail(
+            approved_supply_qty: json['approved_supply_qty'],
+            batch_no: json['batch_no'],
+            category_id: json['category_id'],
+            drug_id: json['drug_id'],
+            drug_name: json['drug_name'],
+            expire_date: json['expire_date'],
+            facility_stockout_id: json['facility_stockout_id'],
+            mfg_date: json['mfg_date'],
+            supplied_qty: json['supplied_qty'],
+            receive_qty: json['receive_qty'],
+            reject_qty: json['reject_qty'],
+            reject_reason: json['reject_reason'],
+        );
+    }
+
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> data = new Map<String, dynamic>();
+        data['approved_supply_qty'] = this.approved_supply_qty;
+        data['batch_no'] = this.batch_no;
+        data['category_id'] = this.category_id;
+        data['drug_id'] = this.drug_id;
+        data['drug_name'] = this.drug_name;
+        data['expire_date'] = this.expire_date;
+        data['facility_stockout_id'] = this.facility_stockout_id;
+        data['mfg_date'] = this.mfg_date;
+        data['supplied_qty'] = this.supplied_qty;
+        data['receive_qty'] = this.receive_qty;
+        data['reject_qty'] = this.reject_qty;
+        data['reject_reason'] = this.reject_reason;
         return data;
     }
 }
