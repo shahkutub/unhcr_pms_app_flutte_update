@@ -221,7 +221,10 @@ class after_login_controller extends GetxController {
         body: data
     );
 
-    print("${response.statusCode}");
+    print("statusCode: ${response.statusCode}");
+    if(response.statusCode == 401){
+      logout();
+    }
     print("${response.body}");
 
     var jsoObj = jsonDecode(response.body);
@@ -234,7 +237,7 @@ class after_login_controller extends GetxController {
       dbHelper.deleteALlDispatch();
     }
 
-    Navigator.of(context).pop();
+   // Navigator.of(context).pop();
 
     return response;
   }
@@ -253,7 +256,11 @@ class after_login_controller extends GetxController {
         body: data
     );
 
-    print("${response.statusCode}");
+    print("statusCode: ${response.statusCode}");
+    if(response.statusCode == 401){
+      logout();
+    }
+
     print("${response.body}");
 
     var jsoObj = jsonDecode(response.body);
@@ -277,6 +284,7 @@ class after_login_controller extends GetxController {
     dbHelper.deleteALlDrugs();
     dbHelper.deleteALlDispatch();
     dbHelper.deletePserial();
+    dbHelper.delete_internal_request();
     Get.offAllNamed(Routes.LOGIN);
 
   }

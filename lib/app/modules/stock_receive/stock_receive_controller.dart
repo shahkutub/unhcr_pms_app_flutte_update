@@ -141,20 +141,22 @@ class StockReceiveController extends GetxController{
   }
 
 
+
+
   void approveStockReceive(BuildContext context){
     dbHelper.deleteALlDrugs();
-    druglistResonse.value.dispatch_items!.forEach((element) async {
+    stockReceiveMedicineResponse.value.medicine_list!.forEach((element) async {
       Map<String, dynamic> row = {
         DatabaseHelper.drug_name: ''+element.drug_name.toString(),
         DatabaseHelper.drug_id: element.drug_id,
-        DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
-        DatabaseHelper.drug_pstrength_id: element.pstrength_id,
-        DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
-        DatabaseHelper.drug_generic_id: element.generic_id,
-        DatabaseHelper.drug_available_stock: element.available_stock,
-        DatabaseHelper.drug_stock_receive: element.available_stock,
+        //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
+        //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
+        //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
+        //DatabaseHelper.drug_generic_id: element.generic_id,
+        DatabaseHelper.drug_available_stock: element.stockout_details![0].receive_qty,
+        DatabaseHelper.drug_stock_receive: element.stockout_details![0].receive_qty,
         DatabaseHelper.drug_stock_consume: '0',
-        DatabaseHelper.drug_stock_lose: '0',
+        DatabaseHelper.drug_stock_lose: element.stockout_details![0].reject_qty,
         //DatabaseHelper.drug_stock: element.generic_id,
       };
 

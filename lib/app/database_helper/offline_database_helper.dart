@@ -103,16 +103,16 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE $table_drugs (
             $columnId INTEGER PRIMARY KEY,
-            $drug_id TEXT NOT NULL,
-            $drug_name TEXT NOT NULL,
-            $drug_generic_name TEXT NOT NULL,
-            $drug_generic_id TEXT NOT NULL,
-            $drug_pstrength_name TEXT NOT NULL,
-            $drug_available_stock TEXT NOT NULL,
-            $drug_stock_receive TEXT NOT NULL,
-            $drug_stock_consume TEXT NOT NULL,
-            $drug_stock_lose TEXT NOT NULL,
-            $drug_pstrength_id TEXT NOT NULL
+            $drug_id TEXT,
+            $drug_name TEXT,
+            $drug_generic_name TEXT,
+            $drug_generic_id TEXT,
+            $drug_pstrength_name TEXT,
+            $drug_available_stock TEXT,
+            $drug_stock_receive TEXT,
+            $drug_stock_consume TEXT,
+            $drug_stock_lose TEXT,
+            $drug_pstrength_id TEXT 
             
           )
           ''');

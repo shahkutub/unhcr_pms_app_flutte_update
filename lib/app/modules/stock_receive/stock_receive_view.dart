@@ -135,96 +135,102 @@ class StockReceiveView extends GetView<StockReceiveController>{
                     itemBuilder: (BuildContext context, int index) {
                       var data =  controller.stockReceiveResponse.value.distribution_list?[index];
                       var sl = index+1;
-                      return Card(
-                        elevation: 5,
-                        margin: EdgeInsets.only(top: 20),
-                          child: Container(
-                           // padding: EdgeInsets.all(10),
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              children: [
-                               Expanded(
-                                 child: Container(
+                      return InkWell(
+                        onTap: (){
+                          controller.get_stock_Receive_medicine(data!.id.toString());
+                          showCustomDialog(context);
+                        },
+                        child: Card(
+                            elevation: 5,
+                            margin: EdgeInsets.only(top: 20),
+                            child: Container(
+                              // padding: EdgeInsets.all(10),
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
 
-                                   decoration: BoxDecoration(
-                                     border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
-                                   ),
-                                   child: Column(
-                                     children: [
-                                       Text(''+data!.dispensary_name.toString()),
-                                       //Text('15-11-22'),
-                                     ],
-                                   ),
-                                   padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
-                               ),flex: 3,),
+                                      decoration: BoxDecoration(
+                                          border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Text(''+data!.dispensary_name.toString()),
+                                          //Text('15-11-22'),
+                                        ],
+                                      ),
+                                      padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
+                                    ),flex: 3,),
 
-                                Expanded(child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text('Date:'),
-                                      Text(''+data!.supply_date.toString()),
-                                    ],
-                                  ),
-                                  padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
-                                ),flex: 2,),
-
-                                Expanded(child: Container(
-                                  decoration: BoxDecoration(
-                                    //  border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
-                                  ),
-                                  child: Container(
-                                    
-                                    child: InkWell(
-                                      child: Text('Receive',style: TextStyle(fontSize: 10,color: Colors.white),),
-                                      onTap: (){
-                                        controller.get_stock_Receive_medicine(data.id.toString());
-                                        showCustomDialog(context);
-                                      },
-                                    ),
+                                  Expanded(child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.all(Radius.circular(5))
+                                        border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
                                     ),
-                                    padding: EdgeInsets.all(3),
-                                    alignment: Alignment.center,
-                                  ),
-                                  padding:EdgeInsets.only(right: 5,left: 5,top: 5,bottom: 5) ,
-                                ),flex: 1,),
-                              ],
-                            ),
-                          )
-                        // child: Container(
-                        //   padding: EdgeInsets.all(10),
-                        //   alignment: Alignment.centerLeft,
-                        //   child: Row(
-                        //     children: [
-                        //       Text(''+sl.toString()),
-                        //       SizedBox(width: 10,),
-                        //       Column(
-                        //         mainAxisAlignment: MainAxisAlignment.start,
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           SizedBox(
-                        //             width: 300,
-                        //             child: Text(''+data!.drug_name.toString()),
-                        //           ),
-                        //           SizedBox(height: 5,),
-                        //           // Row(
-                        //           //   children: [
-                        //           Text('Available Stock: '+data!.available_stock.toString(),style: TextStyle(fontSize: 12),),
-                        //           SizedBox(height: 5,),
-                        //           Text('Stock Request: 0',style: TextStyle(fontSize: 12),),
-                        //           //   ],
-                        //           // )
-                        //         ],
-                        //       )
-                        //
-                        //     ],
-                        //   ),
-                        // )
+                                    child: Column(
+                                      children: [
+                                        Text('Date:'),
+                                        Text(''+data!.supply_date.toString()),
+                                      ],
+                                    ),
+                                    padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
+                                  ),flex: 2,),
+
+                                  Expanded(child: Container(
+                                    decoration: BoxDecoration(
+                                      //  border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                                    ),
+                                    child: Container(
+
+                                      child: InkWell(
+                                        child: Text('Receive',style: TextStyle(fontSize: 10,color: Colors.white),),
+                                        onTap: (){
+                                          controller.get_stock_Receive_medicine(data.id.toString());
+                                          showCustomDialog(context);
+                                        },
+                                      ),
+                                      decoration: BoxDecoration(
+                                          color: Colors.green,
+                                          borderRadius: BorderRadius.all(Radius.circular(5))
+                                      ),
+                                      padding: EdgeInsets.all(3),
+                                      alignment: Alignment.center,
+                                    ),
+                                    padding:EdgeInsets.only(right: 5,left: 5,top: 5,bottom: 5) ,
+                                  ),flex: 1,),
+                                ],
+                              ),
+                            )
+                          // child: Container(
+                          //   padding: EdgeInsets.all(10),
+                          //   alignment: Alignment.centerLeft,
+                          //   child: Row(
+                          //     children: [
+                          //       Text(''+sl.toString()),
+                          //       SizedBox(width: 10,),
+                          //       Column(
+                          //         mainAxisAlignment: MainAxisAlignment.start,
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           SizedBox(
+                          //             width: 300,
+                          //             child: Text(''+data!.drug_name.toString()),
+                          //           ),
+                          //           SizedBox(height: 5,),
+                          //           // Row(
+                          //           //   children: [
+                          //           Text('Available Stock: '+data!.available_stock.toString(),style: TextStyle(fontSize: 12),),
+                          //           SizedBox(height: 5,),
+                          //           Text('Stock Request: 0',style: TextStyle(fontSize: 12),),
+                          //           //   ],
+                          //           // )
+                          //         ],
+                          //       )
+                          //
+                          //     ],
+                          //   ),
+                          // )
+                        ),
                       );
                     }),)
               :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
@@ -243,15 +249,15 @@ class StockReceiveView extends GetView<StockReceiveController>{
 
         ),
 
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Add your onPressed code here!
-          controller.approveStockReceive(context);
-        },
-        label: Text('Approve'),
-        //icon: Icon(Icons.thumb_up),
-        backgroundColor: Colors.blue,
-      )
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //     // Add your onPressed code here!
+      //     controller.approveStockReceive(context);
+      //   },
+      //   label: Text('Approve'),
+      //   //icon: Icon(Icons.thumb_up),
+      //   backgroundColor: Colors.blue,
+      // )
 
     );
   }
@@ -391,7 +397,8 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                     children: [
                                      // Text('Req qty: '+data.facility_requested_qty.toString()),
                                       data.stockout_details!.length > 0?
-                                      Text('App qty: '+data.stockout_details![0].approved_supply_qty.toString()):Text(''),
+                                      Text('Supp qty: '+data.stockout_details![0].approved_supply_qty.toString()):Text(''),
+
                                     ],
                                   ),
                                   padding:EdgeInsets.only(right: 10,left: 10) ,
@@ -400,6 +407,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
                               ],
                             ),
                           ),
+                          data.stockout_details!.length > 0?
                           Container(
                             color: Colors.white,
                             padding: EdgeInsets.all(10),
@@ -407,17 +415,23 @@ class StockReceiveView extends GetView<StockReceiveController>{
                               children: [
                                 Expanded(
                                   child: Container(
-
                                     decoration: BoxDecoration(
                                         border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
                                     ),
                                     child: TextField (
-                                      controller: receiveQtyEditControler,
+                                      keyboardType: TextInputType.number,
+                                      //controller: receiveQtyEditControler,
                                       decoration: InputDecoration(
                                           border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
                                           labelText: 'Receive qty',
                                           hintText: 'Receive qty'
                                       ),
+                                      onChanged: (content) {
+                                        if(data.stockout_details!.length > 0){
+                                          data.stockout_details![0].receive_qty = content;
+                                          print('receive_qty: '+data.stockout_details![0].receive_qty.toString());
+                                        }
+                                      },
                                     ),
                                     padding:EdgeInsets.only(right: 2,left: 2) ,
                                   ),flex: 1,),
@@ -427,7 +441,15 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                   //     border: Border(right: BorderSide(color: Colors.black.withOpacity(0.3)))
                                   // ),
                                   child: TextField (
-                                    controller: rejectQtyEditControler,
+                                    keyboardType: TextInputType.number,
+                                    //controller: rejectQtyEditControler,
+                                    onChanged: (content) {
+                                      if(data.stockout_details!.length > 0){
+                                        data.stockout_details![0].reject_qty = content;
+                                        print('Reject qty: '+data.stockout_details![0].reject_qty.toString());
+                                      }
+                                    },
+
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
                                         labelText: 'Reject qty',
@@ -440,9 +462,12 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                 Expanded(child: Container(
                                   child: TextField (
                                     onChanged: (content) {
-
+                                      if(data.stockout_details!.length > 0){
+                                        data.stockout_details![0].reject_reason = content;
+                                        print('Reject Reason: '+data.stockout_details![0].reject_reason.toString());
+                                      }
                                     },
-                                    controller: rejectReasonEditControler,
+                                    //controller: rejectReasonEditControler,
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
                                         labelText: 'Reject Reason',
@@ -454,7 +479,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
 
                               ],
                             ),
-                          ),
+                          ):SizedBox(),
                         ],
                       )
                     )
@@ -464,6 +489,17 @@ class StockReceiveView extends GetView<StockReceiveController>{
                 :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
             )
           ),
+
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {
+                // Add your onPressed code here!
+                controller.approveStockReceive(context);
+              },
+              label: Text('Approve'),
+              //icon: Icon(Icons.thumb_up),
+              backgroundColor: Colors.blue,
+            )
+
         );
       },
       transitionBuilder: (_, anim, __, child) {
