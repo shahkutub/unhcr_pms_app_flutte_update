@@ -42,7 +42,7 @@ class LoginController extends GetxController {
   @override
   void onReady() {
     // TODO: implement onReady
-   // enableLocation();
+    // enableLocation();
     super.onReady();
   }
 
@@ -62,7 +62,7 @@ class LoginController extends GetxController {
 
       Ui.customLoaderDialogWithMessage();
       AuthRepository().userLogin(userData.value).then((response) {
-       // print('logindata'+response);
+        // print('logindata'+response);
 
 
         if(response != null){
@@ -226,11 +226,11 @@ class LoginController extends GetxController {
     var localdataSize = await dbHelper.queryAllRecords();
     print('localdataSize: ${localdataSize.length}');
     for (var i = 0; i < localdataSize.length; i++) {
-          Map<String, dynamic> map = localdataSize[i];
-          var name = map['name'];
-          print("name: "+name);
-         // var id = map['id'];
-        }
+      Map<String, dynamic> map = localdataSize[i];
+      var name = map['name'];
+      print("name: "+name);
+      // var id = map['id'];
+    }
 
 
   }

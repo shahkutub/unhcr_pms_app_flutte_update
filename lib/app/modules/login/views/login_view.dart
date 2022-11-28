@@ -56,7 +56,7 @@ class LoginView extends GetView<LoginController> {
 
                         )
 
-                        ),
+                    ),
                     Positioned(
                       bottom: 100,
                       left: 0,
@@ -135,10 +135,10 @@ class LoginView extends GetView<LoginController> {
                             children: <Widget>[
                               Container(
                                 padding: EdgeInsets.all(5.0),
-                               margin: EdgeInsets.all(5.0),
-                               // decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+                                margin: EdgeInsets.all(5.0),
+                                // decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
                                 child: TextFormField(
-                                 // controller: controller.userNameController.value,
+                                  // controller: controller.userNameController.value,
                                   initialValue: "gkf1dept1@unhcr.org",
                                   onChanged: (input) {
                                     controller.userData.value.userName = input;
@@ -147,13 +147,13 @@ class LoginView extends GetView<LoginController> {
                                     return input!.isEmpty ? 'Please provide your username.' : null;
                                   },
                                   style: TextStyle(fontSize: 15),
-                                    decoration: InputDecoration(
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
-                                      ),
+                                  decoration: InputDecoration(
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
+                                    ),
 
                                     hintText: "User Name",
                                     hintStyle: TextStyle(color: Colors.grey[500]),
@@ -164,7 +164,7 @@ class LoginView extends GetView<LoginController> {
                               Container(
                                 padding: EdgeInsets.all(5.0),
                                 child: TextFormField(
-                                 // controller: controller.passwordController.value,
+                                  // controller: controller.passwordController.value,
                                   initialValue: "Pms@1234",
                                   onChanged: (input) {
                                     controller.userData.value.password = input;
@@ -174,13 +174,13 @@ class LoginView extends GetView<LoginController> {
                                   },
                                   style: TextStyle(fontSize: 15),
                                   obscureText: true,
-                                    decoration: InputDecoration(
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
-                                      ),
+                                  decoration: InputDecoration(
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
+                                    ),
                                     hintText: "Password",
                                     hintStyle: TextStyle(color: Colors.grey[500]),
                                   ),
@@ -195,7 +195,7 @@ class LoginView extends GetView<LoginController> {
                                   // Get.offAllNamed(Routes.INFORMATION_FORM);
                                   //Get.offAllNamed(Routes.PROVIDED_DATA_LIST);
 
-                                 // Get.offAllNamed(Routes.AFTER_LOGIN);
+                                  // Get.offAllNamed(Routes.AFTER_LOGIN);
 
                                   if (controller.loginFormKey.currentState!.validate()) {
                                     controller.login();

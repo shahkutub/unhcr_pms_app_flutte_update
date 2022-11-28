@@ -146,21 +146,26 @@ class StockReceiveController extends GetxController{
   void approveStockReceive(BuildContext context){
     dbHelper.deleteALlDrugs();
     stockReceiveMedicineResponse.value.medicine_list!.forEach((element) async {
-      Map<String, dynamic> row = {
-        DatabaseHelper.drug_name: ''+element.drug_name.toString(),
-        DatabaseHelper.drug_id: element.drug_id,
-        //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
-        //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
-        //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
-        //DatabaseHelper.drug_generic_id: element.generic_id,
-        DatabaseHelper.drug_available_stock: element.stockout_details![0].receive_qty,
-        DatabaseHelper.drug_stock_receive: element.stockout_details![0].receive_qty,
-        DatabaseHelper.drug_stock_consume: '0',
-        DatabaseHelper.drug_stock_lose: element.stockout_details![0].reject_qty,
-        //DatabaseHelper.drug_stock: element.generic_id,
-      };
+      element.stockout_details!.forEach((element2) async{
+        Map<String, dynamic> row = {
+          DatabaseHelper.drug_name: ''+element2.drug_name.toString(),
+          DatabaseHelper.drug_id: element2.drug_id,
+          //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
+          //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
+          //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
+          //DatabaseHelper.drug_generic_id: element.generic_id,
+          DatabaseHelper.drug_available_stock: element2.receive_qty,
+          DatabaseHelper.drug_stock_receive: element2.receive_qty,
+          DatabaseHelper.drug_stock_consume: '0',
+          DatabaseHelper.drug_stock_lose: element2.reject_qty,
+          DatabaseHelper.drug_reject_reason: element2.reject_reason,
+          DatabaseHelper.drug_batch_no: element2.batch_no,
+          //DatabaseHelper.drug_stock: element.generic_id,
+        };
 
-      await dbHelper.insert_drug(row);
+        await dbHelper.insert_drug(row);
+      });
+
     });
 
     Utils.showToastWithTitle('','Stock received done');

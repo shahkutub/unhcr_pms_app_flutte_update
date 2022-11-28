@@ -357,8 +357,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
             controller.stockReceiveMedicineResponse.value.medicine_list!.length! > 0 ?
             Expanded(child: ListView.builder(
                 itemCount: controller.stockReceiveMedicineResponse.value.medicine_list?.length,
-                //itemCount: 15,
-                //primary: false,
+                primary: false,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
                   var data = controller.stockReceiveMedicineResponse.value.medicine_list?[index];
@@ -395,9 +394,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                   ),
                                   child: Column(
                                     children: [
-                                     // Text('Req qty: '+data.facility_requested_qty.toString()),
-                                      data.stockout_details!.length > 0?
-                                      Text('Supp qty: '+data.stockout_details![0].approved_supply_qty.toString()):Text(''),
+                                     Text('Appr qty: '+data.approved_qty.toString()),
 
                                     ],
                                   ),
@@ -408,78 +405,120 @@ class StockReceiveView extends GetView<StockReceiveController>{
                             ),
                           ),
                           data.stockout_details!.length > 0?
-                          Container(
-                            color: Colors.white,
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
-                                    ),
-                                    child: TextField (
-                                      keyboardType: TextInputType.number,
-                                      //controller: receiveQtyEditControler,
-                                      decoration: InputDecoration(
-                                          border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
-                                          labelText: 'Receive qty',
-                                          hintText: 'Receive qty'
-                                      ),
-                                      onChanged: (content) {
-                                        if(data.stockout_details!.length > 0){
-                                          data.stockout_details![0].receive_qty = content;
-                                          print('receive_qty: '+data.stockout_details![0].receive_qty.toString());
-                                        }
-                                      },
-                                    ),
-                                    padding:EdgeInsets.only(right: 2,left: 2) ,
-                                  ),flex: 1,),
+                         ListView.builder(
+                             itemCount: data.stockout_details!.length,
+                             primary: false,
+                             shrinkWrap: true,
+                             physics: NeverScrollableScrollPhysics(),
+                             itemBuilder: (BuildContext context, int index2) {
+                               return Container(
+                                 color: Colors.white,
+                                 padding: EdgeInsets.all(5),
+                                 child: Column(
+                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                   children: [
+                                     Text('Batch no: '+data.stockout_details![index2].batch_no.toString()),
 
-                                Expanded(child: Container(
-                                  // decoration: BoxDecoration(
-                                  //     border: Border(right: BorderSide(color: Colors.black.withOpacity(0.3)))
-                                  // ),
-                                  child: TextField (
-                                    keyboardType: TextInputType.number,
-                                    //controller: rejectQtyEditControler,
-                                    onChanged: (content) {
-                                      if(data.stockout_details!.length > 0){
-                                        data.stockout_details![0].reject_qty = content;
-                                        print('Reject qty: '+data.stockout_details![0].reject_qty.toString());
-                                      }
-                                    },
+                                     SizedBox(height: 5,),
 
-                                    decoration: InputDecoration(
-                                        border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
-                                        labelText: 'Reject qty',
-                                        hintText: 'Reject qty'
-                                    ),
-                                  ),
-                                  padding:EdgeInsets.only(right: 2,left: 2) ,
-                                ),flex: 1,),
+                                     Row(
+                                       children: [
+                                         Expanded(
+                                           child: Container(
 
-                                Expanded(child: Container(
-                                  child: TextField (
-                                    onChanged: (content) {
-                                      if(data.stockout_details!.length > 0){
-                                        data.stockout_details![0].reject_reason = content;
-                                        print('Reject Reason: '+data.stockout_details![0].reject_reason.toString());
-                                      }
-                                    },
-                                    //controller: rejectReasonEditControler,
-                                    decoration: InputDecoration(
-                                        border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey)),
-                                        labelText: 'Reject Reason',
-                                        hintText: 'Reject Reason'
-                                    ),
-                                  ),
-                                  padding:EdgeInsets.only(right: 2,left: 2) ,
-                                ),flex: 1,),
+                                             // decoration: BoxDecoration(
+                                             //   border: Border(right: BorderSide(color: Colors.grey,width: 1)),
+                                             //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                             // ),
+                                             child: TextField (
+                                               keyboardType: TextInputType.number,
+                                               //controller: receiveQtyEditControler,
+                                               decoration: InputDecoration(
 
-                              ],
-                            ),
-                          ):SizedBox(),
+                                                   border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey),
+                                                       borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                   labelText: 'Receive qty',
+                                                   hintText: 'Receive qty'
+                                               ),
+                                               onChanged: (content) {
+                                                 //if(data.stockout_details!.length > 0){
+                                                 if(content.isNotEmpty){
+                                                   if(int.parse(content) > int.parse(data.approved_qty.toString())){
+                                                     _showToast(context, 'Receive quantity must be less than or equal approve quantity');
+                                                   }
+                                                 }
+                                                 data.stockout_details![index2].receive_qty = content;
+                                                 print('receive_qty: '+data.stockout_details![index2].receive_qty.toString());
+                                                 // }
+                                               },
+
+                                               style: TextStyle(fontSize: 12),
+
+                                             ),
+                                             alignment: Alignment.center,
+                                             height: 40,
+                                             padding:EdgeInsets.only(right: 2,left: 2) ,
+                                           ),flex: 1,),
+
+                                         Expanded(child: Container(
+                                           // decoration: BoxDecoration(
+                                           //   border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3))),
+                                           //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                           // ),
+                                           child: TextField (
+                                             keyboardType: TextInputType.number,
+                                             //controller: rejectQtyEditControler,
+                                             onChanged: (content) {
+                                               //if(data.stockout_details!.length > 0){
+                                               data.stockout_details![index2].reject_qty = content;
+                                               print('Reject qty: '+data.stockout_details![index2].reject_qty.toString());
+                                               //}
+                                             },
+
+                                             decoration: InputDecoration(
+                                                 border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey),
+                                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                 labelText: 'Reject qty',
+                                                 hintText: 'Reject qty'
+                                             ),
+                                             style: TextStyle(fontSize: 12),
+                                           ),
+                                           padding:EdgeInsets.only(right: 2,left: 2),
+                                           height: 40,
+                                         ),flex: 1,),
+
+                                         Expanded(child: Container(
+
+                                           child: TextField (
+                                             onChanged: (content) {
+                                               //if(data.stockout_details!.length > 0){
+                                               data.stockout_details![index2].reject_reason = content;
+                                               print('Reject Reason: '+data.stockout_details![index2].reject_reason.toString());
+                                               //}
+                                             },
+                                             //controller: rejectReasonEditControler,
+                                             decoration: InputDecoration(
+                                                 border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey),
+                                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                 labelText: 'Reject Reason',
+                                                 hintText: 'Reject Reason'
+                                             ),
+                                             style: TextStyle(fontSize: 12),
+                                           ),
+
+                                           padding:EdgeInsets.only(right: 2,left: 2) ,
+                                           height: 40,
+                                         ),flex: 1,),
+
+                                       ],
+                                     ),
+
+                                     SizedBox(height: 5,),
+                                   ],
+                                 )
+
+                               );
+                             }) :SizedBox(),
                         ],
                       )
                     )

@@ -36,6 +36,8 @@ class DatabaseHelper {
   static final drug_stock_receive = 'stock_receive';
   static final drug_stock_consume = 'stock_consume';
   static final drug_stock_lose = 'stock_lose';
+  static final drug_reject_reason = 'reject_reason';
+  static final drug_batch_no = 'batch_no';
 
 
   // table_internal_request
@@ -112,6 +114,8 @@ class DatabaseHelper {
             $drug_stock_receive TEXT,
             $drug_stock_consume TEXT,
             $drug_stock_lose TEXT,
+            $drug_batch_no TEXT,
+            $drug_reject_reason TEXT,
             $drug_pstrength_id TEXT 
             
           )

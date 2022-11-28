@@ -190,7 +190,7 @@ class after_login_controller extends GetxController {
     List<MedicineModel> medicineDetails = [];
 
     dispatchDrugList.forEach((element) {
-      MedicineModel medicineModel = MedicineModel(int.parse(element.drug_id.toString()),int.parse(element.dispatch_stock.toString()),);
+      MedicineModel medicineModel = MedicineModel(int.parse(element.drug_id.toString()),int.parse(element.batch_no.toString()),int.parse(element.dispatch_stock.toString()),int.parse(element.receive_stock.toString()),);
       medicineDetails.add(medicineModel);
     });
 
@@ -222,8 +222,9 @@ class after_login_controller extends GetxController {
     );
 
     print("statusCode: ${response.statusCode}");
-    if(response.statusCode == 401){
-      logout();
+    if(response.statusCode == 500){
+      //logout();
+      Get.offAllNamed(Routes.LOGIN);
     }
     print("${response.body}");
 
@@ -257,8 +258,9 @@ class after_login_controller extends GetxController {
     );
 
     print("statusCode: ${response.statusCode}");
-    if(response.statusCode == 401){
-      logout();
+    if(response.statusCode == 500){
+      //logout();
+      Get.offAllNamed(Routes.LOGIN);
     }
 
     print("${response.body}");
@@ -361,10 +363,13 @@ class InternalItemModel {
 
 class MedicineModel{
   var item_id = 0;
+  var batch_id = 0;
   var dispatch_qty = 0;
-  MedicineModel(this.item_id, this.dispatch_qty);
+  var receive_stock = 0;
+  MedicineModel(this.item_id,this.batch_id, this.dispatch_qty,this.receive_stock);
   Map toJson() => {
     'item_id': item_id,
+    'batch_id': batch_id,
     'dispatch_qty': dispatch_qty,
   };
 

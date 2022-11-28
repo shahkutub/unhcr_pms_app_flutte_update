@@ -197,6 +197,7 @@ class ItemDispatchController extends GetxController{
       drug_info.generic_name = map[DatabaseHelper.drug_generic_name];
       drug_info.available_stock = map[DatabaseHelper.drug_available_stock];
       drug_info.dispatch_stock = map[DatabaseHelper.drug_stock_consume];
+      drug_info.batch_no = map[DatabaseHelper.drug_batch_no];
       //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
       drugList.add(drug_info);
     }
