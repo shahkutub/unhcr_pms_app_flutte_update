@@ -47,6 +47,7 @@ class after_login_controller extends GetxController {
   final navigatorKey = GlobalKey<NavigatorState>();
   final List<DispatchItem> dispatchDrugList = <DispatchItem>[];
   final List<InternalItemModel> internalRequestSubmitList = <InternalItemModel>[];
+  final List<MediReceiveDetailsModel> stockReceiveSubmitList = <MediReceiveDetailsModel>[];
 
   var dispensaryId = "";
   var facilityId = '';
@@ -190,7 +191,7 @@ class after_login_controller extends GetxController {
     List<MedicineModel> medicineDetails = [];
 
     dispatchDrugList.forEach((element) {
-      MedicineModel medicineModel = MedicineModel(int.parse(element.drug_id.toString()),int.parse(element.batch_no.toString()),int.parse(element.dispatch_stock.toString()),int.parse(element.receive_stock.toString()),);
+      MedicineModel medicineModel = MedicineModel(int.parse(element.drug_id.toString()),int.parse(element.dispatch_stock.toString()));
       medicineDetails.add(medicineModel);
     });
 
@@ -281,6 +282,44 @@ class after_login_controller extends GetxController {
   }
 
 
+  Future<dynamic> submit_stock_receive(String data,BuildContext context) async {
+
+    Ui.showLoaderDialog(context);
+    // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
+    print("token: ${token}");
+
+    var response = await http.post(Uri.parse(ApiClient.submit_stock_receive),
+        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
+        body: data
+    );
+
+    print("statusCode: ${response.statusCode}");
+    if(response.statusCode == 401){
+      //logout();
+      Get.offAllNamed(Routes.LOGIN);
+    }
+
+    print("${response.body}");
+
+    var jsoObj = jsonDecode(response.body);
+
+    var status = jsoObj['status'];
+    print("status:${status}");
+    if(status == 'success'){
+      Utils.showToast('Internal request upload successful');
+      dbHelper.delete_internal_request();
+
+    }
+
+    Navigator.of(context).pop();
+
+    return response;
+  }
+
+
   void logout() {
     Get.find<AuthService>().removeCurrentUser();
     dbHelper.deleteALlDrugs();
@@ -307,7 +346,8 @@ class after_login_controller extends GetxController {
       var drug_info = InternalItemModel(map[DatabaseHelper.internal_req_med_id],
           map[DatabaseHelper.internal_req_qty],
           map[DatabaseHelper.internal_req_remark],
-          map[DatabaseHelper.internal_req_date]);
+          map[DatabaseHelper.internal_req_date],
+          map[DatabaseHelper.internal_req_serial]);
       internalRequestSubmitList.add(drug_info);
     }
     print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
@@ -320,9 +360,59 @@ class after_login_controller extends GetxController {
 
   }
 
+  get_stock_receive_submitdata(BuildContext context) async {
+
+    var internalReqSize = await dbHelper.queryAllDrugRows();
+
+    print('internalReqSize: ${internalReqSize.length}');
+    for (var i = 0; i < internalReqSize.length; i++) {
+      Map<String, dynamic> map = internalReqSize[i];
+
+      var drug_info = InternalItemModel(map[DatabaseHelper.internal_req_med_id],
+          map[DatabaseHelper.internal_req_qty],
+          map[DatabaseHelper.internal_req_remark],
+          map[DatabaseHelper.internal_req_date],
+          map[DatabaseHelper.internal_req_serial]);
+      internalRequestSubmitList.add(drug_info);
+    }
+    print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
+
+    Map<String, dynamic> map = internalReqSize[0];
+    var stockout_master_id = map[DatabaseHelper.stockout_master_id];
+
+    StockReceiveSubmitModel submitDispatchModel = StockReceiveSubmitModel( stockout_master_id, stockReceiveSubmitList);
+    String jsonData = jsonEncode(submitDispatchModel);
+    print('stockreceivejson: '+jsonData.toString());
+
+    submit_stock_receive( jsonData,context);
+
+  }
+
 }
 
+class StockReceiveSubmitModel{
+  var  stockout_master_id = '';
+  List<MediReceiveDetailsModel> medicine_details = [];
+  StockReceiveSubmitModel(this.stockout_master_id,this.medicine_details);
 
+  Map toJson() => {
+    'medicine_details': medicine_details
+  };
+}
+
+class MediReceiveDetailsModel {
+
+  var received_qty = '';
+  var rejected_qty = '';
+  var rejected_reason = '';
+  MediReceiveDetailsModel(this.received_qty, this.rejected_qty,this.rejected_reason);
+  Map toJson() => {
+    'received_qty': received_qty,
+    'rejected_qty': rejected_qty,
+    'rejected_reason': rejected_reason,
+  };
+
+}
 
 class InternalRequestSubmitModel {
 
@@ -349,12 +439,14 @@ class InternalItemModel {
   var req_qty = 0;
   var remark = '';
   var date = '';
-  InternalItemModel(this.item_id, this.req_qty,this.remark,this.date,);
+  var serial = '';
+  InternalItemModel(this.item_id, this.req_qty,this.remark,this.date,this.serial,);
   Map toJson() => {
     'item_id': item_id,
     'req_qty': req_qty,
     'remark': remark,
     'date': date,
+    'serial': serial,
   };
 
 }
@@ -363,13 +455,14 @@ class InternalItemModel {
 
 class MedicineModel{
   var item_id = 0;
-  var batch_id = 0;
+ // var batch_id = 0;
   var dispatch_qty = 0;
-  var receive_stock = 0;
-  MedicineModel(this.item_id,this.batch_id, this.dispatch_qty,this.receive_stock);
+ // var receive_stock = 0;
+  //MedicineModel(this.item_id,this.batch_id, this.dispatch_qty,this.receive_stock);
+  MedicineModel(this.item_id, this.dispatch_qty);
   Map toJson() => {
     'item_id': item_id,
-    'batch_id': batch_id,
+    //'batch_id': batch_id,
     'dispatch_qty': dispatch_qty,
   };
 

@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 
 import '../../../database_helper/offline_database_helper.dart';
 import '../../../services/auth_service.dart';
+import 'package:http/http.dart' as http;
 
 class LoginController extends GetxController {
   //TODO: Implement LoginController
@@ -61,17 +62,36 @@ class LoginController extends GetxController {
       Get.focusScope!.unfocus();
 
       Ui.customLoaderDialogWithMessage();
+
+
+
       AuthRepository().userLogin(userData.value).then((response) {
         // print('logindata'+response);
 
 
         if(response != null){
+          Get.offAllNamed(Routes.AFTER_LOGIN);
+          Get.showSnackbar(Ui.SuccessSnackBar(message: 'Login Success'.tr, title: 'Success'.tr));
+
+
+          // if(response == 500){
+          //   Get.focusScope!.unfocus();
+          //   //logout();
+          //   Get.showSnackbar(Ui.SuccessSnackBar(message: 'Internal server error'.tr, title: 'error'.tr));
+          // }
+          // if(response.statusCode == 200){
+          //   //logout();
+          //   Get.offAllNamed(Routes.AFTER_LOGIN);
+          //   Get.showSnackbar(Ui.SuccessSnackBar(message: 'Login Success'.tr, title: 'Success'.tr));
+          //
+          // }
+
+
           //String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
 
-          Get.offAllNamed(Routes.AFTER_LOGIN);
+
           //Get.offAllNamed(Routes.HOME);
           // Get.find<RootController>().changePageOutRoot(0);
-          Get.showSnackbar(Ui.SuccessSnackBar(message: 'Successfully logged in'.tr, title: 'Success'.tr));
         }
         // if (response == 'Unauthorised') {
         //   Get.back();

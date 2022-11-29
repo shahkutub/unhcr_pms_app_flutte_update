@@ -23,7 +23,7 @@ class APIManager {
 
   Future<dynamic> postAPICallWithHeaderWithoutParam(String url, Map<String, String> headerData) async {
     print("Calling API: $url");
-   // print("Calling parameters: $param");
+    // print("Calling parameters: $param");
 
     var responseJson;
     try {
@@ -44,6 +44,8 @@ class APIManager {
     var responseJson;
     try {
       final response = await http.post(Uri.parse(url), body: param);
+
+
       responseJson = _response(response);
       print(responseJson);
     } on SocketException {

@@ -16,6 +16,8 @@ import '../../../services/auth_service.dart';
 import '../../../utils.dart';
 import 'package:http/http.dart' as http;
 
+import '../../login/controllers/after_login_controller.dart';
+
 class InternalRequestController extends GetxController{
 
   static InternalRequestController get i => Get.find();
@@ -25,6 +27,8 @@ class InternalRequestController extends GetxController{
 
   final List<ItemDispatchModel> itemList = <ItemDispatchModel>[].obs;
   final List<DispatchItem> drugList = <DispatchItem>[].obs;
+  final List<InternalItemModel> internalReqList = <InternalItemModel>[].obs;
+  final List<InternalItemModel> internalReqListDistinck = <InternalItemModel>[].obs;
   final drugData = DrugInfo().obs;
 
   var  requestQtyLabelText = '0'.obs;
@@ -61,9 +65,9 @@ class InternalRequestController extends GetxController{
         remarkEditController.value.text = "";
       }
     });
-     userNAme.value = Get.find<AuthService>().currentUser.value.data!.employee_info!.facility_id.toString();
+    userNAme.value = Get.find<AuthService>().currentUser.value.data!.employee_info!.facility_id.toString();
 
-     print('facilityID: '+userNAme.value);
+    print('facilityID: '+userNAme.value);
 
     userNAme.value = Get.find<AuthService>().currentUser.value.data!.users!.username!;
     //insert_patient_serialToLocalDB();
@@ -72,8 +76,10 @@ class InternalRequestController extends GetxController{
     //Utils.currentDateBengali();
 
 
-    getPSerialNo();
-    get_drug_list();
+    // getPSerialNo();
+     get_drug_list();
+    get_internal_request_list();
+
     //submit_dispatch();
 
   }
@@ -107,6 +113,8 @@ class InternalRequestController extends GetxController{
     print('localdataSize: ${localdataSize.length}');
     getPSerialNo();
     get_drug_list();
+
+
     //await dbHelper.deleteSerial(formattedDate);
 
     //await dbHelper.insert_patient_serial(row);
@@ -126,9 +134,10 @@ class InternalRequestController extends GetxController{
   }
 
   // insert item_dispatch
-  Future<void> insert_internal_request(ItemDispatchModel data) async {
+  Future<void> insert_internal_request(ItemDispatchModel data ,String serial) async {
 
     Map<String, dynamic> row = {
+      DatabaseHelper.internal_req_serial: serial,
       DatabaseHelper.internal_req_date: data.date,
       DatabaseHelper.internal_req_med_name: data.medicine_name,
       DatabaseHelper.internal_req_med_id: data.medicine_id,
@@ -176,6 +185,28 @@ class InternalRequestController extends GetxController{
 
   }
 
+  get_internal_request_list() async {
+    internalReqList.clear();
+    internalReqListDistinck.clear();
+    var localdataSize2 = await dbHelper.get_internal_request();
+    print('internal_requestSize: ${localdataSize2.length}');
+    for (var i = 0; i < localdataSize2.length; i++) {
+      Map<String, dynamic> map = localdataSize2[i];
+      var madeid = map[DatabaseHelper.internal_req_med_id];
+      var requestQty = map[DatabaseHelper.internal_req_qty];
+      var remark = map[DatabaseHelper.internal_req_remark];
+      var date = map[DatabaseHelper.internal_req_date];
+      var serial = map[DatabaseHelper.internal_req_serial];
+      var drug_info = InternalItemModel(madeid,requestQty,remark,date,serial);
+
+      internalReqList.add(drug_info);
+      internalReqListDistinck.add(drug_info);
+    }
+
+    final ids = Set();
+    internalReqListDistinck.retainWhere((x) => ids.add(x.serial));
+    print("drugList: "+drugList.length.toString());
+  }
 
   get_drug_list() async {
     drugList.clear();

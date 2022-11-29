@@ -143,7 +143,7 @@ class StockReceiveController extends GetxController{
 
 
 
-  void approveStockReceive(BuildContext context){
+  void approveStockReceive(BuildContext context, String stockout_master_id){
     dbHelper.deleteALlDrugs();
     stockReceiveMedicineResponse.value.medicine_list!.forEach((element) async {
       element.stockout_details!.forEach((element2) async{
@@ -154,12 +154,13 @@ class StockReceiveController extends GetxController{
           //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
           //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
           //DatabaseHelper.drug_generic_id: element.generic_id,
-          DatabaseHelper.drug_available_stock: element2.receive_qty,
-          DatabaseHelper.drug_stock_receive: element2.receive_qty,
+          DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+          DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
           DatabaseHelper.drug_stock_consume: '0',
           DatabaseHelper.drug_stock_lose: element2.reject_qty,
           DatabaseHelper.drug_reject_reason: element2.reject_reason,
           DatabaseHelper.drug_batch_no: element2.batch_no,
+          DatabaseHelper.stockout_master_id: stockout_master_id,
           //DatabaseHelper.drug_stock: element.generic_id,
         };
 

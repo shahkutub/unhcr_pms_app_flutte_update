@@ -121,7 +121,7 @@ class InformationRepository {
       print('responsedruglist: ${response}');
 
       if(response == null){
-       // Get.toNamed(Routes.LOGIN);
+        // Get.toNamed(Routes.LOGIN);
       }
 
       return MedicineListResponse.fromJson(response);
@@ -147,7 +147,7 @@ class InformationRepository {
     APIManager _manager = APIManager();
     var response;
     try {
-      response = await _manager.get(ApiClient.stock_receive_list+'/'+url,headers);
+      response = await _manager.get(ApiClient.stock_receive_list,headers);
       print('responsedruglist: ${response}');
 
       if(response == null){

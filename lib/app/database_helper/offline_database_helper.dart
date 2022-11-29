@@ -38,11 +38,13 @@ class DatabaseHelper {
   static final drug_stock_lose = 'stock_lose';
   static final drug_reject_reason = 'reject_reason';
   static final drug_batch_no = 'batch_no';
+  static final stockout_master_id = 'stockout_master_id';
 
 
   // table_internal_request
   static final table_internal_request = 'table_internal_request';
 
+  static final internal_req_serial = 'internal_req_serial';
   static final internal_req_date = 'internal_req_date';
   static final internal_req_med_name = 'internal_req_med_name';
   static final internal_req_med_id = 'internal_req_med_id';
@@ -116,6 +118,7 @@ class DatabaseHelper {
             $drug_stock_lose TEXT,
             $drug_batch_no TEXT,
             $drug_reject_reason TEXT,
+            $stockout_master_id TEXT,
             $drug_pstrength_id TEXT 
             
           )
@@ -125,11 +128,12 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE $table_internal_request (
             $columnId INTEGER PRIMARY KEY,
-            $internal_req_date TEXT NOT NULL,
-            $internal_req_med_name TEXT NOT NULL,
-            $internal_req_med_id INT NOT NULL,
-            $internal_req_qty INT NOT NULL,
-            $internal_req_remark TEXT NOT NULL
+            $internal_req_date TEXT,
+            $internal_req_serial TEXT,
+            $internal_req_med_name TEXT,
+            $internal_req_med_id INT,
+            $internal_req_qty INT,
+            $internal_req_remark TEXT
           )
           ''');
   }

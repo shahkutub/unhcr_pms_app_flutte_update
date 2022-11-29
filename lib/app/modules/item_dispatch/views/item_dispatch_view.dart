@@ -156,9 +156,11 @@ class ItemDispatchView extends GetView<ItemDispatchController>{
                             print('medname : '+controller.itemName.value);
 
                             controller.drugList.forEach((element) {
-                              if(element.drug_name == value){
+                              var matchStr = element.drug_name!+ ' (Batch:'+element.batch_no!+' )';
+                              if(matchStr == value){
                                 controller.itemId.value = element.drug_id.toString();
                                 controller.controllerAvailableQty.value.text = element.available_stock!;
+                                print('available_stock : '+element.available_stock!);
                               }
                             });
 

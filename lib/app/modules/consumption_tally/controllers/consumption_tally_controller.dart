@@ -114,7 +114,7 @@ class ConsumptionTallyController extends GetxController{
   onSearchTextChanged(String text) async {
     searchItemList.clear();
     if (text.isEmpty) {
-     // setState(() {});
+      // setState(() {});
       return;
     }
 

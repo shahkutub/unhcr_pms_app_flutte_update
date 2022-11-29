@@ -201,7 +201,7 @@ class ItemDispatchController extends GetxController{
       //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
       drugList.add(drug_info);
     }
-    print("drugList: "+drugList.length.toString());
+    print("avalstock: "+drugList[0].available_stock.toString());
   }
 
   submit_dispatch(BuildContext context){

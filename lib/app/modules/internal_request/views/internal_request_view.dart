@@ -1,6 +1,9 @@
 
 
+import 'dart:math';
+
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
@@ -24,6 +27,9 @@ class InternalRequestView extends GetView<InternalRequestController>{
     double height;
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+
+
+
     //txtDate.text = "00-00-0000";
     // TextEditingController _controller = TextEditingController();
     // _controller.text = "0";
@@ -40,406 +46,861 @@ class InternalRequestView extends GetView<InternalRequestController>{
         appBar: PreferredSize(
           preferredSize: Size(60,55),
           child:  AppBar(
-              backgroundColor: Colors.blueAccent,
-              elevation: 0,
-              centerTitle: true,
-              //title: Text('Item Dispatch')
+            backgroundColor: Colors.blueAccent,
+            elevation: 0,
+            centerTitle: true,
+            //title: Text('Item Dispatch')
 
             title: Stack(alignment: Alignment.center,
               children: <Widget>[
                 Container(
                   alignment: Alignment.centerLeft,
-                  child: Text('N-PMS'),),
-                Container(
-                  alignment: Alignment.centerRight,
-                  child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
+                  //child: Text(AppConstant.pageName),),
+                  child: Text('Internal Request'),),
 
-                              Obx(() => Text(""+controller.userNAme.value,
-                                  style: TextStyle(color: Colors.white,fontSize: 12),
-                                  textAlign:TextAlign.center,
-                                ),
-                              ),
-
-                              Obx(
-                                    () => Text(""+controller.userRole.value,
-                                  style: TextStyle(color: Colors.white,fontSize: 12),
-                                  textAlign:TextAlign.center,
-                                ),
-                              ),
-
-
-                            ],
-                          ),
-                )
               ],
             ),
-          //   Row(
-          //   // mainAxisAlignment: MainAxisAlignment.end, //Center Row contents horizontally,
-          //   // crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically,
-          //   children: [
-          //     // Container(
-          //     //   //margin: EdgeInsets.only(left:20,top: 20),
-          //     //   height: 50,
-          //     //   width: 50,
-          //     //   child:CircleAvatar(
-          //     //     radius: 48, // Image radius
-          //     //     backgroundImage: NetworkImage('imageUrl'),
-          //     //   ) ,
-          //     // ),
-          //
-          //     // SizedBox(
-          //     //   width: 10,
-          //     // ),
-          //
-          //
-          //     Align(
-          //       alignment: Alignment.centerRight,
-          //       child:Column(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         crossAxisAlignment: CrossAxisAlignment.center,
-          //         children: [
-          //
-          //           Obx(
-          //                 () => Text(""+controller.userNAme.value,
-          //               style: TextStyle(color: Colors.white,fontSize: 12),
-          //               textAlign:TextAlign.center,
-          //             ),
-          //           ),
-          //
-          //           Obx(
-          //                 () => Text(""+controller.userRole.value,
-          //               style: TextStyle(color: Colors.white,fontSize: 12),
-          //               textAlign:TextAlign.center,
-          //             ),
-          //           ),
-          //
-          //
-          //         ],
-          //       ),
-          //     ),
-          //
-          //
-          //   ],
-          // ),
+
           ),
         ),
       //resizeToAvoidBottomInset: true,
-        body: Container(
-          margin: EdgeInsets.all(10),
-          child:Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Center(
-                  child: Text(
-                    "Internal Request",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 15),),
-                ),
+      body: Container(
+        height: context.height,
+        width: context.width,
+        child: Obx(() =>
 
-                SizedBox(
-                  height: 30,
-                ),
+        controller.internalReqListDistinck != null ?
+        controller.internalReqListDistinck!.length! > 0 ?
 
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
 
-                      Flexible(
-                        child:GestureDetector(
-                          onTap: () { _selectDate(context);},
-                          child: TextField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Enter Date Here',
-                              hintText: '00-00-0000',
-                            ),
-                            autofocus: false,
-                            enabled: false,
-                            controller: controller.txt.value,
-                          ),
-                        ),
+        Expanded(child: ListView.builder(
+            itemCount:  controller.internalReqListDistinck?.length,
+            //itemCount: 15,
+            //primary: false,
+            shrinkWrap: true,
 
-                        flex: 1,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Form(
-                  key: controller.etSkillScore1Key.value,
-                  child: Column(
-                    children: <Widget>[
-                      Obx(() =>
-                          DropdownSearch<String>(
-                            // key: controller.etSkillScore1Key.value,
-                            //mode of dropdown
-                            mode: Mode.DIALOG,
-                            //to show search box
-                            showSearchBox: true,
-                            //selectedItem: true,
-                            //list of dropdown items
-                            //items: controller.itemlist,
-                            items: controller.drugList?.map((item) => item.drug_name!).toList(),
-                            label: "Item name",
-                            onChanged: (value) {
-                              controller.selected_spinner_item.value = value.toString();
-                              controller.itemName.value = value.toString();
-
-                              print('medname : '+controller.itemName.value);
-
-                              controller.drugList.forEach((element) {
-                                if(element.drug_name == value){
-                                  controller.itemId.value = element.drug_id.toString();
-                                  controller.remarkEditController.value.text = '';
-                                }
-                              });
-
-                            },
-                            //show selected item
-                            selectedItem:  controller.selected_spinner_item.value,
-
-                          ),
-                      ),
-
-                      SizedBox(
-                        height: 20,
-                      ),
-
-                      Row(
+            itemBuilder: (BuildContext context, int index) {
+              var data =  controller.internalReqListDistinck?[index];
+              var sl = index+1;
+              return InkWell(
+                onTap: (){
+                  // controller.get_stock_Receive_medicine(data!.id.toString());
+                  // showCustomDialog(context);
+                },
+                child: Card(
+                    elevation: 5,
+                    margin: EdgeInsets.only(top: 20),
+                    child: Container(
+                      // padding: EdgeInsets.all(10),
+                      alignment: Alignment.center,
+                      child: Row(
                         children: [
-                          Expanded(child: TextField(
-                            keyboardType: TextInputType.number,
-                            // readOnly: true,
-                            controller: controller.requestEditQtyController.value,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Request Qty',
-                              hintText: controller.requestQtyLabelText.value,
-                            ),
-                            onChanged: (value){
-                              controller.itemQty.value = int.parse(controller.requestEditQtyController.value.text);
-                            },
-                          ), flex: 1,),
+                          Expanded(
+                            child: Container(
 
-                          SizedBox(
-                            width: 20,
-                          ),
-
-                          Expanded(child: TextField(
-                            keyboardType: TextInputType.text,
-                            controller: controller.remarkEditController.value,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Remark',
-                              hintText: '',
-                            ),
-                            onChanged: (value){
-                              controller.remark.value = controller.remarkEditController.value.text;
-                            },
-                          ), flex: 1,)
-
-                        ],
-                      ),
-
-
-                      Container(
-                        margin: EdgeInsets.only(top: 20),
-                        alignment: Alignment.topRight,
-                        child: TextButton(
-                          child: Text('Add',style: TextStyle(color: Colors.white),),
-                          style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)),
-                          onPressed: () {
-                            controller.addItemToList();
-                          },
-
-                        ),
-
-                      ),
-                    ],
-                  ),
-                ),
-
-
-
-
-                SizedBox(
-                  height: 20,
-                ),
-                // Container(
-                //   color: Colors.grey,
-                //   height: 1,
-                //   width: Get.width,
-                // ),
-                SizedBox(
-                  height: 10,
-                ),
-
-
-
-                Obx(() {
-                  if(controller.itemList.length>0){
-                    return Container(
-
-
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Text('Top 10 Consumed Medicine'),
-                          SizedBox( height:10),
-                          Row(
-                            children: <Widget>[
-                              Expanded(child:  Text("SL",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),), flex: 1,),
-                              Expanded(child:  Text("ITEM DESCRIPTION",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),), flex: 6,),
-                              Expanded(child:  Center(child: Text("QTY",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),),), flex: 2,),
-                              Expanded(child:  Center(child: Text("Remark",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),),), flex: 2,),
-                              Expanded(child:  GestureDetector(
-
-                                  child:Container(
-                                    padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-                                    margin: EdgeInsets.only(left: 1,top: 7),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      // border: Border.all(
-                                      //   color: Colors.blueAccent,
-                                      // ),
-                                      //borderRadius: BorderRadius.all(Radius.circular(2))
-                                    ),
-
-                                    child: Center(
-                                      child: Icon(Icons.remove_circle_outline,color: Colors.white,
-                                        size: 15,),
-                                    )
-                                    ,)
-
-                              ), flex: 1,),
-                            ],
-                          ),
-
-                        ],
-                      ),
-
-                    );
-
-
-                  }else{
-                    return SizedBox(
-                      height: 0.0,
-                    );
-                  }
-
-                }),
-
-                SizedBox(
-                  height: 0,
-                ),
-
-
-
-                // list
-                Expanded(
-                    child: Obx(() => ListView.builder(
-                        padding: const EdgeInsets.all(5),
-                        //itemCount: controller.itemList.length,
-                        itemCount: controller.itemList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          var sl = index+1;
-                          return Column(
-                            children: [
-                              SizedBox( height:10),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(child:  Text(""+sl.toString(),style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 1,),
-                                  Expanded(child:  Text(""+controller.itemList[index].medicine_name,style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 6,),
-                                  Expanded(child:  Center(child: Text(""+controller.itemList[index].medicine_qty.toString(),style: TextStyle(color: Colors.black,fontSize: 12),),), flex: 2,),
-                                  Expanded(child:  Center(child: Text(""+controller.itemList[index].remark.toString(),style: TextStyle(color: Colors.black,fontSize: 12),),), flex: 2,),
-                                  Expanded(child:  GestureDetector(
-                                      onTap: () {
-                                        controller.itemList.removeAt(index);
-                                      },
-                                      child:Container(
-                                        padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-                                        margin: EdgeInsets.only(left: 1,top: 7),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          // border: Border.all(
-                                          //   color: Colors.blueAccent,
-                                          // ),
-                                          //borderRadius: BorderRadius.all(Radius.circular(2))
-                                        ),
-
-                                        child: Center(
-                                          child: Icon(Icons.remove_circle_outline,color: Colors.red,
-                                            size: 15,),
-                                        ),)
-
-                                  ), flex: 1,),
+                              decoration: BoxDecoration(
+                                  //border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                              ),
+                              child: Column(
+                                children: [
+                                  Text('Serial:\n'+data!.serial.toString()),
+                                  //Text('15-11-22'),
                                 ],
                               ),
-                            ],
+                              padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
+                            ),flex: 1,),
 
-                          );
-                        }
-                    )
-                    )
-                ),
+                          Expanded(child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                //border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                            ),
+                            child: Column(
+                              children: [
+                                Text('Date:'),
+                                Text(''+data!.date.toString()),
+                              ],
+                            ),
+                            padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
+                          ),flex: 2,),
 
-                SizedBox(
-                  height: 0,
-                ),
+                          Expanded(child: Container(
+                            decoration: BoxDecoration(
+                              //  border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3)))
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
 
-                Obx(() {
-                  if(controller.itemList.length>0){
-                    return
-                      InkWell(
-                          onTap: () {
-                             _showDialogInternalRequest(context);
-                          },
-                          child: Stack(
-                            children: <Widget>[
-                              Align(alignment: Alignment.center,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width: Get.width,
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff03A1E0),
-                                    //border:Border.all(color: Colors.blueAccent) ,
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  child: InkWell(
+                                    child: Text('View',style: TextStyle(fontSize: 10,color: Colors.white),),
+                                    onTap: (){
+                                      // controller.get_stock_Receive_medicine(data.id.toString());
+                                       showCustomDialog(context);
+                                    },
                                   ),
-                                  child: Text("Submit", style: TextStyle(color: Colors.white),),
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.all(Radius.circular(5))
+                                  ),
+                                  padding: EdgeInsets.all(10),
+                                  alignment: Alignment.center,
                                 ),
-                              ),
+                                // SizedBox(height: 10,),
+                                // Container(
+                                //
+                                //   child: InkWell(
+                                //     child: Text('Receive',style: TextStyle(fontSize: 10,color: Colors.white),),
+                                //     onTap: (){
+                                //       // controller.get_stock_Receive_medicine(data.id.toString());
+                                //       // showCustomDialog(context);
+                                //     },
+                                //   ),
+                                //   decoration: BoxDecoration(
+                                //       color: Colors.green,
+                                //       borderRadius: BorderRadius.all(Radius.circular(5))
+                                //   ),
+                                //   padding: EdgeInsets.only(top: 10,bottom: 10),
+                                //   alignment: Alignment.center,
+                                // ),
+                              ],
+                            ),
 
-                            ],
-                          )
-
-                      );
-                  }else{
-                    return SizedBox(
-                      height: 0.0,
-                    );
-                  }
-
-                }),
-
-
-              ]
-          ),
+                            padding:EdgeInsets.only(right: 5,left: 5,top: 10,bottom: 10) ,
+                          ),flex: 1,),
+                        ],
+                      ),
+                    )
+                  // child: Container(
+                  //   padding: EdgeInsets.all(10),
+                  //   alignment: Alignment.centerLeft,
+                  //   child: Row(
+                  //     children: [
+                  //       Text(''+sl.toString()),
+                  //       SizedBox(width: 10,),
+                  //       Column(
+                  //         mainAxisAlignment: MainAxisAlignment.start,
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           SizedBox(
+                  //             width: 300,
+                  //             child: Text(''+data!.drug_name.toString()),
+                  //           ),
+                  //           SizedBox(height: 5,),
+                  //           // Row(
+                  //           //   children: [
+                  //           Text('Available Stock: '+data!.available_stock.toString(),style: TextStyle(fontSize: 12),),
+                  //           SizedBox(height: 5,),
+                  //           Text('Stock Request: 0',style: TextStyle(fontSize: 12),),
+                  //           //   ],
+                  //           // )
+                  //         ],
+                  //       )
+                  //
+                  //     ],
+                  //   ),
+                  // )
+                ),
+              );
+            }),)
+            :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
+            :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
         ),
-        
-        
+      ),
+
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            showCustomDialog( context);
+          },
+          label: Text('Add'),
+          //icon: Icon(Icons.thumb_up),
+          backgroundColor: Colors.blue,
+        )
+
+
+
+      // Container(
+      //   margin: EdgeInsets.all(10),
+      //   child:Column(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: <Widget>[
+      //         Center(
+      //           child: Text(
+      //             "Internal Request",
+      //             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 15),),
+      //         ),
+      //
+      //         SizedBox(
+      //           height: 30,
+      //         ),
+      //
+      //         Container(
+      //           margin: EdgeInsets.only(top: 10),
+      //           child: Row(
+      //             mainAxisAlignment: MainAxisAlignment.center,
+      //             children: [
+      //
+      //               Flexible(
+      //                 child:GestureDetector(
+      //                   onTap: () { _selectDate(context);},
+      //                   child: TextField(
+      //                     decoration: InputDecoration(
+      //                       border: OutlineInputBorder(),
+      //                       labelText: 'Enter Date Here',
+      //                       hintText: '00-00-0000',
+      //                     ),
+      //                     autofocus: false,
+      //                     enabled: false,
+      //                     controller: controller.txt.value,
+      //                   ),
+      //                 ),
+      //
+      //                 flex: 1,
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //         SizedBox(
+      //           height: 30,
+      //         ),
+      //         Form(
+      //           key: controller.etSkillScore1Key.value,
+      //           child: Column(
+      //             children: <Widget>[
+      //               Obx(() =>
+      //                   DropdownSearch<String>(
+      //                     // key: controller.etSkillScore1Key.value,
+      //                     //mode of dropdown
+      //                     mode: Mode.DIALOG,
+      //                     //to show search box
+      //                     showSearchBox: true,
+      //                     //selectedItem: true,
+      //                     //list of dropdown items
+      //                     //items: controller.itemlist,
+      //                     items: controller.drugList?.map((item) => item.drug_name!).toList(),
+      //                     label: "Item name",
+      //                     onChanged: (value) {
+      //                       controller.selected_spinner_item.value = value.toString();
+      //                       controller.itemName.value = value.toString();
+      //
+      //                       print('medname : '+controller.itemName.value);
+      //
+      //                       controller.drugList.forEach((element) {
+      //                         if(element.drug_name == value){
+      //                           controller.itemId.value = element.drug_id.toString();
+      //                           controller.remarkEditController.value.text = '';
+      //                         }
+      //                       });
+      //
+      //                     },
+      //                     //show selected item
+      //                     selectedItem:  controller.selected_spinner_item.value,
+      //
+      //                   ),
+      //               ),
+      //
+      //               SizedBox(
+      //                 height: 20,
+      //               ),
+      //
+      //               Row(
+      //                 children: [
+      //                   Expanded(child: TextField(
+      //                     keyboardType: TextInputType.number,
+      //                     // readOnly: true,
+      //                     controller: controller.requestEditQtyController.value,
+      //                     decoration: InputDecoration(
+      //                       border: OutlineInputBorder(),
+      //                       labelText: 'Request Qty',
+      //                       hintText: controller.requestQtyLabelText.value,
+      //                     ),
+      //                     onChanged: (value){
+      //                       controller.itemQty.value = int.parse(controller.requestEditQtyController.value.text);
+      //                     },
+      //                   ), flex: 1,),
+      //
+      //                   SizedBox(
+      //                     width: 20,
+      //                   ),
+      //
+      //                   Expanded(child: TextField(
+      //                     keyboardType: TextInputType.text,
+      //                     controller: controller.remarkEditController.value,
+      //                     decoration: InputDecoration(
+      //                       border: OutlineInputBorder(),
+      //                       labelText: 'Remark',
+      //                       hintText: '',
+      //                     ),
+      //                     onChanged: (value){
+      //                       controller.remark.value = controller.remarkEditController.value.text;
+      //                     },
+      //                   ), flex: 1,)
+      //
+      //                 ],
+      //               ),
+      //
+      //
+      //               Container(
+      //                 margin: EdgeInsets.only(top: 20),
+      //                 alignment: Alignment.topRight,
+      //                 child: TextButton(
+      //                   child: Text('Add',style: TextStyle(color: Colors.white),),
+      //                   style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)),
+      //                   onPressed: () {
+      //                     controller.addItemToList();
+      //                   },
+      //
+      //                 ),
+      //
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //
+      //
+      //
+      //
+      //         SizedBox(
+      //           height: 20,
+      //         ),
+      //         // Container(
+      //         //   color: Colors.grey,
+      //         //   height: 1,
+      //         //   width: Get.width,
+      //         // ),
+      //         SizedBox(
+      //           height: 10,
+      //         ),
+      //
+      //
+      //
+      //         Obx(() {
+      //           if(controller.itemList.length>0){
+      //             return Container(
+      //
+      //
+      //               child: Column(
+      //                 mainAxisAlignment: MainAxisAlignment.start,
+      //                 crossAxisAlignment: CrossAxisAlignment.start,
+      //                 children: [
+      //                   // Text('Top 10 Consumed Medicine'),
+      //                   SizedBox( height:10),
+      //                   Row(
+      //                     children: <Widget>[
+      //                       Expanded(child:  Text("SL",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),), flex: 1,),
+      //                       Expanded(child:  Text("ITEM DESCRIPTION",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),), flex: 6,),
+      //                       Expanded(child:  Center(child: Text("QTY",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),),), flex: 2,),
+      //                       Expanded(child:  Center(child: Text("Remark",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),),), flex: 2,),
+      //                       Expanded(child:  GestureDetector(
+      //
+      //                           child:Container(
+      //                             padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+      //                             margin: EdgeInsets.only(left: 1,top: 7),
+      //                             decoration: BoxDecoration(
+      //                               color: Colors.white,
+      //                               // border: Border.all(
+      //                               //   color: Colors.blueAccent,
+      //                               // ),
+      //                               //borderRadius: BorderRadius.all(Radius.circular(2))
+      //                             ),
+      //
+      //                             child: Center(
+      //                               child: Icon(Icons.remove_circle_outline,color: Colors.white,
+      //                                 size: 15,),
+      //                             )
+      //                             ,)
+      //
+      //                       ), flex: 1,),
+      //                     ],
+      //                   ),
+      //
+      //                 ],
+      //               ),
+      //
+      //             );
+      //
+      //
+      //           }else{
+      //             return SizedBox(
+      //               height: 0.0,
+      //             );
+      //           }
+      //
+      //         }),
+      //
+      //         SizedBox(
+      //           height: 0,
+      //         ),
+      //
+      //
+      //
+      //         // list
+      //         Expanded(
+      //             child: Obx(() => ListView.builder(
+      //                 padding: const EdgeInsets.all(5),
+      //                 //itemCount: controller.itemList.length,
+      //                 itemCount: controller.itemList.length,
+      //                 itemBuilder: (BuildContext context, int index) {
+      //                   var sl = index+1;
+      //                   return Column(
+      //                     children: [
+      //                       SizedBox( height:10),
+      //                       Row(
+      //                         children: <Widget>[
+      //                           Expanded(child:  Text(""+sl.toString(),style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 1,),
+      //                           Expanded(child:  Text(""+controller.itemList[index].medicine_name,style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 6,),
+      //                           Expanded(child:  Center(child: Text(""+controller.itemList[index].medicine_qty.toString(),style: TextStyle(color: Colors.black,fontSize: 12),),), flex: 2,),
+      //                           Expanded(child:  Center(child: Text(""+controller.itemList[index].remark.toString(),style: TextStyle(color: Colors.black,fontSize: 12),),), flex: 2,),
+      //                           Expanded(child:  GestureDetector(
+      //                               onTap: () {
+      //                                 controller.itemList.removeAt(index);
+      //                               },
+      //                               child:Container(
+      //                                 padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+      //                                 margin: EdgeInsets.only(left: 1,top: 7),
+      //                                 decoration: BoxDecoration(
+      //                                   color: Colors.white,
+      //                                   // border: Border.all(
+      //                                   //   color: Colors.blueAccent,
+      //                                   // ),
+      //                                   //borderRadius: BorderRadius.all(Radius.circular(2))
+      //                                 ),
+      //
+      //                                 child: Center(
+      //                                   child: Icon(Icons.remove_circle_outline,color: Colors.red,
+      //                                     size: 15,),
+      //                                 ),)
+      //
+      //                           ), flex: 1,),
+      //                         ],
+      //                       ),
+      //                     ],
+      //
+      //                   );
+      //                 }
+      //             )
+      //             )
+      //         ),
+      //
+      //         SizedBox(
+      //           height: 0,
+      //         ),
+      //
+      //         Obx(() {
+      //           if(controller.itemList.length>0){
+      //             return
+      //               InkWell(
+      //                   onTap: () {
+      //                     _showDialogInternalRequest(context);
+      //                   },
+      //                   child: Stack(
+      //                     children: <Widget>[
+      //                       Align(alignment: Alignment.center,
+      //                         child: Container(
+      //                           alignment: Alignment.center,
+      //                           width: Get.width,
+      //                           padding: EdgeInsets.all(10),
+      //                           margin: EdgeInsets.all(5),
+      //                           decoration: BoxDecoration(
+      //                             color: Color(0xff03A1E0),
+      //                             //border:Border.all(color: Colors.blueAccent) ,
+      //                             borderRadius: BorderRadius.all(Radius.circular(10)),
+      //                           ),
+      //                           child: Text("Submit", style: TextStyle(color: Colors.white),),
+      //                         ),
+      //                       ),
+      //
+      //                     ],
+      //                   )
+      //
+      //               );
+      //           }else{
+      //             return SizedBox(
+      //               height: 0.0,
+      //             );
+      //           }
+      //
+      //         }),
+      //
+      //
+      //       ]
+      //   ),
+      // ),
+
+
     );
   }
 
-  void _showDialogInternalRequest(BuildContext context) {
+  void showCustomDialog(BuildContext context) {
+    var rng = new Random();
+    var code = rng.nextInt(900000) + 100000;
+    print('random: '+code.toString());
+    showGeneralDialog(
+      context: context,
+      barrierLabel: "Barrier",
+      barrierDismissible: true,
+      barrierColor: Colors.white,
+      transitionDuration: Duration(milliseconds: 100),
+      pageBuilder: (_, __, ___) {
+        return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: PreferredSize(
+              preferredSize: Size(60,55),
+              child:  AppBar(
+                backgroundColor: Colors.blueAccent,
+                elevation: 0,
+                centerTitle: true,
+                //title: Text('Item Dispatch')
+
+                title: Stack(alignment: Alignment.center,
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      //child: Text(AppConstant.pageName),),
+                      child: Text('Internal Request'),),
+
+                  ],
+                ),
+
+              ),
+            ),
+            body:
+          Container(
+            margin: EdgeInsets.all(10),
+            child:Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Text(
+                      "Serial: ${code.toString()}",
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal,fontSize: 15),),
+                  ),
+
+                  SizedBox(
+                    height: 10,
+                  ),
+
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+
+                        Flexible(
+                          child:GestureDetector(
+                            onTap: () { _selectDate(context);},
+                            child: TextField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Enter Date Here',
+                                hintText: '00-00-0000',
+                              ),
+                              autofocus: false,
+                              enabled: false,
+                              controller: controller.txt.value,
+                            ),
+                          ),
+
+                          flex: 1,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Form(
+                    key: controller.etSkillScore1Key.value,
+                    child: Column(
+                      children: <Widget>[
+                        Obx(() =>
+                            DropdownSearch<String>(
+                              // key: controller.etSkillScore1Key.value,
+                              //mode of dropdown
+                              mode: Mode.DIALOG,
+                              //to show search box
+                              showSearchBox: true,
+                              //selectedItem: true,
+                              //list of dropdown items
+                              //items: controller.itemlist,
+                              items: controller.drugList?.map((item) => item.drug_name!).toList(),
+                              label: "Item name",
+                              onChanged: (value) {
+                                controller.selected_spinner_item.value = value.toString();
+                                controller.itemName.value = value.toString();
+
+                                print('medname : '+controller.itemName.value);
+
+                                controller.drugList.forEach((element) {
+                                  if(element.drug_name == value){
+                                    controller.itemId.value = element.drug_id.toString();
+                                    controller.remarkEditController.value.text = '';
+                                  }
+                                });
+
+                              },
+                              //show selected item
+                              selectedItem:  controller.selected_spinner_item.value,
+
+                            ),
+                        ),
+
+                        SizedBox(
+                          height: 20,
+                        ),
+
+                        Row(
+                          children: [
+                            Expanded(child: TextField(
+                              keyboardType: TextInputType.number,
+                              // readOnly: true,
+                              controller: controller.requestEditQtyController.value,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Request Qty',
+                                hintText: controller.requestQtyLabelText.value,
+                              ),
+                              onChanged: (value){
+                                controller.itemQty.value = int.parse(controller.requestEditQtyController.value.text);
+                              },
+                            ), flex: 1,),
+
+                            SizedBox(
+                              width: 20,
+                            ),
+
+                            Expanded(child: TextField(
+                              keyboardType: TextInputType.text,
+                              controller: controller.remarkEditController.value,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Remark',
+                                hintText: '',
+                              ),
+                              onChanged: (value){
+                                controller.remark.value = controller.remarkEditController.value.text;
+                              },
+                            ), flex: 1,)
+
+                          ],
+                        ),
+
+
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          alignment: Alignment.topRight,
+                          child: TextButton(
+                            child: Text('Add',style: TextStyle(color: Colors.white),),
+                            style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)),
+                            onPressed: () {
+                              controller.addItemToList();
+                            },
+
+                          ),
+
+                        ),
+                      ],
+                    ),
+                  ),
+
+
+
+
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // Container(
+                  //   color: Colors.grey,
+                  //   height: 1,
+                  //   width: Get.width,
+                  // ),
+                  SizedBox(
+                    height: 10,
+                  ),
+
+
+
+                  Obx(() {
+                    if(controller.itemList.length>0){
+                      return Container(
+
+
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Text('Top 10 Consumed Medicine'),
+                            SizedBox( height:10),
+                            Row(
+                              children: <Widget>[
+                                Expanded(child:  Text("SL",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),), flex: 1,),
+                                Expanded(child:  Text("ITEM DESCRIPTION",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),), flex: 6,),
+                                Expanded(child:  Center(child: Text("QTY",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),),), flex: 2,),
+                                Expanded(child:  Center(child: Text("Remark",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),),), flex: 2,),
+                                Expanded(child:  GestureDetector(
+
+                                    child:Container(
+                                      padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+                                      margin: EdgeInsets.only(left: 1,top: 7),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        // border: Border.all(
+                                        //   color: Colors.blueAccent,
+                                        // ),
+                                        //borderRadius: BorderRadius.all(Radius.circular(2))
+                                      ),
+
+                                      child: Center(
+                                        child: Icon(Icons.remove_circle_outline,color: Colors.white,
+                                          size: 15,),
+                                      )
+                                      ,)
+
+                                ), flex: 1,),
+                              ],
+                            ),
+
+                          ],
+                        ),
+
+                      );
+
+
+                    }else{
+                      return SizedBox(
+                        height: 0.0,
+                      );
+                    }
+
+                  }),
+
+                  SizedBox(
+                    height: 0,
+                  ),
+
+
+
+                  // list
+                  Expanded(
+                      child: Obx(() => ListView.builder(
+                          padding: const EdgeInsets.all(5),
+                          //itemCount: controller.itemList.length,
+                          itemCount: controller.itemList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            var sl = index+1;
+                            return Column(
+                              children: [
+                                SizedBox( height:10),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(child:  Text(""+sl.toString(),style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 1,),
+                                    Expanded(child:  Text(""+controller.itemList[index].medicine_name,style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 6,),
+                                    Expanded(child:  Center(child: Text(""+controller.itemList[index].medicine_qty.toString(),style: TextStyle(color: Colors.black,fontSize: 12),),), flex: 2,),
+                                    Expanded(child:  Center(child: Text(""+controller.itemList[index].remark.toString(),style: TextStyle(color: Colors.black,fontSize: 12),),), flex: 2,),
+                                    Expanded(child:  GestureDetector(
+                                        onTap: () {
+                                          controller.itemList.removeAt(index);
+                                        },
+                                        child:Container(
+                                          padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+                                          margin: EdgeInsets.only(left: 1,top: 7),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            // border: Border.all(
+                                            //   color: Colors.blueAccent,
+                                            // ),
+                                            //borderRadius: BorderRadius.all(Radius.circular(2))
+                                          ),
+
+                                          child: Center(
+                                            child: Icon(Icons.remove_circle_outline,color: Colors.red,
+                                              size: 15,),
+                                          ),)
+
+                                    ), flex: 1,),
+                                  ],
+                                ),
+                              ],
+
+                            );
+                          }
+                      )
+                      )
+                  ),
+
+                  SizedBox(
+                    height: 0,
+                  ),
+
+                  Obx(() {
+                    if(controller.itemList.length>0){
+                      return
+                        InkWell(
+                            onTap: () {
+                              _showDialogInternalRequest(context,code.toString());
+                            },
+                            child: Stack(
+                              children: <Widget>[
+                                Align(alignment: Alignment.center,
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width: Get.width,
+                                    padding: EdgeInsets.all(10),
+                                    margin: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xff03A1E0),
+                                      //border:Border.all(color: Colors.blueAccent) ,
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                    child: Text("Submit", style: TextStyle(color: Colors.white),),
+                                  ),
+                                ),
+
+                              ],
+                            )
+
+                        );
+                    }else{
+                      return SizedBox(
+                        height: 0.0,
+                      );
+                    }
+
+                  }),
+
+
+                ]
+            ),
+          ),
+
+
+        );
+      },
+      transitionBuilder: (_, anim, __, child) {
+        Tween<Offset> tween;
+        if (anim.status == AnimationStatus.reverse) {
+          tween = Tween(begin: Offset(-1, 0), end: Offset.zero);
+        } else {
+          tween = Tween(begin: Offset(1, 0), end: Offset.zero);
+        }
+
+        return SlideTransition(
+          position: tween.animate(anim),
+          child: FadeTransition(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+
+
+  void _showDialogInternalRequest(BuildContext context,String serial) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -474,7 +935,7 @@ class InternalRequestView extends GetView<InternalRequestController>{
               onPressed: () {
 
                 controller.itemList.forEach((element) {
-                  controller.insert_internal_request(element);
+                  controller.insert_internal_request(element,serial);
 
                 });
 

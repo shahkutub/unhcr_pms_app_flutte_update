@@ -137,8 +137,9 @@ class StockReceiveView extends GetView<StockReceiveController>{
                       var sl = index+1;
                       return InkWell(
                         onTap: (){
+
                           controller.get_stock_Receive_medicine(data!.id.toString());
-                          showCustomDialog(context);
+                          showCustomDialog(context,data!.id.toString());
                         },
                         child: Card(
                             elevation: 5,
@@ -186,7 +187,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                         child: Text('Receive',style: TextStyle(fontSize: 10,color: Colors.white),),
                                         onTap: (){
                                           controller.get_stock_Receive_medicine(data.id.toString());
-                                          showCustomDialog(context);
+                                          showCustomDialog(context,data.id.toString());
                                         },
                                       ),
                                       decoration: BoxDecoration(
@@ -317,7 +318,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
       //});
   }
 
-  void showCustomDialog(BuildContext context) {
+  void showCustomDialog(BuildContext context, String stockout_master_id) {
     showGeneralDialog(
       context: context,
       barrierLabel: "Barrier",
@@ -394,7 +395,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                   ),
                                   child: Column(
                                     children: [
-                                     Text('Appr qty: '+data.approved_qty.toString()),
+                                     //Text('Appr qty: '+data.approved_qty.toString()),
 
                                     ],
                                   ),
@@ -411,6 +412,8 @@ class StockReceiveView extends GetView<StockReceiveController>{
                              shrinkWrap: true,
                              physics: NeverScrollableScrollPhysics(),
                              itemBuilder: (BuildContext context, int index2) {
+
+                               data.stockout_details![index2].receive_qty = data.stockout_details![index2].supplied_qty;
                                return Container(
                                  color: Colors.white,
                                  padding: EdgeInsets.all(5),
@@ -432,13 +435,12 @@ class StockReceiveView extends GetView<StockReceiveController>{
                                              // ),
                                              child: TextField (
                                                keyboardType: TextInputType.number,
-                                               //controller: receiveQtyEditControler,
+                                               controller: TextEditingController()..text = data.stockout_details![index2].supplied_qty.toString(),
                                                decoration: InputDecoration(
-
                                                    border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey),
                                                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                                    labelText: 'Receive qty',
-                                                   hintText: 'Receive qty'
+                                                   hintText: 'Receive qty',
                                                ),
                                                onChanged: (content) {
                                                  //if(data.stockout_details!.length > 0){
@@ -532,7 +534,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () {
                 // Add your onPressed code here!
-                controller.approveStockReceive(context);
+                controller.approveStockReceive(context,stockout_master_id);
               },
               label: Text('Approve'),
               //icon: Icon(Icons.thumb_up),

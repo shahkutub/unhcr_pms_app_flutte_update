@@ -28,9 +28,14 @@ class AuthRepository {
 
       print('response: ${response}');
 
-
+      // if(response.statusCode == 500){
+      //   print('response: ${'500'}');
+      //   //logout();
+      //   //Get.offAllNamed(Routes.LOGIN);
+      // }
 
       if (response != null) {
+
 
         Get.find<AuthService>().setUser(LoginResponseDept.fromJson(response));
         return LoginResponseDept.fromJson(response);
