@@ -38,6 +38,8 @@ class DatabaseHelper {
   static final drug_stock_lose = 'stock_lose';
   static final drug_reject_reason = 'reject_reason';
   static final drug_batch_no = 'batch_no';
+  // drug_receive_type : 1 == general, 2== internal
+  static final drug_receive_type = 'drug_receive_type';
   static final stockout_master_id = 'stockout_master_id';
 
 
@@ -45,6 +47,7 @@ class DatabaseHelper {
   static final table_internal_request = 'table_internal_request';
 
   static final internal_req_serial = 'internal_req_serial';
+  static final internal_req_batch_no = 'internal_req_batch_no';
   static final internal_req_date = 'internal_req_date';
   static final internal_req_med_name = 'internal_req_med_name';
   static final internal_req_med_id = 'internal_req_med_id';
@@ -117,6 +120,7 @@ class DatabaseHelper {
             $drug_stock_consume TEXT,
             $drug_stock_lose TEXT,
             $drug_batch_no TEXT,
+            $drug_receive_type TEXT,
             $drug_reject_reason TEXT,
             $stockout_master_id TEXT,
             $drug_pstrength_id TEXT 

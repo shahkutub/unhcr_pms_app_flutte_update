@@ -136,7 +136,7 @@ class InternalRequestView extends GetView<InternalRequestController>{
                                     child: Text('View',style: TextStyle(fontSize: 10,color: Colors.white),),
                                     onTap: (){
                                       // controller.get_stock_Receive_medicine(data.id.toString());
-                                       showCustomDialog(context);
+
                                     },
                                   ),
                                   decoration: BoxDecoration(
@@ -146,23 +146,23 @@ class InternalRequestView extends GetView<InternalRequestController>{
                                   padding: EdgeInsets.all(10),
                                   alignment: Alignment.center,
                                 ),
-                                // SizedBox(height: 10,),
-                                // Container(
-                                //
-                                //   child: InkWell(
-                                //     child: Text('Receive',style: TextStyle(fontSize: 10,color: Colors.white),),
-                                //     onTap: (){
-                                //       // controller.get_stock_Receive_medicine(data.id.toString());
-                                //       // showCustomDialog(context);
-                                //     },
-                                //   ),
-                                //   decoration: BoxDecoration(
-                                //       color: Colors.green,
-                                //       borderRadius: BorderRadius.all(Radius.circular(5))
-                                //   ),
-                                //   padding: EdgeInsets.only(top: 10,bottom: 10),
-                                //   alignment: Alignment.center,
-                                // ),
+                                SizedBox(height: 10,),
+                                Container(
+
+                                  child: InkWell(
+                                    child: Text('Receive',style: TextStyle(fontSize: 10,color: Colors.white),),
+                                    onTap: (){
+                                      controller.get_internal_request_list_by_serial(data.serial);
+                                      showCustomDialogInternalApprove(context,'');
+                                    },
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.all(Radius.circular(5))
+                                  ),
+                                  padding: EdgeInsets.only(top: 10,bottom: 10),
+                                  alignment: Alignment.center,
+                                ),
                               ],
                             ),
 
@@ -219,315 +219,6 @@ class InternalRequestView extends GetView<InternalRequestController>{
 
 
 
-      // Container(
-      //   margin: EdgeInsets.all(10),
-      //   child:Column(
-      //       crossAxisAlignment: CrossAxisAlignment.start,
-      //       children: <Widget>[
-      //         Center(
-      //           child: Text(
-      //             "Internal Request",
-      //             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,fontSize: 15),),
-      //         ),
-      //
-      //         SizedBox(
-      //           height: 30,
-      //         ),
-      //
-      //         Container(
-      //           margin: EdgeInsets.only(top: 10),
-      //           child: Row(
-      //             mainAxisAlignment: MainAxisAlignment.center,
-      //             children: [
-      //
-      //               Flexible(
-      //                 child:GestureDetector(
-      //                   onTap: () { _selectDate(context);},
-      //                   child: TextField(
-      //                     decoration: InputDecoration(
-      //                       border: OutlineInputBorder(),
-      //                       labelText: 'Enter Date Here',
-      //                       hintText: '00-00-0000',
-      //                     ),
-      //                     autofocus: false,
-      //                     enabled: false,
-      //                     controller: controller.txt.value,
-      //                   ),
-      //                 ),
-      //
-      //                 flex: 1,
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //         SizedBox(
-      //           height: 30,
-      //         ),
-      //         Form(
-      //           key: controller.etSkillScore1Key.value,
-      //           child: Column(
-      //             children: <Widget>[
-      //               Obx(() =>
-      //                   DropdownSearch<String>(
-      //                     // key: controller.etSkillScore1Key.value,
-      //                     //mode of dropdown
-      //                     mode: Mode.DIALOG,
-      //                     //to show search box
-      //                     showSearchBox: true,
-      //                     //selectedItem: true,
-      //                     //list of dropdown items
-      //                     //items: controller.itemlist,
-      //                     items: controller.drugList?.map((item) => item.drug_name!).toList(),
-      //                     label: "Item name",
-      //                     onChanged: (value) {
-      //                       controller.selected_spinner_item.value = value.toString();
-      //                       controller.itemName.value = value.toString();
-      //
-      //                       print('medname : '+controller.itemName.value);
-      //
-      //                       controller.drugList.forEach((element) {
-      //                         if(element.drug_name == value){
-      //                           controller.itemId.value = element.drug_id.toString();
-      //                           controller.remarkEditController.value.text = '';
-      //                         }
-      //                       });
-      //
-      //                     },
-      //                     //show selected item
-      //                     selectedItem:  controller.selected_spinner_item.value,
-      //
-      //                   ),
-      //               ),
-      //
-      //               SizedBox(
-      //                 height: 20,
-      //               ),
-      //
-      //               Row(
-      //                 children: [
-      //                   Expanded(child: TextField(
-      //                     keyboardType: TextInputType.number,
-      //                     // readOnly: true,
-      //                     controller: controller.requestEditQtyController.value,
-      //                     decoration: InputDecoration(
-      //                       border: OutlineInputBorder(),
-      //                       labelText: 'Request Qty',
-      //                       hintText: controller.requestQtyLabelText.value,
-      //                     ),
-      //                     onChanged: (value){
-      //                       controller.itemQty.value = int.parse(controller.requestEditQtyController.value.text);
-      //                     },
-      //                   ), flex: 1,),
-      //
-      //                   SizedBox(
-      //                     width: 20,
-      //                   ),
-      //
-      //                   Expanded(child: TextField(
-      //                     keyboardType: TextInputType.text,
-      //                     controller: controller.remarkEditController.value,
-      //                     decoration: InputDecoration(
-      //                       border: OutlineInputBorder(),
-      //                       labelText: 'Remark',
-      //                       hintText: '',
-      //                     ),
-      //                     onChanged: (value){
-      //                       controller.remark.value = controller.remarkEditController.value.text;
-      //                     },
-      //                   ), flex: 1,)
-      //
-      //                 ],
-      //               ),
-      //
-      //
-      //               Container(
-      //                 margin: EdgeInsets.only(top: 20),
-      //                 alignment: Alignment.topRight,
-      //                 child: TextButton(
-      //                   child: Text('Add',style: TextStyle(color: Colors.white),),
-      //                   style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)),
-      //                   onPressed: () {
-      //                     controller.addItemToList();
-      //                   },
-      //
-      //                 ),
-      //
-      //               ),
-      //             ],
-      //           ),
-      //         ),
-      //
-      //
-      //
-      //
-      //         SizedBox(
-      //           height: 20,
-      //         ),
-      //         // Container(
-      //         //   color: Colors.grey,
-      //         //   height: 1,
-      //         //   width: Get.width,
-      //         // ),
-      //         SizedBox(
-      //           height: 10,
-      //         ),
-      //
-      //
-      //
-      //         Obx(() {
-      //           if(controller.itemList.length>0){
-      //             return Container(
-      //
-      //
-      //               child: Column(
-      //                 mainAxisAlignment: MainAxisAlignment.start,
-      //                 crossAxisAlignment: CrossAxisAlignment.start,
-      //                 children: [
-      //                   // Text('Top 10 Consumed Medicine'),
-      //                   SizedBox( height:10),
-      //                   Row(
-      //                     children: <Widget>[
-      //                       Expanded(child:  Text("SL",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),), flex: 1,),
-      //                       Expanded(child:  Text("ITEM DESCRIPTION",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),), flex: 6,),
-      //                       Expanded(child:  Center(child: Text("QTY",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),),), flex: 2,),
-      //                       Expanded(child:  Center(child: Text("Remark",style: TextStyle(color: Color(0xff03A1E0),fontSize: 12),),), flex: 2,),
-      //                       Expanded(child:  GestureDetector(
-      //
-      //                           child:Container(
-      //                             padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-      //                             margin: EdgeInsets.only(left: 1,top: 7),
-      //                             decoration: BoxDecoration(
-      //                               color: Colors.white,
-      //                               // border: Border.all(
-      //                               //   color: Colors.blueAccent,
-      //                               // ),
-      //                               //borderRadius: BorderRadius.all(Radius.circular(2))
-      //                             ),
-      //
-      //                             child: Center(
-      //                               child: Icon(Icons.remove_circle_outline,color: Colors.white,
-      //                                 size: 15,),
-      //                             )
-      //                             ,)
-      //
-      //                       ), flex: 1,),
-      //                     ],
-      //                   ),
-      //
-      //                 ],
-      //               ),
-      //
-      //             );
-      //
-      //
-      //           }else{
-      //             return SizedBox(
-      //               height: 0.0,
-      //             );
-      //           }
-      //
-      //         }),
-      //
-      //         SizedBox(
-      //           height: 0,
-      //         ),
-      //
-      //
-      //
-      //         // list
-      //         Expanded(
-      //             child: Obx(() => ListView.builder(
-      //                 padding: const EdgeInsets.all(5),
-      //                 //itemCount: controller.itemList.length,
-      //                 itemCount: controller.itemList.length,
-      //                 itemBuilder: (BuildContext context, int index) {
-      //                   var sl = index+1;
-      //                   return Column(
-      //                     children: [
-      //                       SizedBox( height:10),
-      //                       Row(
-      //                         children: <Widget>[
-      //                           Expanded(child:  Text(""+sl.toString(),style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 1,),
-      //                           Expanded(child:  Text(""+controller.itemList[index].medicine_name,style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 6,),
-      //                           Expanded(child:  Center(child: Text(""+controller.itemList[index].medicine_qty.toString(),style: TextStyle(color: Colors.black,fontSize: 12),),), flex: 2,),
-      //                           Expanded(child:  Center(child: Text(""+controller.itemList[index].remark.toString(),style: TextStyle(color: Colors.black,fontSize: 12),),), flex: 2,),
-      //                           Expanded(child:  GestureDetector(
-      //                               onTap: () {
-      //                                 controller.itemList.removeAt(index);
-      //                               },
-      //                               child:Container(
-      //                                 padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-      //                                 margin: EdgeInsets.only(left: 1,top: 7),
-      //                                 decoration: BoxDecoration(
-      //                                   color: Colors.white,
-      //                                   // border: Border.all(
-      //                                   //   color: Colors.blueAccent,
-      //                                   // ),
-      //                                   //borderRadius: BorderRadius.all(Radius.circular(2))
-      //                                 ),
-      //
-      //                                 child: Center(
-      //                                   child: Icon(Icons.remove_circle_outline,color: Colors.red,
-      //                                     size: 15,),
-      //                                 ),)
-      //
-      //                           ), flex: 1,),
-      //                         ],
-      //                       ),
-      //                     ],
-      //
-      //                   );
-      //                 }
-      //             )
-      //             )
-      //         ),
-      //
-      //         SizedBox(
-      //           height: 0,
-      //         ),
-      //
-      //         Obx(() {
-      //           if(controller.itemList.length>0){
-      //             return
-      //               InkWell(
-      //                   onTap: () {
-      //                     _showDialogInternalRequest(context);
-      //                   },
-      //                   child: Stack(
-      //                     children: <Widget>[
-      //                       Align(alignment: Alignment.center,
-      //                         child: Container(
-      //                           alignment: Alignment.center,
-      //                           width: Get.width,
-      //                           padding: EdgeInsets.all(10),
-      //                           margin: EdgeInsets.all(5),
-      //                           decoration: BoxDecoration(
-      //                             color: Color(0xff03A1E0),
-      //                             //border:Border.all(color: Colors.blueAccent) ,
-      //                             borderRadius: BorderRadius.all(Radius.circular(10)),
-      //                           ),
-      //                           child: Text("Submit", style: TextStyle(color: Colors.white),),
-      //                         ),
-      //                       ),
-      //
-      //                     ],
-      //                   )
-      //
-      //               );
-      //           }else{
-      //             return SizedBox(
-      //               height: 0.0,
-      //             );
-      //           }
-      //
-      //         }),
-      //
-      //
-      //       ]
-      //   ),
-      // ),
-
-
     );
   }
 
@@ -575,7 +266,7 @@ class InternalRequestView extends GetView<InternalRequestController>{
                   ),
                   Center(
                     child: Text(
-                      "Serial: ${code.toString()}",
+                      "Request No: ${controller.internalRequestNumber.toString()}",
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal,fontSize: 15),),
                   ),
 
@@ -840,7 +531,7 @@ class InternalRequestView extends GetView<InternalRequestController>{
                       return
                         InkWell(
                             onTap: () {
-                              _showDialogInternalRequest(context,code.toString());
+                              _showDialogInternalRequest(context,controller.internalRequestNumber.toString());
                             },
                             child: Stack(
                               children: <Widget>[
@@ -997,5 +688,196 @@ class InternalRequestView extends GetView<InternalRequestController>{
     controller.txt.value.text = formattedDate.toString();
 
   }
+
+  void showCustomDialogInternalApprove(BuildContext context, String stockout_master_id) {
+    showGeneralDialog(
+      context: context,
+      barrierLabel: "Barrier",
+      barrierDismissible: true,
+      barrierColor: Colors.white,
+      transitionDuration: Duration(milliseconds: 100),
+      pageBuilder: (_, __, ___) {
+        return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: PreferredSize(
+              preferredSize: Size(60,55),
+              child:  AppBar(
+                backgroundColor: Colors.blueAccent,
+                elevation: 0,
+                centerTitle: true,
+                //title: Text('Item Dispatch')
+
+                title: Stack(alignment: Alignment.center,
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      //child: Text(AppConstant.pageName),),
+                      child: Text('Internal request Receive'),),
+
+                  ],
+                ),
+
+              ),
+            ),
+            body: Container(
+              margin: EdgeInsets.all(10),
+
+                height: context.height,
+                width: context.width,
+                child: Obx(() =>
+
+                controller.internal_receive_medicine_list != null ?
+                controller.internal_receive_medicine_list!.length! > 0 ?
+                Expanded(child:
+                controller.internal_receive_medicine_list!.length > 0?
+                ListView.builder(
+                    itemCount: controller.internal_receive_medicine_list!.length,
+                    primary: false,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index2) {
+                      var data = controller.internal_receive_medicine_list[index2];
+                      print('receqty: '+data.receive_qty.toString());
+
+                      //data.receive_qty = data.supplied_qty;
+                      return Container(
+                          color: Colors.white,
+                          padding: EdgeInsets.all(5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(''+data.drug_name.toString()),
+
+                              SizedBox(height: 5,),
+
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+
+                                      // decoration: BoxDecoration(
+                                      //   border: Border(right: BorderSide(color: Colors.grey,width: 1)),
+                                      //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                      // ),
+                                      child: TextField (
+                                        keyboardType: TextInputType.number,
+                                        controller: TextEditingController()..text = data.receive_qty.toString(),
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey),
+                                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                          labelText: 'Receive qty',
+                                          hintText: 'Receive qty',
+                                        ),
+                                        onChanged: (content) {
+                                          //if(data.stockout_details!.length > 0){
+
+                                          data.receive_qty = content;
+                                          print('receive_qty: '+data.receive_qty.toString());
+                                          // }
+                                        },
+
+                                        style: TextStyle(fontSize: 12),
+
+                                      ),
+                                      alignment: Alignment.center,
+                                      height: 40,
+                                      padding:EdgeInsets.only(right: 2,left: 2) ,
+                                    ),flex: 1,),
+
+                                  Expanded(child: Container(
+                                    // decoration: BoxDecoration(
+                                    //   border: Border(right: BorderSide(color: Colors.grey.withOpacity(0.3))),
+                                    //   borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    // ),
+                                    child: TextField (
+                                      keyboardType: TextInputType.number,
+                                      //controller: rejectQtyEditControler,
+                                      onChanged: (content) {
+                                        //if(data.stockout_details!.length > 0){
+                                        data.reject_qty = content;
+                                        print('Reject qty: '+data.reject_qty.toString());
+                                        //}
+                                      },
+
+                                      decoration: InputDecoration(
+                                          border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey),
+                                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                          labelText: 'Reject qty',
+                                          hintText: 'Reject qty'
+                                      ),
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    padding:EdgeInsets.only(right: 2,left: 2),
+                                    height: 40,
+                                  ),flex: 1,),
+
+                                  Expanded(child: Container(
+
+                                    child: TextField (
+                                      onChanged: (content) {
+                                        //if(data.stockout_details!.length > 0){
+                                        data.reject_reason = content;
+                                        print('Reject Reason: '+data.reject_reason.toString());
+                                        //}
+                                      },
+                                      //controller: rejectReasonEditControler,
+                                      decoration: InputDecoration(
+                                          border: OutlineInputBorder(borderSide: BorderSide(width: 1,color: Colors.grey),
+                                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                          labelText: 'Reject Reason',
+                                          hintText: 'Reject Reason'
+                                      ),
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+
+                                    padding:EdgeInsets.only(right: 2,left: 2) ,
+                                    height: 40,
+                                  ),flex: 1,),
+
+                                ],
+                              ),
+
+                              SizedBox(height: 5,),
+                            ],
+                          )
+
+                      );
+                    }) :SizedBox(),)
+                    :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
+                    :Container(height:300,alignment:Alignment.center,child: Text('No data found'),)
+                )
+            ),
+
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () {
+                // Add your onPressed code here!
+                controller.approveStockReceive(context,stockout_master_id);
+              },
+              label: Text('Receive'),
+              //icon: Icon(Icons.thumb_up),
+              backgroundColor: Colors.blue,
+            )
+
+        );
+      },
+      transitionBuilder: (_, anim, __, child) {
+        Tween<Offset> tween;
+        if (anim.status == AnimationStatus.reverse) {
+          tween = Tween(begin: Offset(-1, 0), end: Offset.zero);
+        } else {
+          tween = Tween(begin: Offset(1, 0), end: Offset.zero);
+        }
+
+        return SlideTransition(
+          position: tween.animate(anim),
+          child: FadeTransition(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
 }
 

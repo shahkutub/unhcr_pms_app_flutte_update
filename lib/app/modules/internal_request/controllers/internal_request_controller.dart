@@ -12,6 +12,7 @@ import '../../../../common/ui.dart';
 import '../../../api_providers/api_url.dart';
 import '../../../database_helper/offline_database_helper.dart';
 import '../../../models/MedicineListResponse.dart';
+import '../../../models/StockReceiveMedicineListResponse.dart';
 import '../../../services/auth_service.dart';
 import '../../../utils.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +20,10 @@ import 'package:http/http.dart' as http;
 import '../../login/controllers/after_login_controller.dart';
 
 class InternalRequestController extends GetxController{
+  final List<StockoutDetail> internal_receive_medicine_list = <StockoutDetail>[].obs;
+
+  int internalRequestNumber = 0;
+
 
   static InternalRequestController get i => Get.find();
   var txt = TextEditingController().obs;
@@ -148,7 +153,7 @@ class InternalRequestController extends GetxController{
     var localdataSize = await dbHelper.get_internal_request();
     print('internal_requestSize: ${localdataSize.length}');
 
-
+    get_internal_request_list();
   }
 
   void updateDrugAvailableQty(int id,int qty ,int qtyConsume) async {
@@ -173,6 +178,41 @@ class InternalRequestController extends GetxController{
     //print(await db.query(DatabaseHelper.table));
   }
 
+  void approveStockReceive(BuildContext context, String stockout_master_id){
+    dbHelper.deleteALlDrugs();
+    internal_receive_medicine_list!.forEach((element2) async{
+        Map<String, dynamic> row = {
+          DatabaseHelper.drug_name: ''+element2.drug_name.toString(),
+          DatabaseHelper.drug_id: element2.drug_id,
+          //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
+          //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
+          //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
+          //DatabaseHelper.drug_generic_id: element.generic_id,
+          DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+          DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+          DatabaseHelper.drug_stock_consume: '0',
+          DatabaseHelper.drug_stock_lose: element2.reject_qty,
+          DatabaseHelper.drug_reject_reason: element2.reject_reason,
+          DatabaseHelper.drug_batch_no: element2.batch_no,
+          DatabaseHelper.stockout_master_id: stockout_master_id,
+          DatabaseHelper.drug_receive_type: '2',
+          //DatabaseHelper.drug_stock: element.generic_id,
+        };
+
+        await dbHelper.insert_drug(row);
+      });
+
+
+
+    Utils.showToastWithTitle('','Stock received done');
+    Navigator.pop(context);
+    // var localdataSize =  dbHelper.queryAllDrugRows();
+    // print('localdataDrugSize: ${localdataSize.length}');
+  }
+
+
+
+
   void addItemToList(){
     // var now = new DateTime.now();
     // var formatter = new DateFormat('dd-MM-yyyy');
@@ -183,6 +223,28 @@ class InternalRequestController extends GetxController{
     itemList.insert(0, item);
     //print("itemList: "+itemList[0].name);
 
+  }
+
+  get_internal_request_list_by_serial(String serial) async {
+    internal_receive_medicine_list.clear();
+    var localdataSize2 = await dbHelper.get_internal_request();
+    print('internal_requestSize: ${localdataSize2.length}');
+    for (var i = 0; i < localdataSize2.length; i++) {
+      Map<String, dynamic> map = localdataSize2[i];
+      var serialNo = map[DatabaseHelper.internal_req_serial];
+      if(serialNo == serial){
+        var madeid = map[DatabaseHelper.internal_req_med_id];
+        var madename = map[DatabaseHelper.internal_req_med_name];
+        var requestQty = map[DatabaseHelper.internal_req_qty];
+        var remark = map[DatabaseHelper.internal_req_remark];
+        var date = map[DatabaseHelper.internal_req_date];
+        var drug_info = StockoutDetail(drug_name:madename ,drug_id: madeid.toString(),receive_qty:requestQty.toString());
+
+        internal_receive_medicine_list.add(drug_info);
+      }
+
+    }
+    print("inter_rec_medilist: "+internal_receive_medicine_list.length.toString());
   }
 
   get_internal_request_list() async {
@@ -205,6 +267,7 @@ class InternalRequestController extends GetxController{
 
     final ids = Set();
     internalReqListDistinck.retainWhere((x) => ids.add(x.serial));
+    internalRequestNumber = internalReqListDistinck.length +1;
     print("drugList: "+drugList.length.toString());
   }
 
