@@ -102,7 +102,7 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
           currentIndex: 0,
           onTap: (int index) {
             if(index == 2){
-              controller.get_dispatch_submit_list(context);
+              //controller.get_dispatch_submit_list(context);
               controller.get_stock_receive_submitdata(context);
               //controller.get_internal_request_list( context);
 

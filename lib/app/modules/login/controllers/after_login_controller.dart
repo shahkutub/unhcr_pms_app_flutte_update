@@ -47,6 +47,7 @@ class after_login_controller extends GetxController {
   final navigatorKey = GlobalKey<NavigatorState>();
   final List<DispatchItem> dispatchDrugList = <DispatchItem>[];
   final List<InternalItemModel> internalRequestSubmitList = <InternalItemModel>[];
+  final List<InternalReceiveSubmitModel> internalReceiveSubmitList = <InternalReceiveSubmitModel>[];
   final List<MediReceiveDetailsModel> stockReceiveSubmitList = <MediReceiveDetailsModel>[];
 
   var dispensaryId = "";
@@ -367,19 +368,58 @@ class after_login_controller extends GetxController {
     print('internalReqSize: ${internalReqSize.length}');
     for (var i = 0; i < internalReqSize.length; i++) {
       Map<String, dynamic> map = internalReqSize[i];
+      var receiveType =  map[DatabaseHelper.drug_receive_type];
+      if(receiveType == '1'){
+        var drug_info = MediReceiveDetailsModel(
+          map[DatabaseHelper.drug_id],
+          map[DatabaseHelper.drug_stock_receive],
+          map[DatabaseHelper.drug_stock_lose].toString().isEmpty?'0':map[DatabaseHelper.drug_stock_lose].toString(),
+          map[DatabaseHelper.drug_reject_reason],
+        );
+        stockReceiveSubmitList.add(drug_info);
+      }
 
-      var drug_info = InternalItemModel(map[DatabaseHelper.internal_req_med_id],
-          map[DatabaseHelper.internal_req_qty],
-          map[DatabaseHelper.internal_req_remark],
-          map[DatabaseHelper.internal_req_date],
-          map[DatabaseHelper.internal_req_serial]);
-      internalRequestSubmitList.add(drug_info);
+
     }
-    print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
+    print("stockReceiveSubmitList: "+stockReceiveSubmitList.length.toString());
 
     Map<String, dynamic> map = internalReqSize[0];
     var stockout_master_id = map[DatabaseHelper.stockout_master_id];
+    print('stockout_master_id: ${stockout_master_id}');
 
+    StockReceiveSubmitModel submitDispatchModel = StockReceiveSubmitModel( stockout_master_id, stockReceiveSubmitList);
+    String jsonData = jsonEncode(submitDispatchModel);
+    print('stockreceivejson: '+jsonData.toString());
+
+    submit_stock_receive( jsonData,context);
+
+  }
+
+  get_internal_receive_submitdata(BuildContext context) async {
+
+    var internalReqSize = await dbHelper.queryAllDrugRows();
+
+    print('internalReqSize: ${internalReqSize.length}');
+    for (var i = 0; i < internalReqSize.length; i++) {
+      Map<String, dynamic> map = internalReqSize[i];
+      var receiveType =  map[DatabaseHelper.drug_receive_type];
+      if(receiveType == 2){
+        var drug_info = MediReceiveDetailsModel(
+          map[DatabaseHelper.drug_id],
+          map[DatabaseHelper.drug_stock_receive],
+          map[DatabaseHelper.drug_stock_lose],
+          map[DatabaseHelper.drug_reject_reason],
+        );
+        stockReceiveSubmitList.add(drug_info);
+      }
+
+
+    }
+    print("stockReceiveSubmitList: "+stockReceiveSubmitList.length.toString());
+
+    Map<String, dynamic> map = internalReqSize[0];
+    var stockout_master_id = map[DatabaseHelper.stockout_master_id];
+    print('stockout_master_id: ${stockout_master_id}');
     StockReceiveSubmitModel submitDispatchModel = StockReceiveSubmitModel( stockout_master_id, stockReceiveSubmitList);
     String jsonData = jsonEncode(submitDispatchModel);
     print('stockreceivejson: '+jsonData.toString());
@@ -396,17 +436,20 @@ class StockReceiveSubmitModel{
   StockReceiveSubmitModel(this.stockout_master_id,this.medicine_details);
 
   Map toJson() => {
+    'stockout_master_id': stockout_master_id,
     'medicine_details': medicine_details
   };
 }
 
 class MediReceiveDetailsModel {
 
+  var drug_id = '';
   var received_qty = '';
   var rejected_qty = '';
   var rejected_reason = '';
-  MediReceiveDetailsModel(this.received_qty, this.rejected_qty,this.rejected_reason);
+  MediReceiveDetailsModel(this.drug_id,this.received_qty, this.rejected_qty,this.rejected_reason);
   Map toJson() => {
+    'drug_id': drug_id,
     'received_qty': received_qty,
     'rejected_qty': rejected_qty,
     'rejected_reason': rejected_reason,
@@ -441,6 +484,24 @@ class InternalItemModel {
   var date = '';
   var serial = '';
   InternalItemModel(this.item_id, this.req_qty,this.remark,this.date,this.serial,);
+  Map toJson() => {
+    'item_id': item_id,
+    'req_qty': req_qty,
+    'remark': remark,
+    'date': date,
+    'serial': serial,
+  };
+
+}
+
+class InternalReceiveSubmitModel {
+
+  var item_id = 0;
+  var req_qty = 0;
+  var remark = '';
+  var date = '';
+  var serial = '';
+  InternalReceiveSubmitModel(this.item_id, this.req_qty,this.remark,this.date,this.serial,);
   Map toJson() => {
     'item_id': item_id,
     'req_qty': req_qty,

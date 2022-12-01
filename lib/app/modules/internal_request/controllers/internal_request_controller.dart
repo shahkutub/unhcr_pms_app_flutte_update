@@ -179,7 +179,7 @@ class InternalRequestController extends GetxController{
   }
 
   void approveStockReceive(BuildContext context, String stockout_master_id){
-    dbHelper.deleteALlDrugs();
+    //dbHelper.deleteALlDrugs();
     internal_receive_medicine_list!.forEach((element2) async{
         Map<String, dynamic> row = {
           DatabaseHelper.drug_name: ''+element2.drug_name.toString(),
@@ -191,8 +191,9 @@ class InternalRequestController extends GetxController{
           DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
           DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
           DatabaseHelper.drug_stock_consume: '0',
-          DatabaseHelper.drug_stock_lose: element2.reject_qty,
-          DatabaseHelper.drug_reject_reason: element2.reject_reason,
+          DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'',
+          DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
+
           DatabaseHelper.drug_batch_no: element2.batch_no,
           DatabaseHelper.stockout_master_id: stockout_master_id,
           DatabaseHelper.drug_receive_type: '2',
