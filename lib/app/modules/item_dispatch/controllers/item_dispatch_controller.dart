@@ -99,6 +99,7 @@ class ItemDispatchController extends GetxController{
       DatabaseHelper.date: formattedDate
     };
     await dbHelper.insert_patient_serial(row);
+    await dbHelper.insert_patient_serial_all(row);
     var localdataSize = await dbHelper.getAllPatientSerial();
     print('localdataSize: ${localdataSize.length}');
     getPSerialNo();

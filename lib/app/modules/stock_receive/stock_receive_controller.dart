@@ -21,6 +21,8 @@ import '../../utils.dart';
 
 class StockReceiveController extends GetxController{
 
+
+
   static StockReceiveController get i => Get.find();
 
   var button = 1.obs;
@@ -145,9 +147,26 @@ class StockReceiveController extends GetxController{
 
   void approveStockReceive(BuildContext context, String stockout_master_id){
     print('stockout_master_id: ${stockout_master_id}');
-    dbHelper.deleteALlDrugs();
+    //dbHelper.deleteALlDrugs();
     stockReceiveMedicineResponse.value.medicine_list!.forEach((element) async {
       element.stockout_details!.forEach((element2) async{
+        //var data;
+        String existDrugName = '';
+        int availStock = 0;
+        try{
+          var data =  await dbHelper.querySingleDrug(element2.drug_id.toString(),element2.batch_no.toString());
+          Map<String, dynamic> map = data[0];
+          availStock = int.parse(map[DatabaseHelper.drug_available_stock]);
+          existDrugName = map[DatabaseHelper.drug_stock_receive];
+          print('availStock: '+availStock.toString());
+        }catch (e){
+
+        }
+
+        String? recqtyStr = element2.receive_qty!.toString().isNotEmpty?element2.receive_qty:element2.supplied_qty!;
+        int receQuantity = int.parse(recqtyStr!);
+        availStock = availStock+receQuantity;
+
         Map<String, dynamic> row = {
           DatabaseHelper.drug_name: ''+element2.drug_name.toString(),
           DatabaseHelper.drug_id: element2.drug_id,
@@ -155,7 +174,9 @@ class StockReceiveController extends GetxController{
           //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
           //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
           //DatabaseHelper.drug_generic_id: element.generic_id,
-          DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+
+          //DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+          DatabaseHelper.drug_available_stock: availStock,
           DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
           DatabaseHelper.drug_stock_consume: '0',
           DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
@@ -167,7 +188,13 @@ class StockReceiveController extends GetxController{
           //DatabaseHelper.drug_stock: element.generic_id,
         };
 
-        await dbHelper.insert_drug(row);
+
+        if(existDrugName.isNotEmpty){
+          await dbHelper.updateDrug(row);
+        }else{
+          await dbHelper.insert_drug(row);
+        }
+
       });
 
     });

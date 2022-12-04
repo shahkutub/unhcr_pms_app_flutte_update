@@ -14,6 +14,9 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
 
   @override
   Widget build(BuildContext context) {
+    Get.find<after_login_controller>();
+    //controller.get_drug_list();
+
     return Scaffold( //first scaffold
           appBar: AppBar(
             title: Container(
@@ -364,110 +367,7 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                             SizedBox(
                               width: 5,
                             ),
-                            // Card(
-                            //     elevation: 0,
-                            //
-                            //   child:
-                            GestureDetector(
-                                onTap: () {
-                                  Get.toNamed(Routes.CONSUMPTION_TALLY);
-                                },
-                                child: Card(
-                                  elevation: 5,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      color: Color(0xffB4E3F6),
-                                    ),
-                                    borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
-                                  ),
-                                  child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    width: context.width/3.5,
-                                    height: context.width/4,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
 
-                                        Text(
-                                          'Stock Return',
-                                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                        ),
-
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
-                                )
-                            ),
-
-                            //),
-
-                            SizedBox(
-                              width: 5,
-                            ),
-                            // Card(
-                            //     elevation: 0,
-                            //child:
-                            GestureDetector(
-                                onTap: () {
-
-                                },
-                                child: Card(
-                                  elevation: 5,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      color: Color(0xffB4E3F6),
-                                    ),
-                                    borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
-                                  ),
-                                  child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    width: context.width/3.5,
-                                    height: context.width/4,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
-
-                                        Text(
-                                          'Stock Loss',
-                                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                        ),
-
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
-                                )
-                            ),
-
-                          ],
-                        ),
-                      ),
-
-                      Container(
-                        //padding: EdgeInsets.all(10),
-                        margin: EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                          //color: Colors.green,
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(0.0) //                 <--- border radius here
-                          ),
-                        ),
-                        child:Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
                             // Card(
                             //   elevation: 0,
                             //   child:
@@ -529,7 +429,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                             InkWell(
                                 onTap: () {
                                   AppConstant.pageName = 'Closing Stock';
-                                  Get.toNamed(Routes.Current_STOCK);
+
+                                 Get.toNamed(Routes.Current_STOCK);
                                 },
                                 child: Card(
                                   elevation: 5,
@@ -565,6 +466,25 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                             ),
 
                             //),
+
+                          ],
+                        ),
+                      ),
+
+                      Container(
+                        //padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
+                          //color: Colors.green,
+                          border: Border.all(color: Colors.white),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(0.0) //                 <--- border radius here
+                          ),
+                        ),
+                        child:Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
 
                             SizedBox(
                               width: 5,
@@ -661,10 +581,11 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                       children: [
 
 
-                                        Text("200",
+                                        Obx(()=>Text(controller.totalPatientCount.value.toString(),
                                           style: TextStyle(color: Colors.black,fontSize: 25),
                                           textAlign:TextAlign.center,
-                                        ),
+                                        ),) ,
+
                                         SizedBox(
                                           height: 15,
                                         ),
@@ -697,10 +618,11 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
 
-                                        Text("20",
+                                        Obx(() =>Text(controller.totalConsumed.value.toString(),
                                           style: TextStyle(color: Colors.black,fontSize: 25),
                                           textAlign:TextAlign.center,
-                                        ),
+                                        ),),
+
 
                                         SizedBox(
                                           height: 15,
@@ -800,28 +722,31 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                             // ),
 
 
-                            Container(
-                              height: Get.height/7,
-                              child: ListView.builder(
-                                itemCount: 10,
-                                //primary: false,
-                                shrinkWrap: true,
-                                itemBuilder: (BuildContext context, int index) {
-                                  var sl = index+1;
-                                  return Column(
-                                    children: [
-                                      SizedBox( height:10),
-                                      Row(
-                                        children: <Widget>[
-                                          Expanded(child:  Text(""+sl.toString(),style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 1,),
-                                          Expanded(child:  Text("Montilucast  ",style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 5,),
-                                          Expanded(child:  Text("300",style: TextStyle(color: Colors.black,fontSize: 12),), flex: 2,),
-                                        ],
-                                      ),
-                                    ],
+                            Obx(() =>
+                                Container(
+                                  height: Get.height/7,
+                                  child: ListView.builder(
+                                      itemCount: controller.drugListMax.length,
+                                      //primary: false,
+                                      shrinkWrap: true,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        var sl = index+1;
+                                        return Column(
+                                          children: [
+                                            SizedBox( height:10),
+                                            Row(
+                                              children: <Widget>[
+                                                Expanded(child:  Text(""+sl.toString(),style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 1,),
+                                                Expanded(child:  Text( controller.drugListMax[index].drug_name.toString(),style: TextStyle(color: Colors.grey,fontSize: 12),), flex: 5,),
+                                                Expanded(child:  Text(controller.drugListMax[index].dispatch_stock.toString(),style: TextStyle(color: Colors.black,fontSize: 12),), flex: 2,),
+                                              ],
+                                            ),
+                                          ],
 
-                                  );
-                                }),),
+                                        );
+                                      }),),
+                            ),
+
 
 
                           ],

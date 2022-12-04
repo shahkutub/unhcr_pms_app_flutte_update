@@ -53,12 +53,18 @@ class after_login_controller extends GetxController {
   var dispensaryId = "";
   var facilityId = '';
   var partnerId = '';
+  var totalConsumed = 0.obs;
+  var totalPatientCount = 0.obs;
 
   //final List<ItemDispatchModel> itemList = <ItemDispatchModel>[].obs;
+  final List<DispatchItem> drugList = <DispatchItem>[].obs;
+  final List<DispatchItem> drugListMax = <DispatchItem>[].obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     print('after login home vie');
+
+    get_drug_list();
     // get_drug_listFirst();
     // get_drug_listFromLocalDb();
     navigatorKey: navigatorKey;
@@ -71,7 +77,8 @@ class after_login_controller extends GetxController {
     //get_drug_list();
     //getLocationPermission();
     //AuthRepository().allProd();
-
+    var localdataSize = await dbHelper.getAllPatientSerialCountAll();
+    totalPatientCount.value = localdataSize.length;
 
     super.onInit();
   }
@@ -83,6 +90,44 @@ class after_login_controller extends GetxController {
   }
 
 
+  get_drug_list() async {
+    drugList.clear();
+    drugListMax.clear();
+    var localdataSize2 = await dbHelper.queryAllDrugRows();
+    print('localdataDrugSize: ${localdataSize2.length}');
+    for (var i = 0; i < localdataSize2.length; i++) {
+      Map<String, dynamic> map = localdataSize2[i];
+      var drug_info = DispatchItem();
+      drug_info.drug_name = map[DatabaseHelper.drug_name];
+      drug_info.drug_id = map[DatabaseHelper.drug_id];
+      drug_info.generic_id = map[DatabaseHelper.drug_generic_id];
+      drug_info.generic_name = map[DatabaseHelper.drug_generic_name];
+      drug_info.available_stock = map[DatabaseHelper.drug_available_stock];
+      drug_info.dispatch_stock = map[DatabaseHelper.drug_stock_consume];
+
+      //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
+      drugList.add(drug_info);
+    }
+
+    drugList.forEach((element) {
+      totalConsumed = totalConsumed+int.parse(element.dispatch_stock.toString());
+    });
+
+    print("drugList: "+drugList.length.toString());
+
+    // sort the data based on
+    if (drugList != null && drugList.isNotEmpty) {
+      drugList.sort((a, b) => a.dispatch_stock!.compareTo(b.dispatch_stock!));
+    }
+// you can simply do this
+    for( int i =drugList.length-5; i< drugList.length;i++){
+    print('drugListMax'+drugList[i].dispatch_stock.toString());
+    drugListMax.add(drugList[i]);
+    }
+
+    drugListMax.reversed;
+
+  }
 
   void login() async {
     // userData.value.fullName = userNameController.value.text;

@@ -16,6 +16,7 @@ class DatabaseHelper {
 
 
   static final table_patient_serial = 'table_patient_serial';
+  static final table_patient_serial_all = 'table_patient_serial_all';
 
   static final table_item_dispatch = 'table_item_dispatch';
   static final item_dispatch_quantity = 'item_dispatch_quantity';
@@ -97,6 +98,13 @@ class DatabaseHelper {
           ''');
 
     await db.execute('''
+          CREATE TABLE $table_patient_serial_all (
+            $columnId INTEGER PRIMARY KEY,
+            $date INT NOT NULL
+          )
+          ''');
+
+    await db.execute('''
           CREATE TABLE $table_item_dispatch (
             $columnId INTEGER PRIMARY KEY,
             $item_dispatch_serial INT NOT NULL,
@@ -149,6 +157,27 @@ class DatabaseHelper {
     return await db.insert(
         table_drugs, row, conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
+  // column values will be used to update the row.
+  Future<int> updateDrug(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    String id = row[drug_id];
+    return await db.update(table_drugs, row, where: '$drug_id = ?', whereArgs: [id]);
+  }
+
+
+  Future<dynamic> querySingleDrug (String drugId, String batchNo) async {
+    final db = await database;
+    return await db.query(
+        table_drugs,
+        //where: "${drug_id} = ?",
+        where: "${drug_id} = ? AND ${drug_batch_no} = ?",
+        //whereArgs: [drugId],
+        whereArgs: [drugId, batchNo],
+        limit: 1
+    );
+  }
+
 
 
   Future<int> deleteALlDrugs() async {
@@ -236,10 +265,20 @@ class DatabaseHelper {
     return await db.insert(table_patient_serial, row);
   }
 
+  Future<int> insert_patient_serial_all(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.insert(table_patient_serial_all, row);
+  }
+
   Future<int?> getAllPatientSerialCount() async {
     Database db = await instance.database;
     return Sqflite.firstIntValue(
         await db.rawQuery('SELECT COUNT(*) FROM $table_patient_serial'));
+  }
+
+  Future<List<Map<String, dynamic>>> getAllPatientSerialCountAll() async {
+    Database db = await instance.database;
+    return await db.query(DatabaseHelper.table_patient_serial_all);
   }
 
   Future<List<Map<String, dynamic>>> getAllPatientSerial() async {
