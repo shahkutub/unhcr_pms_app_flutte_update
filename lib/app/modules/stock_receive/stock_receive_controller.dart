@@ -3,6 +3,7 @@
 import 'package:brac_arna/app/database_helper/offline_database_helper.dart';
 import 'package:brac_arna/app/models/StockReceiveMedicineListResponse.dart';
 import 'package:brac_arna/app/models/StockReceiveResponse.dart';
+import 'package:brac_arna/app/modules/stock_receive/StockReceiveDetailsResponse.dart';
 import 'package:brac_arna/app/services/auth_service.dart';
 import 'package:brac_arna/common/AppConstant.dart';
 import 'package:flutter/material.dart';
@@ -11,18 +12,22 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/ui.dart';
+import '../../api_providers/api_url.dart';
 import '../../models/MedicineListResponse.dart';
 import '../../models/drug_list_response.dart';
 import '../../repositories/information_repository.dart';
 import '../../routes/app_pages.dart';
 import '../../utils.dart';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:brac_arna/app/api_providers/customExceptions.dart';
+import 'package:http/http.dart' as http;
 
 
 class StockReceiveController extends GetxController{
-
-
-
+  var isPending = true.obs;
+  var isReceive = false.obs;
   static StockReceiveController get i => Get.find();
 
   var button = 1.obs;
@@ -31,16 +36,111 @@ class StockReceiveController extends GetxController{
   final dbHelper = DatabaseHelper.instance;
 
   final druglistResonse = MedicineListResponse().obs;
-  final stockReceiveResponse = StockReceiveResponse().obs;
+  var stockReceiveResponse = StockReceiveResponse().obs;
   final stockReceiveMedicineResponse = StockReceiveMedicineListResponse().obs;
+  final stockReceiveDetailsResponse = StockReceiveDetailsResponse().obs;
   var showCircle = false.obs;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    get_drug_listReceive();
-    get_stock_Receive('distribution_approved');
+    //get_drug_listReceive();
+    //get_stock_Receive('distribution_approved');
+    getStockPending();
+  }
+
+  getStockPending() async {
+    //print("Calling API: $url");
+
+    if(!await (Utils.checkConnection() as Future<bool>)){
+      debugPrint('No internet connection');
+      Get.back();
+      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
+    }else{
+      String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+      var headers = {'Authorization': 'Bearer $token'};
+      var responseJson;
+      try {
+        final response = await http.get(Uri.parse(ApiClient.stock_receive_list),headers: headers);
+        print('statuscode: '+response.statusCode.toString());
+        print('response: '+response.body.toString());
+        if(response.statusCode == 500){
+          Get.showSnackbar(Ui.defaultSnackBar(message: 'Authentication field'));
+          Get.toNamed(Routes.LOGIN);
+        }
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body.toString());
+
+          //  List<dynamic> distribution_list = jsonResponse['distribution_list'];
+          // if(distribution_list.length == 0){
+          //   Get.back();
+          //   Get.showSnackbar(Ui.defaultSnackBar(message: 'No data found'));
+          // }
+
+          stockReceiveResponse.value = StockReceiveResponse.fromJson(jsonResponse);
+          if(stockReceiveResponse.value.distribution_list!.length == 0){
+            //Get.back();
+            Get.showSnackbar(Ui.defaultSnackBar(message: 'No data found'));
+          }
+
+          //return new StockReceiveResponse.fromJson(jsonResponse);
+        } else {
+          throw Exception('Failed to load data!');
+        }
+        //responseJson = _response(response);
+      } on SocketException {
+        throw FetchDataException('No Internet connection');
+      }
+      return responseJson;
+    }
+
+  }
+  getStockReceived() async {
+    //print("Calling API: $url");
+
+    if(!await (Utils.checkConnection() as Future<bool>)){
+      debugPrint('No internet connection');
+      Get.back();
+      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
+    }else{
+      String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+      var headers = {'Authorization': 'Bearer $token'};
+      var responseJson;
+      try {
+        final response = await http.get(Uri.parse(ApiClient.dispensary_received),headers: headers);
+        print('statuscode: '+response.statusCode.toString());
+        print('response: '+response.body.toString());
+        if(response.statusCode == 500){
+          Get.showSnackbar(Ui.defaultSnackBar(message: 'Authentication field'));
+          Get.toNamed(Routes.LOGIN);
+        }
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body.toString());
+
+          //  List<dynamic> distribution_list = jsonResponse['distribution_list'];
+          // if(distribution_list.length == 0){
+          //   Get.back();
+          //   Get.showSnackbar(Ui.defaultSnackBar(message: 'No data found'));
+          // }
+
+          stockReceiveResponse.value = StockReceiveResponse.fromJson(jsonResponse);
+          if(stockReceiveResponse.value.distribution_list!.length == 0){
+            Get.back();
+            Get.showSnackbar(Ui.defaultSnackBar(message: 'No data found'));
+          }
+
+          //return new StockReceiveResponse.fromJson(jsonResponse);
+        } else {
+          throw Exception('Failed to load data!');
+        }
+        //responseJson = _response(response);
+      } on SocketException {
+        throw FetchDataException('No Internet connection');
+      }
+      return responseJson;
+    }
+
   }
 
   get_stock_Receive(String pendingORreceive) async {
@@ -51,7 +151,7 @@ class StockReceiveController extends GetxController{
       debugPrint('No internet connection');
       Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
     }else{
-      showCircle.value = true;
+
 
       InformationRepository().get_stock_receive_list(pendingORreceive).then((resp) async {
         stockReceiveResponse.value = resp;
@@ -67,7 +167,7 @@ class StockReceiveController extends GetxController{
     }
 
   }
-  get_stock_Receive_medicine(String id) async {
+  get_stock_Receive_medicine(String id,BuildContext context) async {
     //Get.focusScope!.unfocus();
 
     //Ui.customLoaderDialogWithMessage();
@@ -79,6 +179,7 @@ class StockReceiveController extends GetxController{
 
       InformationRepository().get_stock_receive_medicine_list(id).then((resp) async {
         stockReceiveMedicineResponse.value = resp;
+       // Navigator.pop(context);
         if(stockReceiveMedicineResponse.value != null){
           showCircle.value = false;
 
@@ -91,11 +192,35 @@ class StockReceiveController extends GetxController{
 
   }
 
+  get_stock_Receive_medicine_view(String id,BuildContext context) async {
+    //Get.focusScope!.unfocus();
+
+    //Ui.customLoaderDialogWithMessage();
+    if(!await (Utils.checkConnection() as Future<bool>)){
+      debugPrint('No internet connection');
+      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
+    }else{
+      showCircle.value = true;
+
+      InformationRepository().get_stock_receive_medicine_list_view(id).then((resp) async {
+        stockReceiveDetailsResponse.value = resp;
+        // Navigator.pop(context);
+        if(stockReceiveDetailsResponse.value != null){
+          showCircle.value = false;
+
+          showCircle.value = false;
+        }else{
+          Get.toNamed(Routes.LOGIN);
+        }
+      });
+    }
+
+  }
 
   get_drug_listReceive() async {
     //Get.focusScope!.unfocus();
 
-    //Ui.customLoaderDialogWithMessage();
+    Ui.customLoaderDialogWithMessage();
     if(!await (Utils.checkConnection() as Future<bool>)){
       debugPrint('No internet connection');
       Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
@@ -177,7 +302,8 @@ class StockReceiveController extends GetxController{
 
           //DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
           DatabaseHelper.drug_available_stock: availStock,
-          DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+          //DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+          DatabaseHelper.drug_stock_receive: availStock,
           DatabaseHelper.drug_stock_consume: '0',
           DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
           DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
@@ -222,10 +348,20 @@ class StockReceiveController extends GetxController{
       onPressed: () {
         button.value = index;
         if(button.value == 1){
-
+          isPending.value = true;
+          isReceive.value = false;
+          if(stockReceiveResponse.value.distribution_list != null){
+            stockReceiveResponse.value.distribution_list!.clear();
+          }
+          getStockPending();
 
         }else{
-
+          isPending.value = false;
+          isReceive.value = true;
+          if(stockReceiveResponse.value.distribution_list != null){
+            stockReceiveResponse.value.distribution_list!.clear();
+          }
+          getStockReceived();
         }
       },
       // child: Expanded(

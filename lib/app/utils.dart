@@ -7,14 +7,25 @@ import 'package:get/get.dart';
 class Utils {
 
 
+  static showToastAlert(String s) {
+    Get.snackbar(
+        "Alert!",
+        ""+s,
+        icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white
+    );
+  }
+
   static showToast(String s) {
     Get.snackbar(
-      "Alert!",
-      ""+s,
-      icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red,
-      colorText: Colors.white
+        "!",
+        ""+s,
+        icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white
     );
   }
 

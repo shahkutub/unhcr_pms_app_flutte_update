@@ -10,7 +10,9 @@ class ApiClient {
   //static String drug_list = '${baseUrl}drug/list';
   static String drug_list = '${baseUrl}dispatch/item_list';
   static String stock_receive_list = '${baseUrl}stockout/facility_stockout_data/distribution_approved';
+  static String dispensary_received = '${baseUrl}stockout/facility_stockout_data/dispensary_received';
   static String stock_receive_medicine_list = '${baseUrl}stockin/dispensary_medicine_list';
+  static String stock_receive_medicine_list_view = '${baseUrl}stockin/dispensary_received_details';
   static String submit_dispatch = '${baseUrl}dispatch/savedata';
   static String submit_internal_request = '${baseUrl}dispensary/internal/request/savedata';
   static String submit_stock_receive = '${baseUrl}stockin/dispensary_stockin';

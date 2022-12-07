@@ -625,12 +625,18 @@ class InternalRequestView extends GetView<InternalRequestController>{
               child: new Text("Yes,Submit",style: TextStyle(color: Colors.blue),),
               onPressed: () {
 
-                controller.itemList.forEach((element) {
-                  controller.insert_internal_request(element,serial);
+                if(controller.itemList.length > 0) {
+                  controller.internalRequestSubmitLocalOnline(context,serial);
+                }
 
-                });
 
-                controller.itemList.clear();
+
+                // controller.itemList.forEach((element) {
+                //   controller.insert_internal_request(element,serial);
+                //
+                // });
+                //
+                // controller.itemList.clear();
                 Navigator.pop(context);
                 // _showToast(context,'Item dispatch stored Successfully');
               },

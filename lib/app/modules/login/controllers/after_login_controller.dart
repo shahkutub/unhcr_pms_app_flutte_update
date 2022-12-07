@@ -21,7 +21,7 @@ import 'package:http/http.dart' as http;
 
 import '../../consumption_tally/controllers/consumption_tally_controller.dart';
 
-class after_login_controller extends GetxController {
+class after_login_controller extends GetxController{
   //TODO: Implement LoginController
 
   final Rx<UserModel> userData = UserModel().obs;
@@ -62,9 +62,14 @@ class after_login_controller extends GetxController {
 
   @override
   Future<void> onInit() async {
+   // WidgetsBinding.instance.addObserver(this);
     print('after login home vie');
 
-    get_drug_list();
+
+    var nlist = [1, 6, 8, 2, 16, 0];
+    nlist.sort((b, a) => a.compareTo(b));
+
+    print('decnList'+nlist.toString());
     // get_drug_listFirst();
     // get_drug_listFromLocalDb();
     navigatorKey: navigatorKey;
@@ -72,20 +77,33 @@ class after_login_controller extends GetxController {
     userRole.value = Get.find<AuthService>().currentUser.value.data!.roles![0].role_name!;
     dispensaryId = Get.find<AuthService>().currentUser.value.data!.employee_info!.dispensary_id!;
     facilityId = Get.find<AuthService>().currentUser.value.data!.employee_info!.facility_id!;
-    partnerId = Get.find<AuthService>().currentUser.value.data!.employee_info!.facility_id!;
+    partnerId = Get.find<AuthService>().currentUser.value.data!.employee_info!.partner_id!;
 
     //get_drug_list();
     //getLocationPermission();
     //AuthRepository().allProd();
-    var localdataSize = await dbHelper.getAllPatientSerialCountAll();
-    totalPatientCount.value = localdataSize.length;
 
+    reloadData();
     super.onInit();
   }
 
+  onClose() {
+    super.onClose();
+    //WidgetsBinding.instance.removeObserver(this);
+  }
+
+  // @override
+  // Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+  //   super.didChangeAppLifecycleState(state);
+  //   print('state = $state');
+  //
+  // }
+
+
   @override
-  void onReady() {
+  Future<void> onReady() async {
     // TODO: implement onReady
+
     super.onReady();
   }
 
@@ -110,23 +128,29 @@ class after_login_controller extends GetxController {
     }
 
     drugList.forEach((element) {
-      totalConsumed = totalConsumed+int.parse(element.dispatch_stock.toString());
+      totalConsumed.value = totalConsumed.value+int.parse(element.dispatch_stock.toString());
     });
 
     print("drugList: "+drugList.length.toString());
 
     // sort the data based on
     if (drugList != null && drugList.isNotEmpty) {
-      drugList.sort((a, b) => a.dispatch_stock!.compareTo(b.dispatch_stock!));
+      drugList.sort((b, a) => a.dispatch_stock!.compareTo(b.dispatch_stock!));
     }
+    //.sort((b, a) => a.compareTo(b));
 // you can simply do this
-    for( int i =drugList.length-5; i< drugList.length;i++){
+    var lenth = drugList.length > 10 ? 10 : drugList.length;
+
+    for( int i =0; i< lenth;i++){
     print('drugListMax'+drugList[i].dispatch_stock.toString());
-    drugListMax.add(drugList[i]);
+    if(int.parse(drugList[i].dispatch_stock.toString())>0){
+      drugListMax.add(drugList[i]);
     }
 
-    drugListMax.reversed;
+    }
 
+    //drugListMax.reversed;
+    update();
   }
 
   void login() async {
@@ -285,7 +309,7 @@ class after_login_controller extends GetxController {
       dbHelper.deleteALlDispatch();
     }
 
-   // Navigator.of(context).pop();
+    Navigator.of(context).pop();
 
     return response;
   }
@@ -307,6 +331,7 @@ class after_login_controller extends GetxController {
     print("statusCode: ${response.statusCode}");
     if(response.statusCode == 500){
       //logout();
+      Utils.showToastAlert('Server error');
       Get.offAllNamed(Routes.LOGIN);
     }
 
@@ -343,7 +368,8 @@ class after_login_controller extends GetxController {
     );
 
     print("statusCode: ${response.statusCode}");
-    if(response.statusCode == 401){
+    if(response.statusCode == 500){
+      Utils.showToastAlert('Server error');
       //logout();
       Get.offAllNamed(Routes.LOGIN);
     }
@@ -355,7 +381,7 @@ class after_login_controller extends GetxController {
     var status = jsoObj['status'];
     print("status:${status}");
     if(status == 'success'){
-      Utils.showToast('Internal request upload successful');
+      Utils.showToast('Stock receive upload successful');
       dbHelper.delete_internal_request();
 
     }
@@ -398,11 +424,14 @@ class after_login_controller extends GetxController {
     }
     print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
 
-   InternalRequestSubmitModel submitDispatchModel = InternalRequestSubmitModel( int.parse(dispensaryId ), int.parse(facilityId),int.parse(partnerId),formattedDate,internalRequestSubmitList);
+   InternalRequestSubmitModel submitDispatchModel = InternalRequestSubmitModel( int.parse(dispensaryId ), int.parse(facilityId),int.parse(partnerId),formattedDate,internalRequestSubmitList,'offline');
    String jsonData = jsonEncode(submitDispatchModel);
    print('internalRequestjson: '+jsonData.toString());
 
-   postInternalRequest( jsonData,context);
+   if(internalRequestSubmitList.length>0){
+     postInternalRequest( jsonData,context);
+   }
+
 
   }
 
@@ -436,7 +465,10 @@ class after_login_controller extends GetxController {
     String jsonData = jsonEncode(submitDispatchModel);
     print('stockreceivejson: '+jsonData.toString());
 
-    submit_stock_receive( jsonData,context);
+    if(stockReceiveSubmitList.length>0){
+      submit_stock_receive( jsonData,context);
+    }
+
 
   }
 
@@ -470,6 +502,35 @@ class after_login_controller extends GetxController {
     print('stockreceivejson: '+jsonData.toString());
 
     submit_stock_receive( jsonData,context);
+
+  }
+
+  @override
+  void onDetached() {
+    // TODO: implement onDetached
+  }
+
+  @override
+  void onInactive() {
+    // TODO: implement onInactive
+  }
+
+  @override
+  void onPaused() {
+    // TODO: implement onPaused
+  }
+
+  @override
+  Future<void> onResumed() async {
+
+  }
+
+  reloadData() async {
+    totalConsumed.value = 0;
+    get_drug_list();
+    var localdataSize = await dbHelper.getAllPatientSerialCountAll();
+    totalPatientCount.value = localdataSize.length;
+    //update();
 
   }
 
@@ -508,13 +569,15 @@ class InternalRequestSubmitModel {
   var  facility_id = 0;
   var  partner_id = 0;
   var  date = "";
+  var  request_mode = "";
   List<InternalItemModel> itemDetails = [];
-  InternalRequestSubmitModel(this.dispensary_id,this.facility_id,this.partner_id,this.date,this.itemDetails,);
+  InternalRequestSubmitModel(this.dispensary_id,this.facility_id,this.partner_id,this.date,this.itemDetails,this.request_mode,);
   Map toJson() => {
     'dispensary_id': dispensary_id,
     'facility_id': facility_id,
     'partner_id': partner_id,
     'date': date,
+    'request_mode': request_mode,
     'itemDetails': itemDetails,
   };
 

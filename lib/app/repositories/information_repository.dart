@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/MedicineListResponse.dart';
 import '../models/drug_list_response.dart';
+import '../modules/stock_receive/StockReceiveDetailsResponse.dart';
 import '../routes/app_pages.dart';
 
 class InformationRepository {
@@ -145,13 +146,16 @@ class InformationRepository {
     var headers = {'Authorization': 'Bearer $token'};
     //var headers = {'Authorization': 'Bearer '};
     APIManager _manager = APIManager();
+
+
     var response;
     try {
       response = await _manager.get(ApiClient.stock_receive_list,headers);
       print('responsedruglist: ${response}');
 
+
       if(response == null){
-        // Get.toNamed(Routes.LOGIN);
+         Get.toNamed(Routes.LOGIN);
       }
 
       return StockReceiveResponse.fromJson(response);
@@ -196,6 +200,36 @@ class InformationRepository {
       print('error:$e');
       Get.toNamed(Routes.LOGIN);
       return StockReceiveMedicineListResponse.fromJson(response);
+    }
+  }
+
+Future<StockReceiveDetailsResponse> get_stock_receive_medicine_list_view(String id) async {
+
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //var headers = {'Authorization': 'Bearer '};
+    APIManager _manager = APIManager();
+    var response;
+    try {
+      response = await _manager.get(ApiClient.stock_receive_medicine_list_view+'/'+id,headers);
+      print('responsedruglist: ${response}');
+
+      if(response == null){
+        // Get.toNamed(Routes.LOGIN);
+      }
+
+      return StockReceiveDetailsResponse.fromJson(response);
+      // return all_division_dis_thanan_model().fromJson(response);
+      //  if (response['IsLoggedIn'] == true) {
+      //    Get.find<AuthService>().setUser(UserModel.fromJson(response));
+      //    return all_division_dis_thanan_model.fromJson(response);
+      //  } else {
+      //    return 'Unauthorised';
+      //  }
+    } catch (e) {
+      print('error:$e');
+      Get.toNamed(Routes.LOGIN);
+      return StockReceiveDetailsResponse.fromJson(response);
     }
   }
 

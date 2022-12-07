@@ -87,11 +87,11 @@ class Ui {
   static GetSnackBar defaultSnackBar({String title = 'Alert', required String message}) {
     Get.log("[$title] $message", isError: false);
     return GetSnackBar(
-      titleText: Text(title.tr, style: Get.textTheme.headline6!.merge(TextStyle(color: Get.theme.hintColor))),
-      messageText: Text(message, style: Get.textTheme.caption!.merge(TextStyle(color: Get.theme.focusColor))),
+      titleText: Text(title.tr, style: Get.textTheme.headline6!.merge(TextStyle(color: Colors.white))),
+      messageText: Text(message, style: Get.textTheme.caption!.merge(TextStyle(color: Colors.white))),
       snackPosition: SnackPosition.BOTTOM,
       margin: EdgeInsets.all(20),
-      backgroundColor: Get.theme.primaryColor,
+      backgroundColor: Colors.red,
       borderColor: Get.theme.focusColor.withOpacity(0.1),
       icon: Icon(Icons.warning_amber_rounded, size: 32, color: Get.theme.hintColor),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -135,7 +135,7 @@ class Ui {
 
   static BoxDecoration getBoxDecorationImage({Color? color, double? radius, Border? border, Gradient? gradient, String image = ''}) {
     return BoxDecoration(
-        //  color: color ?? Get.theme.backgroundColor,
+      //  color: color ?? Get.theme.backgroundColor,
         borderRadius: BorderRadius.all(Radius.circular(radius ?? 10)),
         // boxShadow: [
         //   BoxShadow(
@@ -147,8 +147,8 @@ class Ui {
         gradient: gradient,
         image: DecorationImage(image: AssetImage(image), fit: BoxFit.fill
 
-            //CachedNetworkImageProvider(image), fit: BoxFit.fill),
-            ));
+          //CachedNetworkImageProvider(image), fit: BoxFit.fill),
+        ));
   }
 
   static BoxFit getBoxFit(String boxFit) {
@@ -233,11 +233,11 @@ class Ui {
         child: svgSrc != null
             ? SvgPicture.asset(svgSrc, color: svgColor!)
             : Center(
-                child: Text(
-                  text,
-                  style: TextStyle(color: Get.theme.textTheme.bodyText1!.color),
-                ),
-              ),
+          child: Text(
+            text,
+            style: TextStyle(color: Get.theme.textTheme.bodyText1!.color),
+          ),
+        ),
       ),
     );
   }
@@ -271,9 +271,9 @@ class Ui {
       // hintStyle: TextStyle(color: Color(0xffec008c), fontWeight: FontWeight.normal),
       prefixIcon: iconData != null
           ? Icon(
-              iconData,
-              color: Color(0xffec008c),
-            ).marginOnly(right: 14)
+        iconData,
+        color: Color(0xffec008c),
+      ).marginOnly(right: 14)
           : SizedBox(),
       prefixIconConstraints: iconData != null ? BoxConstraints.expand(width: 38, height: 38) : BoxConstraints.expand(width: 0, height: 0),
       floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -332,7 +332,7 @@ class Ui {
 
   static customLoaderDialogWithMessage() {
     return Get.defaultDialog(
-      barrierDismissible: true,
+        barrierDismissible: true,
         title: '',
         radius: 8,
         content: Padding(
@@ -416,25 +416,25 @@ class Ui {
   }
 
   static Widget offsetPopup() => PopupMenuButton<int>(
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: 1,
-            child: Text(
-              "Flutter Open",
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
-            ),
-          ),
-          PopupMenuItem(
-            value: 2,
-            child: Text(
-              "Flutter Tutorial",
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-        icon: Icon(Icons.arrow_drop_down),
-        offset: Offset(50, 50),
-      );
+    itemBuilder: (context) => [
+      PopupMenuItem(
+        value: 1,
+        child: Text(
+          "Flutter Open",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+        ),
+      ),
+      PopupMenuItem(
+        value: 2,
+        child: Text(
+          "Flutter Tutorial",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+        ),
+      ),
+    ],
+    icon: Icon(Icons.arrow_drop_down),
+    offset: Offset(50, 50),
+  );
 
 
 }

@@ -13,6 +13,7 @@ import '../../../api_providers/api_url.dart';
 import '../../../database_helper/offline_database_helper.dart';
 import '../../../models/MedicineListResponse.dart';
 import '../../../models/StockReceiveMedicineListResponse.dart';
+import '../../../routes/app_pages.dart';
 import '../../../services/auth_service.dart';
 import '../../../utils.dart';
 import 'package:http/http.dart' as http;
@@ -57,6 +58,11 @@ class InternalRequestController extends GetxController{
   var itemSize = 0.obs;
   final dbHelper = DatabaseHelper.instance;
   //final druglistResonse = DrugListResponse().obs;
+  final List<InternalItemModel> internalRequestSubmitList = <InternalItemModel>[];
+  var dispensaryId = "";
+  var facilityId = '';
+  var partnerId = '';
+
   @override
   void onInit() {
     // TODO: implement onInit
@@ -74,7 +80,13 @@ class InternalRequestController extends GetxController{
 
     print('facilityID: '+userNAme.value);
 
-    userNAme.value = Get.find<AuthService>().currentUser.value.data!.users!.username!;
+    //userNAme.value = Get.find<AuthService>().currentUser.value.data!.users!.username!;
+    userNAme.value = Get.find<AuthService>().currentUser.value.data!.users!.username!.toString();
+    userRole.value = Get.find<AuthService>().currentUser.value.data!.roles![0].role_name!;
+    dispensaryId = Get.find<AuthService>().currentUser.value.data!.employee_info!.dispensary_id!;
+    facilityId = Get.find<AuthService>().currentUser.value.data!.employee_info!.facility_id!;
+    partnerId = Get.find<AuthService>().currentUser.value.data!.employee_info!.partner_id!;
+
     //insert_patient_serialToLocalDB();
 
     //Utils.replaceEngMonthNameBangla();
@@ -178,9 +190,60 @@ class InternalRequestController extends GetxController{
     //print(await db.query(DatabaseHelper.table));
   }
 
+  // void approveStockReceive(BuildContext context, String stockout_master_id){
+  //   //dbHelper.deleteALlDrugs();
+  //   internal_receive_medicine_list!.forEach((element2) async{
+  //       Map<String, dynamic> row = {
+  //         DatabaseHelper.drug_name: ''+element2.drug_name.toString(),
+  //         DatabaseHelper.drug_id: element2.drug_id,
+  //         //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
+  //         //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
+  //         //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
+  //         //DatabaseHelper.drug_generic_id: element.generic_id,
+  //         DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+  //         DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+  //         DatabaseHelper.drug_stock_consume: '0',
+  //         DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'',
+  //         DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
+  //
+  //         DatabaseHelper.drug_batch_no: element2.batch_no,
+  //         DatabaseHelper.stockout_master_id: stockout_master_id,
+  //         DatabaseHelper.drug_receive_type: '2',
+  //         //DatabaseHelper.drug_stock: element.generic_id,
+  //       };
+  //
+  //       await dbHelper.insert_drug(row);
+  //     });
+  //
+  //
+  //
+  //   Utils.showToastWithTitle('','Stock received done');
+  //   Navigator.pop(context);
+  //   // var localdataSize =  dbHelper.queryAllDrugRows();
+  //   // print('localdataDrugSize: ${localdataSize.length}');
+  // }
+
   void approveStockReceive(BuildContext context, String stockout_master_id){
+    print('stockout_master_id: ${stockout_master_id}');
     //dbHelper.deleteALlDrugs();
-    internal_receive_medicine_list!.forEach((element2) async{
+      internal_receive_medicine_list!.forEach((element2) async{
+        //var data;
+        String existDrugName = '';
+        int availStock = 0;
+        try{
+          var data =  await dbHelper.querySingleDrug(element2.drug_id.toString(),element2.batch_no.toString());
+          Map<String, dynamic> map = data[0];
+          availStock = int.parse(map[DatabaseHelper.drug_available_stock]);
+          existDrugName = map[DatabaseHelper.drug_stock_receive];
+          print('availStock: '+availStock.toString());
+        }catch (e){
+
+        }
+
+        String? recqtyStr = element2.receive_qty!.toString().isNotEmpty?element2.receive_qty:element2.supplied_qty!;
+        int receQuantity = int.parse(recqtyStr!);
+        availStock = availStock+receQuantity;
+
         Map<String, dynamic> row = {
           DatabaseHelper.drug_name: ''+element2.drug_name.toString(),
           DatabaseHelper.drug_id: element2.drug_id,
@@ -188,21 +251,29 @@ class InternalRequestController extends GetxController{
           //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
           //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
           //DatabaseHelper.drug_generic_id: element.generic_id,
-          DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
-          DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+
+          //DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+          DatabaseHelper.drug_available_stock: availStock,
+          //DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+          DatabaseHelper.drug_stock_receive: availStock,
           DatabaseHelper.drug_stock_consume: '0',
-          DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'',
+          DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
           DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
 
           DatabaseHelper.drug_batch_no: element2.batch_no,
+          DatabaseHelper.drug_receive_type: '1',
           DatabaseHelper.stockout_master_id: stockout_master_id,
-          DatabaseHelper.drug_receive_type: '2',
           //DatabaseHelper.drug_stock: element.generic_id,
         };
 
-        await dbHelper.insert_drug(row);
-      });
 
+        if(existDrugName.isNotEmpty){
+          await dbHelper.updateDrug(row);
+        }else{
+          await dbHelper.insert_drug(row);
+        }
+
+      });
 
 
     Utils.showToastWithTitle('','Stock received done');
@@ -210,8 +281,6 @@ class InternalRequestController extends GetxController{
     // var localdataSize =  dbHelper.queryAllDrugRows();
     // print('localdataDrugSize: ${localdataSize.length}');
   }
-
-
 
 
   void addItemToList(){
@@ -291,6 +360,94 @@ class InternalRequestController extends GetxController{
     print("drugList: "+drugList.length.toString());
   }
 
+
+
+  internalRequestSubmitLocalOnline(BuildContext context, String serial) async {
+
+    var now = new DateTime.now();
+    var formatter = new DateFormat('yyyy-MM-dd');
+    String formattedDate = formatter.format(now);
+    print(formattedDate);
+
+    if(await (Utils.checkConnection() as Future<bool>)){
+      debugPrint('No internet connection');
+      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'Internet connection found, internal request is submitting to online DB '));
+
+      itemList.forEach((element) {
+
+        var drug_info = InternalItemModel(element.medicine_id,
+            element.medicine_qty,
+            element.remark,
+            formattedDate,
+            serial);
+        internalRequestSubmitList.add(drug_info);
+
+      });
+
+      print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
+
+      InternalRequestSubmitModel submitDispatchModel = InternalRequestSubmitModel( int.parse(dispensaryId ), int.parse(facilityId),int.parse(partnerId),formattedDate,internalRequestSubmitList,"online");
+      String jsonData = jsonEncode(submitDispatchModel);
+      print('internalRequestjson: '+jsonData.toString());
+
+      postInternalRequest( jsonData,context);
+
+    }else{
+      itemList.forEach((element) {
+        insert_internal_request(element,serial);
+
+      });
+
+      itemList.clear();
+
+    }
+
+
+  }
+
+
+  Future<dynamic> postInternalRequest(String data,BuildContext context) async {
+
+    Ui.showLoaderDialog(context);
+    // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
+    print("token: ${token}");
+
+    var response = await http.post(Uri.parse(ApiClient.submit_internal_request),
+        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
+        body: data
+    );
+
+    print("statusCode: ${response.statusCode}");
+    if(response.statusCode == 500){
+      //logout();
+      Get.offAllNamed(Routes.LOGIN);
+    }
+
+    if(response.statusCode == 401){
+      //logout();
+      Get.offAllNamed(Routes.LOGIN);
+    }
+
+    print("${response.body}");
+
+    var jsoObj = jsonDecode(response.body);
+
+    var status = jsoObj['status'];
+    print("status:${status}");
+    if(status == 'success'){
+      Get.back();
+      Utils.showToast('Internal request upload successful');
+     // dbHelper.delete_internal_request();
+      //Get.offAllNamed(Routes.AFTER_LOGIN);
+    }
+
+    //Navigator.of(context).pop();
+
+    return response;
+  }
 
   @override
   void onReady() {

@@ -18,6 +18,7 @@ class ItemDispatchView extends GetView<ItemDispatchController>{
   @override
   Widget build(BuildContext context) {
     Get.find<ItemDispatchController>();
+    Get.put(ItemDispatchController());
     double width;
     double height;
     width = MediaQuery.of(context).size.width;
