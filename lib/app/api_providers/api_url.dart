@@ -9,6 +9,7 @@ class ApiClient {
   static String login = '${baseUrl}login';
   //static String drug_list = '${baseUrl}drug/list';
   static String drug_list = '${baseUrl}dispatch/item_list';
+  static String current_stock_list = '${baseUrl}currentstock/medicineList';
   static String stock_receive_list = '${baseUrl}stockout/facility_stockout_data/distribution_approved';
   static String dispensary_received = '${baseUrl}stockout/facility_stockout_data/dispensary_received';
   static String stock_receive_medicine_list = '${baseUrl}stockin/dispensary_medicine_list';

@@ -24,6 +24,8 @@ import 'dart:io';
 import 'package:brac_arna/app/api_providers/customExceptions.dart';
 import 'package:http/http.dart' as http;
 
+import '../login/controllers/after_login_controller.dart';
+
 
 class StockReceiveController extends GetxController{
   var isPending = true.obs;
@@ -40,6 +42,7 @@ class StockReceiveController extends GetxController{
   final stockReceiveMedicineResponse = StockReceiveMedicineListResponse().obs;
   final stockReceiveDetailsResponse = StockReceiveDetailsResponse().obs;
   var showCircle = false.obs;
+  final List<MediReceiveDetailsModel> stockReceiveSubmitList = <MediReceiveDetailsModel>[];
 
   @override
   void onInit() {
@@ -267,7 +270,75 @@ class StockReceiveController extends GetxController{
 
   }
 
+  get_stock_receive_submitdata(BuildContext context,String stockout_master_id) async {
 
+
+    stockReceiveMedicineResponse.value.medicine_list!.forEach((element) async {
+      element.stockout_details!.forEach((element2) async{
+        var drug_info = MediReceiveDetailsModel(
+          element2.drug_id!,
+          element2.receive_qty!,
+          element2.reject_qty.toString().isEmpty?'0':element2.reject_qty.toString(),
+         element2.reject_reason.toString().isEmpty?'no':element2.reject_reason.toString(),
+        );
+        stockReceiveSubmitList.add(drug_info);
+      });
+    });
+
+    print("stockReceiveSubmitList: "+stockReceiveSubmitList.length.toString());
+
+    // var stockout_master_id = stockReceiveMedicineResponse.value.medicine_list![0].
+    // stockout_details![0].facility_stockout_id;
+    // print('stockout_master_id: ${stockout_master_id}');
+
+    StockReceiveSubmitModel submitDispatchModel = StockReceiveSubmitModel( stockout_master_id!, stockReceiveSubmitList);
+    String jsonData = jsonEncode(submitDispatchModel);
+    print('stockreceivejson: '+jsonData.toString());
+
+    if(stockReceiveSubmitList.length>0){
+      submit_stock_receive( jsonData,context);
+    }
+
+
+  }
+
+  Future<dynamic> submit_stock_receive(String data,BuildContext context) async {
+
+    Ui.showLoaderDialog(context);
+    // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
+    print("token: ${token}");
+
+    var response = await http.post(Uri.parse(ApiClient.submit_stock_receive),
+        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
+        body: data
+    );
+
+    print("statusCode: ${response.statusCode}");
+    if(response.statusCode == 500){
+      Utils.showToastAlert('Server error');
+      //logout();
+      Get.offAllNamed(Routes.LOGIN);
+    }
+
+    print("${response.body}");
+
+    var jsoObj = jsonDecode(response.body);
+
+    var status = jsoObj['status'];
+    print("status:${status}");
+    if(status == 'success'){
+      Utils.showToast('Stock receive upload successful');
+      dbHelper.delete_internal_request();
+
+    }
+
+    Navigator.of(context).pop();
+
+    return response;
+  }
 
 
   void approveStockReceive(BuildContext context, String stockout_master_id){
@@ -329,6 +400,7 @@ class StockReceiveController extends GetxController{
     Navigator.pop(context);
     // var localdataSize =  dbHelper.queryAllDrugRows();
     // print('localdataDrugSize: ${localdataSize.length}');
+    get_stock_receive_submitdata( context, stockout_master_id);
   }
 
   @override

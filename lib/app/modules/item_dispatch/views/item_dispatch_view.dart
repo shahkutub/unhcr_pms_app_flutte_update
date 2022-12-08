@@ -148,7 +148,8 @@ class ItemDispatchView extends GetView<ItemDispatchController>{
                           //selectedItem: true,
                           //list of dropdown items
                           //items: controller.itemlist,
-                          items: controller.drugList?.map((item) => item.drug_name!+ ' (Batch:'+item.batch_no!+' )').toList(),
+                          //items: controller.drugList?.map((item) => item.drug_name!+ ' (Batch:'+item.batch_no!+' )').toList(),
+                          items: controller.drugList?.map((item) => item.drug_name!).toList(),
                           label: "Item name",
                           onChanged: (value) {
                             controller.selected_spinner_item.value = value.toString();
@@ -157,7 +158,8 @@ class ItemDispatchView extends GetView<ItemDispatchController>{
                             print('medname : '+controller.itemName.value);
 
                             controller.drugList.forEach((element) {
-                              var matchStr = element.drug_name!+ ' (Batch:'+element.batch_no!+' )';
+                              //var matchStr = element.drug_name!+ ' (Batch:'+element.batch_no!+' )';
+                              var matchStr = element.drug_name!;
                               if(matchStr == value){
                                 controller.itemId.value = element.drug_id.toString();
                                 controller.controllerAvailableQty.value.text = element.available_stock!;

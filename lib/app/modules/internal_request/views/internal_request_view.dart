@@ -130,23 +130,23 @@ class InternalRequestView extends GetView<InternalRequestController>{
                             ),
                             child: Column(
                               children: [
-                                Container(
-
-                                  child: InkWell(
-                                    child: Text('View',style: TextStyle(fontSize: 10,color: Colors.white),),
-                                    onTap: (){
-                                      // controller.get_stock_Receive_medicine(data.id.toString());
-
-                                    },
-                                  ),
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.all(Radius.circular(5))
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  alignment: Alignment.center,
-                                ),
-                                SizedBox(height: 10,),
+                                // Container(
+                                //
+                                //   child: InkWell(
+                                //     child: Text('View',style: TextStyle(fontSize: 10,color: Colors.white),),
+                                //     onTap: (){
+                                //       // controller.get_stock_Receive_medicine(data.id.toString());
+                                //
+                                //     },
+                                //   ),
+                                //   decoration: BoxDecoration(
+                                //       color: Colors.green,
+                                //       borderRadius: BorderRadius.all(Radius.circular(5))
+                                //   ),
+                                //   padding: EdgeInsets.all(10),
+                                //   alignment: Alignment.center,
+                                // ),
+                                // SizedBox(height: 10,),
                                 Container(
 
                                   child: InkWell(
@@ -328,6 +328,7 @@ class InternalRequestView extends GetView<InternalRequestController>{
                                 controller.drugList.forEach((element) {
                                   if(element.drug_name == value){
                                     controller.itemId.value = element.drug_id.toString();
+                                    controller.batchId.value = element.batch_no.toString();
                                     controller.remarkEditController.value.text = '';
                                   }
                                 });

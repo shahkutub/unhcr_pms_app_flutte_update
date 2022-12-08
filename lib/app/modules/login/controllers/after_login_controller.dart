@@ -15,6 +15,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../api_providers/api_url.dart';
+import '../../../models/CurrentStockRequestModel.dart';
 import '../../../models/MedicineListResponse.dart';
 import '../../../services/auth_service.dart';
 import 'package:http/http.dart' as http;
@@ -84,6 +85,8 @@ class after_login_controller extends GetxController{
     //AuthRepository().allProd();
 
     reloadData();
+    get_current_stock();
+
     super.onInit();
   }
 
@@ -391,6 +394,49 @@ class after_login_controller extends GetxController{
     return response;
   }
 
+  Future<dynamic> get_current_stock() async {
+
+    var data = CurrentStockRequestModel(dispensary_ids: [int.parse(dispensaryId)],
+        facility_ids:[int.parse(facilityId)] , layer: '5',partner_ids: [int.parse(partnerId)]);
+    String jsonData = jsonEncode(data);
+    print('json: '+jsonData.toString());
+
+    //Ui.showLoaderDialog(context);
+    // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
+    print("token: ${token}");
+
+    var response = await http.post(Uri.parse(ApiClient.current_stock_list),
+        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
+        body: jsonData
+    );
+
+    print("statusCode: ${response.statusCode}");
+    if(response.statusCode == 500){
+      Utils.showToastAlert('Server error');
+      //logout();
+      Get.offAllNamed(Routes.LOGIN);
+    }
+
+    print("${response.body}");
+
+    var jsoObj = jsonDecode(response.body);
+
+    var status = jsoObj['status'];
+    print("status:${status}");
+    if(status == 'success'){
+      Utils.showToast('Stock receive upload successful');
+      dbHelper.delete_internal_request();
+
+    }
+
+    //Navigator.of(context).pop();
+
+    return response;
+  }
+
 
   void logout() {
     Get.find<AuthService>().removeCurrentUser();
@@ -501,7 +547,7 @@ class after_login_controller extends GetxController{
     String jsonData = jsonEncode(submitDispatchModel);
     print('stockreceivejson: '+jsonData.toString());
 
-    submit_stock_receive( jsonData,context);
+    //submit_stock_receive( jsonData,context);
 
   }
 
@@ -654,3 +700,4 @@ class SubmitDispatchModel{
   };
 
 }
+
