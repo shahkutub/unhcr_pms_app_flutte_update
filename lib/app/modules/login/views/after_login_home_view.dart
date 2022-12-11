@@ -112,7 +112,7 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                   if(index == 2){
 
                     controller.get_internal_request_list( context);
-                    controller.get_stock_receive_submitdata(context);
+                    //controller.get_stock_receive_submitdata(context);
                     controller.get_dispatch_submit_list(context);
 
                   }
@@ -174,9 +174,7 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                 //   child:
                                 InkWell(
                                     onTap: () {
-
                                       Get.toNamed(Routes.STOCK_RECEIVE);
-
                                     },
                                     child: Card(
                                       elevation: 5,

@@ -15,34 +15,8 @@ import '../../models/drug_list_response.dart';
 class CurrentStockController extends GetxController{
 
   static CurrentStockController get i => Get.find();
-  //final GlobalKey<FormFieldBuilder> key = GlobalKey<FormBuilderState>();
 
-  // final List<String> _suggestions = <String>[
-  //   'Alligator',
-  //   'Buffalo',
-  //   'Chicken',
-  //   'Dog',
-  //   'Eagle',
-  //   'Frog'
-  // ].obs;
-  final List areaList = [
-    {"name": "Block 1", "id": "124612615"},
-    {"name": "Block 2", "id": "124612615"},
-    {"name": "Block 3", "id": "124612615"},
-    {"name": "PECHS block 1", "id": "124612615"},
-    {"name": "PECHS block 2", "id": "124612615"},
-    {"name": "PECHS block 3", "id": "124612615"},
-    {"name": "PECHS block 4", "id": "124612615"},
-    {"name": "PECHS block 5", "id": "124612615"},
-    {"name": "PECHS block 6", "id": "124612615"},
-    {"name": "PECHS block 7", "id": "12461265"},
-    {"name": "PECHS block 8", "id": "12461215"},
-    {"name": "PECHS block 9", "id": "12461615"},
-    {"name": "PECHS block 0", "id": "12462615"},
-    {"name": "PECHS block 89", "id": "12612615"},
-    {"name": "PECHS block 88", "id": "1261265"},
-    {"name": "PECHS block 87", "id": "14612615"},
-  ];
+
   final List<String> names = <String>['Aby', 'Aish', 'Ayan', 'Ben', 'Bob', 'Charlie', 'Cook', 'Carline'].obs;
   final List<int> msgCount = <int>[2, 0, 10, 6, 52, 4, 0, 2].obs;
   final List<ItemDispatchModel> itemList = <ItemDispatchModel>[].obs;
@@ -73,7 +47,7 @@ class CurrentStockController extends GetxController{
     userRole.value = Get.find<AuthService>().currentUser.value.data!.roles![0].role_name!;
     //insert_patient_serialToLocalDB();
 
-     //getPSerialNo();
+    //getPSerialNo();
     get_drug_list();
 
   }
@@ -162,7 +136,7 @@ class CurrentStockController extends GetxController{
   onSearchTextChanged(String text) async {
     searchItemList.clear();
     if (text.isEmpty) {
-     // setState(() {});
+      // setState(() {});
       return;
     }
 

@@ -27,6 +27,7 @@ class ItemDispatchController extends GetxController{
 
   final List<ItemDispatchModel> itemList = <ItemDispatchModel>[].obs;
   final List<DispatchItem> drugList = <DispatchItem>[].obs;
+  final List<DispatchItem> drugListFinal = <DispatchItem>[].obs;
   final drugData = DrugInfo().obs;
 
   var  controllerAvailableQtyLabelText = '0'.obs;
@@ -202,7 +203,13 @@ class ItemDispatchController extends GetxController{
       //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
       drugList.add(drug_info);
     }
+
+
+
+
     print("avalstock: "+drugList[0].available_stock.toString());
+
+
   }
 
   submit_dispatch(BuildContext context){

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:brac_arna/app/database_helper/offline_database_helper.dart';
 import 'package:brac_arna/app/models/drug_list_response.dart';
@@ -15,12 +16,14 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../api_providers/api_url.dart';
+import '../../../api_providers/customExceptions.dart';
 import '../../../models/CurrentStockRequestModel.dart';
 import '../../../models/MedicineListResponse.dart';
 import '../../../services/auth_service.dart';
 import 'package:http/http.dart' as http;
 
 import '../../consumption_tally/controllers/consumption_tally_controller.dart';
+import 'CurrentStockMedicineListResponse.dart';
 
 class after_login_controller extends GetxController{
   //TODO: Implement LoginController
@@ -61,6 +64,8 @@ class after_login_controller extends GetxController{
   final List<DispatchItem> drugList = <DispatchItem>[].obs;
   final List<DispatchItem> drugListMax = <DispatchItem>[].obs;
 
+  var currentStockMedicineListResponse = CurrentStockMedicineListResponse().obs;
+
   @override
   Future<void> onInit() async {
    // WidgetsBinding.instance.addObserver(this);
@@ -85,7 +90,8 @@ class after_login_controller extends GetxController{
     //AuthRepository().allProd();
 
     reloadData();
-    get_current_stock();
+    getMyCurrentStock();
+    //get_current_stock();
 
     super.onInit();
   }
@@ -396,46 +402,131 @@ class after_login_controller extends GetxController{
 
   Future<dynamic> get_current_stock() async {
 
-    var data = CurrentStockRequestModel(dispensary_ids: [int.parse(dispensaryId)],
-        facility_ids:[int.parse(facilityId)] , layer: '5',partner_ids: [int.parse(partnerId)]);
-    String jsonData = jsonEncode(data);
-    print('json: '+jsonData.toString());
+    if(!await (Utils.checkConnection() as Future<bool>)){
+      debugPrint('No internet connection');
+      Get.back();
+      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
+    }else{
 
-    //Ui.showLoaderDialog(context);
-    // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
-    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
-    var headers = {'Authorization': 'Bearer $token'};
-    //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
-    print("token: ${token}");
+      var data = CurrentStockRequestModel(dispensary_ids: [int.parse(dispensaryId)],
+          facility_ids:[int.parse(facilityId)] , layer: '5',partner_ids: [int.parse(partnerId)]);
+      String jsonData = jsonEncode(data);
+      print('json: '+jsonData.toString());
 
-    var response = await http.post(Uri.parse(ApiClient.current_stock_list),
-        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
-        body: jsonData
-    );
+      //Ui.showLoaderDialog(context);
+      // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+      String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+      var headers = {'Authorization': 'Bearer $token'};
+      //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
+      print("token: ${token}");
 
-    print("statusCode: ${response.statusCode}");
-    if(response.statusCode == 500){
-      Utils.showToastAlert('Server error');
-      //logout();
-      Get.offAllNamed(Routes.LOGIN);
+      var response = await http.post(Uri.parse(ApiClient.current_stock_list),
+          headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
+          body: jsonData
+      );
+
+      print("statusCode: ${response.statusCode}");
+      if(response.statusCode == 500){
+        Utils.showToastAlert('Server error');
+        //logout();
+        Get.offAllNamed(Routes.LOGIN);
+      }
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body.toString());
+
+        currentStockMedicineListResponse.value = CurrentStockMedicineListResponse.fromJson(jsonResponse);
+        if(currentStockMedicineListResponse.value.current_stock_info!.length == 0){
+          //Get.back();
+          Get.showSnackbar(Ui.defaultSnackBar(message: 'No Current stock data found'));
+        }else{
+          currentStockSaveToDB();
+        }
+
+        //return new StockReceiveResponse.fromJson(jsonResponse);
+      } else {
+        throw Exception('Failed to load data!');
+      }
+      //Navigator.of(context).pop();
+
+      return response;
     }
 
-    print("${response.body}");
-
-    var jsoObj = jsonDecode(response.body);
-
-    var status = jsoObj['status'];
-    print("status:${status}");
-    if(status == 'success'){
-      Utils.showToast('Stock receive upload successful');
-      dbHelper.delete_internal_request();
-
-    }
-
-    //Navigator.of(context).pop();
-
-    return response;
   }
+
+  getMyCurrentStock() async {
+    //print("Calling API: $url");
+
+    if(!await (Utils.checkConnection() as Future<bool>)){
+      debugPrint('No internet connection');
+      Get.back();
+      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
+    }else{
+      String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+      var headers = {'Authorization': 'Bearer $token'};
+      var responseJson;
+      try {
+        final response = await http.get(Uri.parse(ApiClient.drug_list),headers: headers);
+        print('statuscode: '+response.statusCode.toString());
+        print('drug_list: '+response.body.toString());
+        if(response.statusCode == 500){
+          Get.showSnackbar(Ui.defaultSnackBar(message: 'Authentication field'));
+          Get.toNamed(Routes.LOGIN);
+        }
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body.toString());
+
+          //  List<dynamic> distribution_list = jsonResponse['distribution_list'];
+          // if(distribution_list.length == 0){
+          //   Get.back();
+          //   Get.showSnackbar(Ui.defaultSnackBar(message: 'No data found'));
+          // }
+
+          druglistResonse.value = MedicineListResponse.fromJson(jsonResponse);
+          if(druglistResonse.value.dispatch_items!.length == 0){
+            //Get.back();
+            Get.showSnackbar(Ui.defaultSnackBar(message: 'No data found'));
+          }else{
+            currentStockSaveToDB();
+          }
+
+          //return new StockReceiveResponse.fromJson(jsonResponse);
+        } else {
+          throw Exception('Failed to load data!');
+        }
+        //responseJson = _response(response);
+      } on SocketException {
+        throw FetchDataException('No Internet connection');
+      }
+      return responseJson;
+    }
+
+  }
+
+  void currentStockSaveToDB(){
+
+
+      druglistResonse.value.dispatch_items!.forEach((element) async {
+        Map<String, dynamic> row = {
+          DatabaseHelper.drug_name: element.drug_name,
+          DatabaseHelper.drug_id: element.drug_id,
+          DatabaseHelper.drug_available_stock: element.available_stock,
+          DatabaseHelper.drug_stock_receive: '0',
+          DatabaseHelper.drug_stock_consume: '0',
+          DatabaseHelper.drug_stock_lose: '0',
+          DatabaseHelper.drug_reject_reason: '',
+          DatabaseHelper.drug_batch_no: element.batch_no,
+          DatabaseHelper.drug_receive_type: '1',
+          DatabaseHelper.stockout_master_id: '',
+        };
+
+        await dbHelper.insert_drug(row);
+      });
+
+
+
+
+  }
+
 
 
   void logout() {
