@@ -125,9 +125,9 @@ class CurrentStockView extends GetView<CurrentStockController>{
                                     SizedBox(height: 5,),
                                     Text('Available Stock: '+data!.available_stock.toString(),style: TextStyle(fontSize: 12),),
                                     SizedBox(height: 5,),
-                                    Text('Stock Receive: '+data!.receive_stock.toString(),style: TextStyle(fontSize: 12),),
+                                    //Text('Stock Receive: '+data!.receive_stock.toString(),style: TextStyle(fontSize: 12),),
                                     SizedBox(height: 5,),
-                                    Text('Dispatch: '+data!.dispatch_stock.toString(),style: TextStyle(fontSize: 12),),
+                                   // Text('Dispatch: '+data!.dispatch_stock.toString(),style: TextStyle(fontSize: 12),),
 
                                     // Stack(
                                     //   children: [

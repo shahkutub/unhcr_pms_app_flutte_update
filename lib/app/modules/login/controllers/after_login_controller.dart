@@ -90,7 +90,8 @@ class after_login_controller extends GetxController{
     //AuthRepository().allProd();
 
     reloadData();
-    getMyCurrentStock();
+
+
     //get_current_stock();
 
     super.onInit();
@@ -136,8 +137,42 @@ class after_login_controller extends GetxController{
       drugList.add(drug_info);
     }
 
+
+    var now = new DateTime.now();
+    var formatter = new DateFormat('yyyy-MM-dd');
+    String todayDate = formatter.format(now);
+    print(todayDate);
+
+    String StockDate = 'no';
+    var openingStockList = await dbHelper.queryAllOpeningStock();
+    if(openingStockList.length > 0){
+      Map<String, dynamic> map = openingStockList[0];
+      StockDate = map[DatabaseHelper.date];
+    }
+
+    if(todayDate != StockDate){
+      await dbHelper.delete_opening_stock();
+      drugList.forEach((element) {
+        Map<String, dynamic> row = {
+          DatabaseHelper.date: todayDate,
+          DatabaseHelper.drug_id: element.drug_id,
+          DatabaseHelper.drug_name: element.drug_name,
+          DatabaseHelper.drug_batch_no: element.batch_no,
+          DatabaseHelper.drug_available_stock: element.available_stock,
+        };
+
+        dbHelper.insert_opening_stock(row);
+
+      });
+      var openingStockList = await dbHelper.queryAllOpeningStock();
+      print('openingStockList: '+openingStockList.length.toString());
+    }
+
+
     drugList.forEach((element) {
       totalConsumed.value = totalConsumed.value+int.parse(element.dispatch_stock.toString());
+
+
     });
 
     print("drugList: "+drugList.length.toString());
@@ -453,7 +488,7 @@ class after_login_controller extends GetxController{
 
   }
 
-  getMyCurrentStock() async {
+  getInitialStockApicall() async {
     //print("Calling API: $url");
 
     if(!await (Utils.checkConnection() as Future<bool>)){
@@ -484,7 +519,7 @@ class after_login_controller extends GetxController{
           druglistResonse.value = MedicineListResponse.fromJson(jsonResponse);
           if(druglistResonse.value.dispatch_items!.length == 0){
             //Get.back();
-            Get.showSnackbar(Ui.defaultSnackBar(message: 'No data found'));
+            Get.showSnackbar(Ui.defaultSnackBar(message: 'No Medicine found'));
           }else{
             currentStockSaveToDB();
           }
@@ -524,7 +559,7 @@ class after_login_controller extends GetxController{
 
 
 
-
+      reloadData();
   }
 
 
@@ -669,6 +704,9 @@ class after_login_controller extends GetxController{
     totalPatientCount.value = localdataSize.length;
     //update();
 
+    if(drugList.length == 0){
+      getInitialStockApicall();
+    }
   }
 
 }

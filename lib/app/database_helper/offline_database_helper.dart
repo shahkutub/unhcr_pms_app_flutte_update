@@ -56,6 +56,10 @@ class DatabaseHelper {
   static final internal_req_remark = 'internal_req_remark';
 
 
+  // table_opening_balance
+  static final table_opening_stock = 'table_opening_stock';
+
+
   // make this a singleton class
   DatabaseHelper._privateConstructor();
 
@@ -138,6 +142,21 @@ class DatabaseHelper {
 
 
     await db.execute('''
+          CREATE TABLE $table_opening_stock (
+            $columnId INTEGER PRIMARY KEY,
+            $drug_id TEXT,
+            $drug_name TEXT,
+            $drug_available_stock TEXT,
+            $drug_stock_consume TEXT,
+            $drug_stock_lose TEXT,
+            $date TEXT,
+            $drug_batch_no TEXT
+           
+          )
+          ''');
+
+
+    await db.execute('''
           CREATE TABLE $table_internal_request (
             $columnId INTEGER PRIMARY KEY,
             $internal_req_date TEXT,
@@ -156,6 +175,26 @@ class DatabaseHelper {
 
     return await db.insert(
         table_drugs, row, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllDrugRows() async {
+    Database db = await instance.database;
+    return await db.query(table_drugs);
+  }
+
+
+
+  // insert drug
+  Future<int> insert_opening_stock(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+
+    return await db.insert(
+        table_opening_stock, row, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<Map<String, dynamic>>> queryAllOpeningStock() async {
+    Database db = await instance.database;
+    return await db.query(table_opening_stock);
   }
 
   // column values will be used to update the row.
@@ -184,6 +223,12 @@ class DatabaseHelper {
     Database db = await instance.database;
     return await db.delete(table_drugs);
   }
+  Future<int> delete_opening_stock() async {
+    Database db = await instance.database;
+    return await db.delete(table_opening_stock);
+  }
+
+
 
   Future<int> deleteALlDispatch() async {
     Database db = await instance.database;
@@ -196,10 +241,7 @@ class DatabaseHelper {
   }
 
 
-  Future<List<Map<String, dynamic>>> queryAllDrugRows() async {
-    Database db = await instance.database;
-    return await db.query(table_drugs);
-  }
+
 
   Future<List<Map<String, dynamic>>> queryAllDispatchRows() async {
     Database db = await instance.database;

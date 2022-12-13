@@ -26,6 +26,7 @@ class CurrentStockController extends GetxController{
   var controllerItemName = TextEditingController().obs;
 
   final List<DispatchItem> drugList = <DispatchItem>[].obs;
+  final List<DispatchItem> openingStockList = <DispatchItem>[].obs;
   var pageName = ''.obs;
   var nameInput = ''.obs;
   var itemName = ''.obs;
@@ -48,7 +49,19 @@ class CurrentStockController extends GetxController{
     //insert_patient_serialToLocalDB();
 
     //getPSerialNo();
-    get_drug_list();
+    if(AppConstant.pageName == "Opening Stock"){
+      get_opening_stock_list();
+    }
+
+    if(AppConstant.pageName == "Closing Stock"){
+      get_drug_list();
+    }
+
+    if(AppConstant.pageName == "Current Stock"){
+      get_drug_list();
+    }
+
+
 
   }
 
@@ -72,6 +85,27 @@ class CurrentStockController extends GetxController{
     }
     print("drugList: "+drugList.length.toString());
   }
+  get_opening_stock_list() async {
+    drugList.clear();
+    var localDataOpeningStock = await dbHelper.queryAllOpeningStock();
+    print('localDataOpeningStock: ${localDataOpeningStock.length}');
+    for (var i = 0; i < localDataOpeningStock.length; i++) {
+      Map<String, dynamic> map = localDataOpeningStock[i];
+      var drug_info = DispatchItem();
+      drug_info.drug_name = map[DatabaseHelper.drug_name];
+      drug_info.drug_id = map[DatabaseHelper.drug_id];
+      // drug_info.generic_id = map[DatabaseHelper.drug_generic_id];
+      // drug_info.generic_name = map[DatabaseHelper.drug_generic_name];
+      drug_info.available_stock = map[DatabaseHelper.drug_available_stock];
+      // drug_info.receive_stock = map[DatabaseHelper.drug_stock_receive];
+      // drug_info.lose_stock = map[DatabaseHelper.drug_stock_lose];
+      // drug_info.dispatch_stock = map[DatabaseHelper.drug_stock_consume];
+      //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
+      drugList.add(drug_info);
+    }
+    print("openingStockList: "+drugList.length.toString());
+  }
+
 
   Future<void> getPSerialNo() async {
     var now = new DateTime.now();

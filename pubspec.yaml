@@ -28,9 +28,9 @@ dependencies:
   uuid: ^3.0.6
   intl: ^0.17.0
   date_format: ^2.0.5
-  flutter_share: ^2.0.0
-  geolocator: ^7.7.1
-  geocoding: ^2.0.1
+  flutter_share: any
+  geolocator: any
+  geocoding: any
   loading_overlay: ^0.3.0
   fl_chart: ^0.50.1
   getwidget: ^2.0.4

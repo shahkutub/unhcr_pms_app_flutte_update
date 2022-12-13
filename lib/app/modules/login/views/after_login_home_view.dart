@@ -255,8 +255,15 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
-
+                                            //Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
+                                            Image(
+                                              height: 40,
+                                              width: 40,
+                                              image: AssetImage(
+                                                'assets/images/dispatch.png',
+                                                //'assets/images/logounhcr.png',
+                                              ),
+                                            ),
                                             Text(
                                               'Dispatch',
                                               style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
@@ -300,8 +307,15 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
-
+                                            //Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
+                                            Image(
+                                              height: 40,
+                                              width: 40,
+                                              image: AssetImage(
+                                                'assets/images/tally.png',
+                                                //'assets/images/logounhcr.png',
+                                              ),
+                                            ),
                                             Text(
                                               'Tally',
                                               style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
@@ -363,8 +377,16 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
+                                           // Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
 
+                                            Image(
+                                              height: 40,
+                                              width: 40,
+                                              image: AssetImage(
+                                                'assets/images/internal_request.png',
+                                                //'assets/images/logounhcr.png',
+                                              ),
+                                            ),
                                             Text(
                                               'Internal Request',
                                               style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
@@ -419,8 +441,15 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
-
+                                            //Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
+                                            Image(
+                                              height: 40,
+                                              width: 40,
+                                              image: AssetImage(
+                                                'assets/images/opening_stock.png',
+                                                //'assets/images/logounhcr.png',
+                                              ),
+                                            ),
                                             Text(
                                               'Opening Stock',
                                               style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
@@ -467,8 +496,15 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
-
+                                            //Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
+                                            Image(
+                                              height: 40,
+                                              width: 40,
+                                              image: AssetImage(
+                                                'assets/images/opening_stock.png',
+                                                //'assets/images/logounhcr.png',
+                                              ),
+                                            ),
                                             Text(
                                               'Closing Stock',
                                               style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
@@ -533,8 +569,15 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
-
+                                            //Icon(Icons.bar_chart_outlined,color: Color(0xff03A1E0),size: 50,),
+                                            Image(
+                                              height: 40,
+                                              width: 40,
+                                              image: AssetImage(
+                                                'assets/images/opening_stock.png',
+                                                //'assets/images/logounhcr.png',
+                                              ),
+                                            ),
                                             Text(
                                               'Current Stock',
                                               style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
