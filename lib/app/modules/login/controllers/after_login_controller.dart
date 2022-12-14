@@ -65,14 +65,19 @@ class after_login_controller extends GetxController{
   final List<DispatchItem> drugListMax = <DispatchItem>[].obs;
 
   var currentStockMedicineListResponse = CurrentStockMedicineListResponse().obs;
-
+  var isStockSubmitted = false.obs;
   @override
   Future<void> onInit() async {
+    //Get.find<AuthService>().setIsCurrentStockSubmitted(true);
+    isStockSubmitted.value = Get.find<AuthService>().isStockSubmitted.value;
+
+    print('IsCurrentStockSubmitted: '+isStockSubmitted.value.toString());
+
    // WidgetsBinding.instance.addObserver(this);
     print('after login home vie');
 
 
-    var nlist = [1, 6, 8, 2, 16, 0];
+    var nlist = [1, 6, 8, 2, 16];
     nlist.sort((b, a) => a.compareTo(b));
 
     print('decnList'+nlist.toString());
@@ -166,6 +171,9 @@ class after_login_controller extends GetxController{
       });
       var openingStockList = await dbHelper.queryAllOpeningStock();
       print('openingStockList: '+openingStockList.length.toString());
+
+      //isStockSubmit = false
+      Get.find<AuthService>().setIsCurrentStockSubmitted(false);
     }
 
 
@@ -698,6 +706,7 @@ class after_login_controller extends GetxController{
   }
 
   reloadData() async {
+    isStockSubmitted.value = Get.find<AuthService>().isStockSubmitted.value;
     totalConsumed.value = 0;
     get_drug_list();
     var localdataSize = await dbHelper.getAllPatientSerialCountAll();

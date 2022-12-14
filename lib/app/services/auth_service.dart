@@ -10,6 +10,7 @@ import 'settings_service.dart';
 class AuthService extends GetxService {
   //final currentUser = LoginResponse().obs;
   final currentUser = LoginResponseDept().obs;
+  final isStockSubmitted = false.obs;
   late GetStorage _box;
 
   AuthService() {
@@ -21,6 +22,7 @@ class AuthService extends GetxService {
     // TODO: implement onInit
     _box = GetStorage();
     await getCurrentUser();
+    await getIsCurrentStockSubmitted();
     super.onInit();
   }
 
@@ -40,6 +42,15 @@ class AuthService extends GetxService {
   //
   //   await getCurrentUser();
   // }
+
+  void setIsCurrentStockSubmitted(bool isSubmitted) async {
+    _box.write('isSubmitted', isSubmitted);
+    await getIsCurrentStockSubmitted();
+  }
+
+  Future getIsCurrentStockSubmitted() async {
+    isStockSubmitted.value =  _box.read('isSubmitted');
+  }
 
   void setUser(LoginResponseDept user) async {
     _box.write('current_user', user.toJson());

@@ -1,5 +1,6 @@
 
 import 'package:brac_arna/app/routes/app_pages.dart';
+import 'package:brac_arna/app/utils.dart';
 import 'package:brac_arna/common/AppConstant.dart';
 import 'package:brac_arna/common/ui.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -229,15 +230,14 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                     onTap: () {
                                       // Navigator.of(context).push(new MaterialPageRoute(builder: (context) =>
                                       //     ItemDispatchView())).whenComplete(controller.reloadData());
+                                      controller.isStockSubmitted.value = Get.find<AuthService>().isStockSubmitted.value;
 
-                                      //Get.offNamed(Routes.ITEM_DISPATCH);
-                                      Get.toNamed(Routes.ITEM_DISPATCH)!.whenComplete(() => controller.reloadData());
-                                      // if(controller.drugList.length == 0){
-                                      //   //controller.get_drug_list(context);
-                                      //   Ui.defaultSnackBar(message: 'Medicine data empty,please Sync');
-                                      // }else{
-                                      //   Get.toNamed(Routes.ITEM_DISPATCH);
-                                      // }
+                                      if(controller.isStockSubmitted.value){
+                                        Get.toNamed(Routes.ITEM_DISPATCH)!.whenComplete(() => controller.reloadData());
+                                      }else{
+                                        Utils.showToast('Opening stock is not submitted');
+                                      }
+
                                     },
                                     child: Card(
                                       elevation: 5,

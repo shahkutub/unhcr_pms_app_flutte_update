@@ -11,6 +11,8 @@ import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:getwidget/components/search_bar/gf_search_bar.dart';
 import 'package:intl/intl.dart';
 
+import '../../services/auth_service.dart';
+
 
 class CurrentStockView extends GetView<CurrentStockController>{
   final _size = Get.size;
@@ -166,6 +168,15 @@ class CurrentStockView extends GetView<CurrentStockController>{
           //),
 
         ),
+        floatingActionButton: !controller.isStockSubmitted.value ?
+        FloatingActionButton.extended(
+        onPressed: () {
+          Get.find<AuthService>().setIsCurrentStockSubmitted(true);
+        },
+        label: Text('Submit'),
+        //icon: Icon(Icons.thumb_up),
+        backgroundColor: Colors.blue,
+      ) : null,
 
         
     );

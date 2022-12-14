@@ -38,10 +38,15 @@ class CurrentStockController extends GetxController{
   var selectedItem = ''.obs;
   var pSerialN0 = '0'.obs;
   final dbHelper = DatabaseHelper.instance;
+  var isStockSubmitted = false.obs;
   @override
-  void onInit() {
-    // TODO: implement onInit
+  Future<void> onInit() async {
     super.onInit();
+    Get.find<AuthService>().setIsCurrentStockSubmitted(false);
+    isStockSubmitted.value = Get.find<AuthService>().isStockSubmitted.value;
+
+    print('IsCurrentStockSubmitted: '+isStockSubmitted.value.toString());
+
     pageName.value = AppConstant.pageName;
     controllerQty.value.text = "0";
     userNAme.value = Get.find<AuthService>().currentUser.value.data!.users!.username!.toString();
