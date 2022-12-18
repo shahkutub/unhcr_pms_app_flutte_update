@@ -1,5 +1,7 @@
 
 
+import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +17,8 @@ class ConsumptionTallyController extends GetxController{
   final List<ItemDispatchModel> tallyitemList = <ItemDispatchModel>[].obs;
   final List<ItemDispatchModel> tallyitemListDateBased = <ItemDispatchModel>[].obs;
   List<ItemDispatchModel> tallyitemListDistincByMedName = <ItemDispatchModel>[].obs;
+  List<ItemDispatchModel> tallyListDistincByDate = <ItemDispatchModel>[].obs;
+  List<ItemDispatchModel> tallyListDistincByPserial = <ItemDispatchModel>[].obs;
 
   var selectedDate = DateTime.now().obs;
 
@@ -142,6 +146,8 @@ class ConsumptionTallyController extends GetxController{
     tallyitemList.clear();
     tallyitemListDateBased.clear();
     tallyitemListDistincByMedName.clear();
+    tallyListDistincByDate.clear();
+    tallyListDistincByPserial.clear();
 
     var localdataSize = await dbHelper.get_tem_dispatch();
     print('localdataitemSize: ${localdataSize.length}');
@@ -163,6 +169,8 @@ class ConsumptionTallyController extends GetxController{
       if(element.dispatch_date == date){
         tallyitemListDateBased.add(element);
         tallyitemListDistincByMedName.add(element);
+        tallyListDistincByDate.add(element);
+        tallyListDistincByPserial.add(element);
       }
     });
 
@@ -174,7 +182,49 @@ class ConsumptionTallyController extends GetxController{
 
     final ids = Set();
     tallyitemListDistincByMedName.retainWhere((x) => ids.add(x.medicine_id));
+    tallyListDistincByDate.retainWhere((x) => ids.add(x.dispatch_date));
+    tallyListDistincByPserial.retainWhere((x) => ids.add(x.patient_serial));
     print('tallyitemListDistincByMedName: '+tallyitemListDistincByMedName.length.toString());
+    print('tallyListDistincByDate: '+tallyListDistincByDate.length.toString());
+    print('tallyListDistincByPserial: '+tallyListDistincByPserial.length.toString());
+
+
+
+
+
+    List<SubmitDispatchModel> medicinemain = [];
+   // String datedata = '';
+    //String pSerial = '';
+
+    tallyListDistincByDate.forEach((elementDate) {
+      String datedata = elementDate.dispatch_date;
+      tallyListDistincByPserial.forEach((elementPs) {
+        List<MedicineModel> medicineDetails = [];
+        String pSerial = elementPs.patient_serial.toString();
+        print('datedata: '+datedata);
+        print('pSerial: '+pSerial);
+        tallyitemList.forEach((elementItem) {
+
+          if(
+          elementDate.dispatch_date == elementItem.dispatch_date &&
+              elementPs.patient_serial == elementItem.patient_serial){
+
+            print('mediname: '+elementItem.medicine_name);
+            MedicineModel medicineModel = MedicineModel(int.parse(elementItem.medicine_id.toString()),int.parse(elementItem.item_dispatch_quantity.toString()));
+            medicineDetails.add(medicineModel);
+          }
+        });
+        SubmitDispatchModel submitDispatchModel = SubmitDispatchModel( datedata,pSerial, medicineDetails);
+        medicinemain.add(submitDispatchModel);
+      });
+
+    });
+
+
+
+    //String jsonTutorial = jsonEncode(submitDispatchModel);
+    String jsonTutorial = jsonEncode(medicinemain);
+    print('postjson: '+jsonTutorial.toString());
 
     // tallyitemListDistincByMedName.addAll(uniquelist);
     //
@@ -192,4 +242,42 @@ class ItemDispatchModel {
   var item_dispatch_quantity = 0 ;
 
   ItemDispatchModel(this.dispatch_date,this.medicine_name, this.medicine_id, this.patient_serial,this.item_dispatch_quantity);
+}
+
+
+
+
+class SubmitDispatchModel{
+
+  var dispatch_date = "";
+  var patient_serial = "";
+  //var medicineDetails = "";
+  List<MedicineModel> medicineDetails = [];
+
+  SubmitDispatchModel(
+      this.dispatch_date,this.patient_serial, this.medicineDetails);
+
+  Map toJson() => {
+
+    'dispatch_date': dispatch_date,
+    'patient_serial': patient_serial,
+    'dispatchDetails': medicineDetails,
+
+  };
+
+}
+
+class MedicineModel{
+  var item_id = 0;
+  // var batch_id = 0;
+  var dispatch_qty = 0;
+  // var receive_stock = 0;
+  //MedicineModel(this.item_id,this.batch_id, this.dispatch_qty,this.receive_stock);
+  MedicineModel(this.item_id, this.dispatch_qty);
+  Map toJson() => {
+    'item_id': item_id,
+    //'batch_id': batch_id,
+    'dispatch_qty': dispatch_qty,
+  };
+
 }
