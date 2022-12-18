@@ -66,6 +66,14 @@ class after_login_controller extends GetxController{
 
   var currentStockMedicineListResponse = CurrentStockMedicineListResponse().obs;
   var isStockSubmitted = false.obs;
+
+  final List<ItemDispatchModel> tallyitemList = <ItemDispatchModel>[].obs;
+  final List<ItemDispatchModel> tallyitemListDateBased = <ItemDispatchModel>[].obs;
+  List<ItemDispatchModel> tallyitemListDistincByMedName = <ItemDispatchModel>[].obs;
+  List<ItemDispatchModel> tallyListDistincByDate = <ItemDispatchModel>[].obs;
+  List<ItemDispatchModel> tallyListDistincByPserial = <ItemDispatchModel>[].obs;
+  var seen = Set<String>();
+
   @override
   Future<void> onInit() async {
     //Get.find<AuthService>().setIsCurrentStockSubmitted(true);
@@ -95,7 +103,7 @@ class after_login_controller extends GetxController{
     //AuthRepository().allProd();
 
     reloadData();
-
+    getItemDispatch();
 
     //get_current_stock();
 
@@ -107,14 +115,100 @@ class after_login_controller extends GetxController{
     //WidgetsBinding.instance.removeObserver(this);
   }
 
-  // @override
-  // Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-  //   super.didChangeAppLifecycleState(state);
-  //   print('state = $state');
-  //
-  // }
 
 
+
+  getItemDispatch() async {
+
+
+    tallyitemList.clear();
+    tallyitemListDateBased.clear();
+    tallyitemListDistincByMedName.clear();
+    tallyListDistincByDate.clear();
+    tallyListDistincByPserial.clear();
+
+    var localdataSize = await dbHelper.get_tem_dispatch();
+    print('localdataitemSize: ${localdataSize.length}');
+
+    for (var i = 0; i < localdataSize.length; i++) {
+      Map<String, dynamic> map = localdataSize[i];
+      var item_dispatch_quantity = map[DatabaseHelper.item_dispatch_quantity];
+      print("item_dispatch_qty: "+item_dispatch_quantity.toString());
+
+      tallyitemList.add(ItemDispatchModel(map[DatabaseHelper.date],map[DatabaseHelper.item_dispatch_medicine_name],
+          map[DatabaseHelper.item_dispatch_medicine_id],map[DatabaseHelper.item_dispatch_serial],item_dispatch_quantity));
+
+    }
+
+    print("tallyitemList lenth: "+tallyitemList.length.toString());
+    //print("date: "+date.toString());
+
+    tallyitemList.forEach((element) {
+      //if(element.dispatch_date == date){
+        tallyitemListDateBased.add(element);
+        tallyitemListDistincByMedName.add(element);
+        tallyListDistincByDate.add(element);
+        tallyListDistincByPserial.add(element);
+     // }
+    });
+
+    print('tallyitemListDateBased: '+tallyitemListDateBased.length.toString());
+
+
+    List<ItemDispatchModel> uniquelist = tallyitemListDateBased.where((student) => seen.add(student.medicine_id.toString())).toList();
+    print('uniquelist: '+uniquelist.length.toString());
+
+    final ids = Set();
+    tallyitemListDistincByMedName.retainWhere((x) => ids.add(x.medicine_id));
+    tallyListDistincByDate.retainWhere((x) => ids.add(x.dispatch_date));
+    tallyListDistincByPserial.retainWhere((x) => ids.add(x.patient_serial));
+    print('tallyitemListDistincByMedName: '+tallyitemListDistincByMedName.length.toString());
+    print('tallyListDistincByDate: '+tallyListDistincByDate.length.toString());
+    print('tallyListDistincByPserial: '+tallyListDistincByPserial.length.toString());
+
+
+
+
+
+    List<SubmitDispatchModelTally> medicinemain = [];
+    // String datedata = '';
+    //String pSerial = '';
+
+    tallyListDistincByDate.forEach((elementDate) {
+      String datedata = elementDate.dispatch_date;
+      tallyListDistincByPserial.forEach((elementPs) {
+        List<MedicineModel> medicineDetails = [];
+        String pSerial = elementPs.patient_serial.toString();
+        print('datedata: '+datedata);
+        print('pSerial: '+pSerial);
+        tallyitemList.forEach((elementItem) {
+
+          if(
+          elementDate.dispatch_date == elementItem.dispatch_date &&
+              elementPs.patient_serial == elementItem.patient_serial){
+
+            print('mediname: '+elementItem.medicine_name);
+            MedicineModel medicineModel = MedicineModel(int.parse(elementItem.medicine_id.toString()),int.parse(elementItem.item_dispatch_quantity.toString()));
+            medicineDetails.add(medicineModel);
+          }
+        });
+        SubmitDispatchModelTally submitDispatchModel = SubmitDispatchModelTally( datedata,pSerial, medicineDetails);
+        medicinemain.add(submitDispatchModel);
+      });
+
+    });
+
+
+
+    //String jsonTutorial = jsonEncode(submitDispatchModel);
+    String jsonTutorial = jsonEncode(medicinemain);
+    print('postjson: '+jsonTutorial.toString());
+
+    // tallyitemListDistincByMedName.addAll(uniquelist);
+    //
+    // print('distinclist: '+tallyitemListDistincByMedName.length.toString());
+
+  }
   @override
   Future<void> onReady() async {
     // TODO: implement onReady
@@ -839,3 +933,22 @@ class SubmitDispatchModel{
 
 }
 
+class SubmitDispatchModelTally{
+
+  var dispatch_date = "";
+  var patient_serial = "";
+  //var medicineDetails = "";
+  List<MedicineModel> medicineDetails = [];
+
+  SubmitDispatchModelTally(
+      this.dispatch_date,this.patient_serial, this.medicineDetails);
+
+  Map toJson() => {
+
+    'dispatch_date': dispatch_date,
+    'patient_serial': patient_serial,
+    'dispatchDetails': medicineDetails,
+
+  };
+
+}

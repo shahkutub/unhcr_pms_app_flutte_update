@@ -131,18 +131,6 @@ class ConsumptionTallyController extends GetxController{
 
 
 
-    // Map<String, dynamic> row = {
-    //
-    //   DatabaseHelper.item_dispatch_serial: 01,
-    //   DatabaseHelper.date: formattedDate,
-    //   DatabaseHelper.item_dispatch_medicine_name: 'napa',
-    //   DatabaseHelper.item_dispatch_medicine_id: 0111,
-    //   DatabaseHelper.item_dispatch_quantity: 10
-    // };
-    // await dbHelper.insert_item_dispatch(row);
-    // var localdataSize = await dbHelper.get_tem_dispatch();
-    // print('localdataitemSize: ${localdataSize.length}');
-
     tallyitemList.clear();
     tallyitemListDateBased.clear();
     tallyitemListDistincByMedName.clear();
