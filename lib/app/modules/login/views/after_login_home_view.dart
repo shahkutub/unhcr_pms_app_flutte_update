@@ -113,8 +113,8 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                   if(index == 2){
 
                     controller.get_internal_request_list( context);
-                    //controller.get_stock_receive_submitdata(context);
-                    controller.get_dispatch_submit_list(context);
+                    controller.getTally(context);
+                    //controller.get_dispatch_submit_list(context);
 
                   }
                   if(index == 3){
@@ -228,15 +228,17 @@ class AfterLoginHomeView extends GetView<after_login_controller> {
                                 //   child:
                                 GestureDetector(
                                     onTap: () {
+                                      Get.toNamed(Routes.ITEM_DISPATCH)!.whenComplete(() => controller.reloadData());
+
                                       // Navigator.of(context).push(new MaterialPageRoute(builder: (context) =>
                                       //     ItemDispatchView())).whenComplete(controller.reloadData());
-                                      controller.isStockSubmitted.value = Get.find<AuthService>().isStockSubmitted.value;
 
-                                      if(controller.isStockSubmitted.value){
-                                        Get.toNamed(Routes.ITEM_DISPATCH)!.whenComplete(() => controller.reloadData());
-                                      }else{
-                                        Utils.showToast('Opening stock is not submitted');
-                                      }
+                                      // controller.isStockSubmitted.value = Get.find<AuthService>().isStockSubmitted.value;
+                                      // if(controller.isStockSubmitted.value){
+                                      //   Get.toNamed(Routes.ITEM_DISPATCH)!.whenComplete(() => controller.reloadData());
+                                      // }else{
+                                      //   Utils.showToast('Opening stock is not submitted');
+                                      // }
 
                                     },
                                     child: Card(

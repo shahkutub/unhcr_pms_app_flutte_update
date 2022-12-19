@@ -240,6 +240,11 @@ class DatabaseHelper {
     return await db.delete(table_patient_serial);
   }
 
+Future<int> deletePserialAll() async {
+    Database db = await instance.database;
+    return await db.delete(table_patient_serial_all);
+  }
+
 
 
 

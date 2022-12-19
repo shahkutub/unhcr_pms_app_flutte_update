@@ -137,4 +137,57 @@ class Utils {
   }
 
 
+  static showCustomDialogReceiveDetail(BuildContext context, ) {
+    showGeneralDialog(
+      context: context,
+      barrierLabel: "Barrier",
+      barrierDismissible: true,
+      barrierColor: Colors.white,
+      transitionDuration: Duration(milliseconds: 100),
+      pageBuilder: (_, __, ___) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: PreferredSize(
+            preferredSize: Size(60,55),
+            child:  AppBar(
+              backgroundColor: Colors.blueAccent,
+              elevation: 0,
+              centerTitle: true,
+              //title: Text('Item Dispatch')
+
+              title: Stack(alignment: Alignment.center,
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    //child: Text(AppConstant.pageName),),
+                    child: Text('Stock Receive'),),
+
+                ],
+              ),
+
+            ),
+          ),
+
+        );
+      },
+      transitionBuilder: (_, anim, __, child) {
+        Tween<Offset> tween;
+        if (anim.status == AnimationStatus.reverse) {
+          tween = Tween(begin: Offset(-1, 0), end: Offset.zero);
+        } else {
+          tween = Tween(begin: Offset(1, 0), end: Offset.zero);
+        }
+
+        return SlideTransition(
+          position: tween.animate(anim),
+          child: FadeTransition(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+
 }

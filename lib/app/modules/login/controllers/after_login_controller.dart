@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:brac_arna/app/database_helper/offline_database_helper.dart';
-import 'package:brac_arna/app/models/drug_list_response.dart';
 import 'package:brac_arna/app/models/user_model.dart';
 import 'package:brac_arna/app/repositories/auth_repository.dart';
-import 'package:brac_arna/app/repositories/information_repository.dart';
 import 'package:brac_arna/app/routes/app_pages.dart';
 import 'package:brac_arna/app/utils.dart';
 import 'package:brac_arna/common/ui.dart';
@@ -103,7 +101,8 @@ class after_login_controller extends GetxController{
     //AuthRepository().allProd();
 
     reloadData();
-    getItemDispatch();
+
+
 
     //get_current_stock();
 
@@ -118,7 +117,7 @@ class after_login_controller extends GetxController{
 
 
 
-  getItemDispatch() async {
+  getTally(BuildContext context) async {
 
 
     tallyitemList.clear();
@@ -203,7 +202,7 @@ class after_login_controller extends GetxController{
     //String jsonTutorial = jsonEncode(submitDispatchModel);
     String jsonTutorial = jsonEncode(medicinemain);
     print('postjson: '+jsonTutorial.toString());
-
+    postTally(jsonTutorial,context);
     // tallyitemListDistincByMedName.addAll(uniquelist);
     //
     // print('distinclist: '+tallyitemListDistincByMedName.length.toString());
@@ -459,6 +458,46 @@ class after_login_controller extends GetxController{
 
     return response;
   }
+
+   postTally (String data,BuildContext context) async {
+
+    Ui.showLoaderDialog(context);
+    // String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
+    var headers = {'Authorization': 'Bearer $token'};
+    //String? token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdW5oY3J0ZXN0YXBpLmxhMzYwaG9zdC5jb21cL2FwaVwvbG9naW4iLCJpYXQiOjE2NjY2Nzg2NzUsImV4cCI6MTY2NjY4MjI3NSwibmJmIjoxNjY2Njc4Njc1LCJqdGkiOiIyeWdlZ2h3eDN4em15SDVrIiwic3ViIjoxNiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FVCE70a3yE23PwRnmANVMdBUKzexcSuhKfRhoSdlkWg';
+    print("token: ${token}");
+
+    var response = await http.post(Uri.parse(ApiClient.submit_tally),
+        headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token'},
+        body: data
+    );
+
+    print("statusCode: ${response.statusCode}");
+    if(response.statusCode == 500){
+      //logout();
+      Get.offAllNamed(Routes.LOGIN);
+    }
+    print("${response.body}");
+
+    var jsoObj = jsonDecode(response.body);
+
+    var status = jsoObj['status'];
+    print("status:${status}");
+    if(status == 'success'){
+      Utils.showToast('Data sync successful');
+       dbHelper.deleteALlDrugs();
+       dbHelper.deleteALlDispatch();
+       dbHelper.deletePserialAll();
+       reloadData();
+      //get_current_stock();
+    }
+
+    Navigator.of(context).pop();
+
+    return response;
+  }
+
 
   Future<dynamic> postInternalRequest(String data,BuildContext context) async {
 
@@ -802,6 +841,7 @@ class after_login_controller extends GetxController{
   reloadData() async {
     isStockSubmitted.value = Get.find<AuthService>().isStockSubmitted.value;
     totalConsumed.value = 0;
+
     get_drug_list();
     var localdataSize = await dbHelper.getAllPatientSerialCountAll();
     totalPatientCount.value = localdataSize.length;

@@ -36,6 +36,7 @@ dependencies:
   getwidget: ^2.0.4
   connectivity_plus: ^2.3.0
   fluttertoast: ^8.1.1
+  printing: ^5.9.0
 
   flutter:
     sdk: flutter
