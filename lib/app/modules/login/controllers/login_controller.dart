@@ -12,15 +12,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
 import '../../../database_helper/offline_database_helper.dart';
+import '../../../models/LoginResponseDept.dart';
 import '../../../services/auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class LoginController extends GetxController {
   //TODO: Implement LoginController
-
-  final Rx<UserModel> userData = UserModel().obs;
-  Rx<TextEditingController> userNameController = TextEditingController().obs;
-  Rx<TextEditingController> passwordController = TextEditingController().obs;
+  var passwordVisible = true.obs;
+  var userData = UserModel().obs;
+  var userNameController = TextEditingController().obs;
+  var passwordController = TextEditingController().obs;
 
   final loading = false.obs;
   var latitude = 'Getting Latitude..'.obs;
@@ -32,9 +33,14 @@ class LoginController extends GetxController {
   final dbHelper = DatabaseHelper.instance;
   var isNetConnected = false.obs;
 
+   var loginResponse = LoginResponseDept();
   @override
   void onInit() {
     loginFormKey = GlobalKey<FormState>();
+
+    //userNameController.value.text = 'gkf1dept1@unhcr.org';
+    // userNameController.value.text = Get.find<AuthService>().currentUser.value.data!.users!.email!.toString();;
+    // passwordController.value.text = 'Pms@1234';
     //getLocation();
     //insertLocalDB();
     super.onInit();
@@ -49,7 +55,7 @@ class LoginController extends GetxController {
 
 
 
-  void login() async {
+  void login(BuildContext context) async {
 
     //isNetConnected.value = Utils.checkConnection();
 
@@ -66,12 +72,26 @@ class LoginController extends GetxController {
 
 
       AuthRepository().userLogin(userData.value).then((response) {
-        // print('logindata'+response);
+
+        try{
+          print('logindata'+response!.toString());
+        }catch(e){
+          Utils.showToastAlert('Login Failed');
+          Navigator.pop(context);
+        }
 
 
-        if(response != null){
-          Get.offAllNamed(Routes.AFTER_LOGIN);
-          Get.showSnackbar(Ui.SuccessSnackBar(message: 'Login Success'.tr, title: 'Success'.tr));
+        loginResponse = response!;
+
+        if(loginResponse != null){
+          if(loginResponse.status == 'error'){
+            Utils.showToastAlert('Login Failed');
+
+          }else{
+            Get.offAllNamed(Routes.AFTER_LOGIN);
+            Get.showSnackbar(Ui.SuccessSnackBar(message: 'Login Success'.tr, title: 'Success'.tr));
+
+          }
 
 
           // if(response == 500){

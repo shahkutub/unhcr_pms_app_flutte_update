@@ -13,17 +13,17 @@ import '../models/LoginResponseDept.dart';
 
 class AuthRepository {
   ///User Login api call
-  Future userLogin(UserModel userData) async {
-    Map userData = {
-      //'email': userData.userName,
-      'email': "gkf1dept1@unhcr.org",
-      //'password': userData.password,
-      'password': "Pms@1234",
+  Future<LoginResponseDept?> userLogin(UserModel userData) async {
+    Map data = {
+      'email': userData.userName,
+      //'email': "gkf1dept1@unhcr.org",
+      'password': userData.password,
+      //'password': "Pms@1234",
     };
     APIManager _manager = APIManager();
     var response;
     try {
-      response = await _manager.postAPICall(ApiClient.login, userData);
+      response = await _manager.postAPICall(ApiClient.login, data);
 
 
       print('response: ${response}');
@@ -40,11 +40,11 @@ class AuthRepository {
         Get.find<AuthService>().setUser(LoginResponseDept.fromJson(response));
         return LoginResponseDept.fromJson(response);
       } else {
-        return 'Unauthorised';
+        return null;
       }
     } catch (e) {
       print('error:$e');
-      return 'Unauthorised';
+      return null;
     }
   }
 

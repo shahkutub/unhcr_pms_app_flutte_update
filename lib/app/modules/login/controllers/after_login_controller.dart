@@ -72,6 +72,7 @@ class after_login_controller extends GetxController{
   List<ItemDispatchModel> tallyListDistincByPserial = <ItemDispatchModel>[].obs;
   var seen = Set<String>();
 
+
   @override
   Future<void> onInit() async {
     //Get.find<AuthService>().setIsCurrentStockSubmitted(true);
@@ -202,7 +203,10 @@ class after_login_controller extends GetxController{
     //String jsonTutorial = jsonEncode(submitDispatchModel);
     String jsonTutorial = jsonEncode(medicinemain);
     print('postjson: '+jsonTutorial.toString());
-    postTally(jsonTutorial,context);
+    if(medicinemain.length>0){
+      postTally(jsonTutorial,context);
+    }
+
     // tallyitemListDistincByMedName.addAll(uniquelist);
     //
     // print('distinclist: '+tallyitemListDistincByMedName.length.toString());
@@ -637,6 +641,8 @@ class after_login_controller extends GetxController{
       Get.back();
       Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
     }else{
+      Ui.showLoaderDialog(Get.context as BuildContext);
+
       String? token = Get.find<AuthService>().currentUser.value.data!.access_token;
       var headers = {'Authorization': 'Bearer $token'};
       var responseJson;
@@ -644,6 +650,7 @@ class after_login_controller extends GetxController{
         final response = await http.get(Uri.parse(ApiClient.drug_list),headers: headers);
         print('statuscode: '+response.statusCode.toString());
         print('drug_list: '+response.body.toString());
+        Navigator.of(Get.context as BuildContext).pop();
         if(response.statusCode == 500){
           Get.showSnackbar(Ui.defaultSnackBar(message: 'Authentication field'));
           Get.toNamed(Routes.LOGIN);

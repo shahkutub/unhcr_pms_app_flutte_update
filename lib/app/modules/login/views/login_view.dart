@@ -137,35 +137,54 @@ class LoginView extends GetView<LoginController> {
                                 padding: EdgeInsets.all(5.0),
                                 margin: EdgeInsets.all(5.0),
                                 // decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
-                                child: TextFormField(
-                                  // controller: controller.userNameController.value,
-                                  initialValue: "gkf1dept1@unhcr.org",
-                                  onChanged: (input) {
-                                    controller.userData.value.userName = input;
-                                  },
-                                  validator: (input) {
-                                    return input!.isEmpty ? 'Please provide your username.' : null;
-                                  },
-                                  style: TextStyle(fontSize: 15),
-                                  decoration: InputDecoration(
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
-                                    ),
+                                child: Obx(()=>
+                                    TextFormField(
+                                      keyboardType: TextInputType.emailAddress,
+                                      controller: controller.userNameController.value,
+                                      //initialValue: "gkf1dept1@unhcr.org",
+                                      onChanged: (input) {
+                                        controller.userData.value.userName = input;
+                                      },
+                                      validator: (input) {
+                                        return input!.isEmpty ? 'Please provide your email.' : null;
+                                      },
+                                      style: TextStyle(fontSize: 15),
+                                      decoration: InputDecoration(
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
+                                        ),
 
-                                    hintText: "User Name",
-                                    hintStyle: TextStyle(color: Colors.grey[500]),
-                                  ),
-                                ),
+                                        labelText: 'Email',
+                                        hintText: "Email",
+                                        hintStyle: TextStyle(color: Colors.grey[500]),
+                                      ),
+                                    ),
+                                )
+
+
+                                // TextFormField(
+                                //   keyboardType: TextInputType.emailAddress,
+                                //   autofocus: false,
+                                //   decoration: InputDecoration(
+                                //     hintText: 'Email',
+                                //     contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                                //     border:
+                                //     OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                                //   ),
+                                //
+                                // ),
+
                               ),
 
                               Container(
                                 padding: EdgeInsets.all(5.0),
-                                child: TextFormField(
-                                  // controller: controller.passwordController.value,
-                                  initialValue: "Pms@1234",
+                                child: Obx(()=> TextFormField(
+                                  keyboardType: TextInputType.text,
+                                  controller: controller.passwordController.value,
+
                                   onChanged: (input) {
                                     controller.userData.value.password = input;
                                   },
@@ -173,7 +192,7 @@ class LoginView extends GetView<LoginController> {
                                     return input!.isEmpty ? 'Please provide your password.' : null;
                                   },
                                   style: TextStyle(fontSize: 15),
-                                  obscureText: true,
+                                  obscureText: controller.passwordVisible.value,
                                   decoration: InputDecoration(
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
@@ -181,10 +200,33 @@ class LoginView extends GetView<LoginController> {
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(color: Color(0xff1A62AE), width: 1.0),
                                     ),
+                                    labelText: 'Password',
                                     hintText: "Password",
                                     hintStyle: TextStyle(color: Colors.grey[500]),
+
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        controller.passwordVisible.value
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Theme.of(context).primaryColorDark,
+                                      ),
+                                      onPressed: () {
+                                        if(controller.passwordVisible.value){
+                                          controller.passwordVisible.value = false;
+                                        }else{
+                                          controller.passwordVisible.value = true;
+                                        }
+
+                                      },
+                                    ),
+
                                   ),
                                 ),
+                                )
+
+
                               ),
 
                               SizedBox(
@@ -198,7 +240,11 @@ class LoginView extends GetView<LoginController> {
                                   // Get.offAllNamed(Routes.AFTER_LOGIN);
 
                                   if (controller.loginFormKey.currentState!.validate()) {
-                                    controller.login();
+                                    controller.userData.value.userName = controller.userNameController.value.text;
+                                    controller.userData.value.password = controller.passwordController.value.text;
+
+
+                                    controller.login(context);
                                   }
                                 },
                                 child: Container(
