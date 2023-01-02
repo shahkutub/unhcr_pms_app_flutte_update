@@ -366,6 +366,8 @@ class StockReceiveController extends GetxController{
         Map<String, dynamic> row = {
           DatabaseHelper.drug_name: ''+element2.drug_name.toString(),
           DatabaseHelper.drug_id: element2.drug_id,
+          DatabaseHelper.drug_batch_no: element2.batch_no,
+          //DatabaseHelper.drug_batch_no: element2.batch_no,
           //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
           //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
           //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
@@ -379,7 +381,7 @@ class StockReceiveController extends GetxController{
           DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
           DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
 
-          DatabaseHelper.drug_batch_no: element2.batch_no,
+
           DatabaseHelper.drug_receive_type: '1',
           DatabaseHelper.stockout_master_id: stockout_master_id,
           //DatabaseHelper.drug_stock: element.generic_id,
