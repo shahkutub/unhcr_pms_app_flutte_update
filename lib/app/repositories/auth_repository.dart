@@ -2,9 +2,6 @@ import 'dart:convert';
 
 import 'package:brac_arna/app/api_providers/api_manager.dart';
 import 'package:brac_arna/app/api_providers/api_url.dart';
-import 'package:brac_arna/app/models/AllProdResponse.dart';
-import 'package:brac_arna/app/models/LoginDataResponse.dart';
-import 'package:brac_arna/app/models/LoginResponse.dart';
 import 'package:brac_arna/app/models/user_model.dart';
 import 'package:brac_arna/app/services/auth_service.dart';
 import 'package:get/get.dart';

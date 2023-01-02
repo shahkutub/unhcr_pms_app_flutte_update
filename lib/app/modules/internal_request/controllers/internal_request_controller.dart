@@ -372,7 +372,7 @@ class InternalRequestController extends GetxController{
 
     if(await (Utils.checkConnection() as Future<bool>)){
       debugPrint('No internet connection');
-      Get.showSnackbar(Ui.internetCheckSnackBar(message: 'Internet connection found, internal request is submitting to online DB '));
+      //Get.showSnackbar(Ui.internetCheckSnackBar(message: 'Internet connection found, internal request is submitting to online DB '));
 
       itemList.forEach((element) {
 
@@ -488,7 +488,10 @@ class InternalRequestController extends GetxController{
     var status = jsoObj['status'];
     print("status:${status}");
     if(status == 'success'){
-      Get.back();
+      //Get.toNamed(Routes.INTERNAL_REQUEST);
+      //Get.back();
+      Navigator.pop(context);
+      //Navigator.of(context).pop();
       Utils.showToast('Internal request upload successful');
      // dbHelper.delete_internal_request();
       //Get.offAllNamed(Routes.AFTER_LOGIN);

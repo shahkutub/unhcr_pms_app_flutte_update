@@ -20,9 +20,9 @@ class Utils {
 
   static showToast(String s) {
     Get.snackbar(
-        "!",
+        "",
         ""+s,
-        icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
+        icon: Icon(Icons.check, color: Colors.white),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white

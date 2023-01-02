@@ -38,9 +38,9 @@ class LoginController extends GetxController {
   void onInit() {
     loginFormKey = GlobalKey<FormState>();
 
-    //userNameController.value.text = 'gkf1dept1@unhcr.org';
+    userNameController.value.text = 'gkf1dept1@unhcr.org';
     // userNameController.value.text = Get.find<AuthService>().currentUser.value.data!.users!.email!.toString();;
-    // passwordController.value.text = 'Pms@1234';
+    passwordController.value.text = 'Pms@1234';
     //getLocation();
     //insertLocalDB();
     super.onInit();

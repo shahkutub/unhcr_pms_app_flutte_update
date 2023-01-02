@@ -1,4 +1,3 @@
-import 'package:brac_arna/app/models/ApiInfo.dart';
 
 class LoginResponse {
     Data? data;

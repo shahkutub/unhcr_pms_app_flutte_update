@@ -11,6 +11,7 @@ import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:getwidget/components/search_bar/gf_search_bar.dart';
 import 'package:intl/intl.dart';
 
+import '../../../routes/app_pages.dart';
 import '../../../utils.dart';
 import '../controllers/internal_request_controller.dart';
 
@@ -210,7 +211,8 @@ class InternalRequestView extends GetView<InternalRequestController>{
 
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            showCustomDialog( context);
+            Get.toNamed(Routes.INTERNAL_REQUEST_SUBMIT);
+            //showCustomDialog( context);
           },
           label: Text('Add'),
           //icon: Icon(Icons.thumb_up),
