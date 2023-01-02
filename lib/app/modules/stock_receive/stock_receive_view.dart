@@ -237,8 +237,31 @@ class StockReceiveView extends GetView<StockReceiveController>{
                       ),
                     );
                   }),)
-                  :Container(height:300,alignment:Alignment.center,child: CircularProgressIndicator(),)
-                  :Container(height:300,alignment:Alignment.center,child: CircularProgressIndicator(),)
+
+                  : Container(
+                  height:300,alignment:Alignment.center,child:
+              Column(
+                children: [
+                  Visibility(
+                      visible: controller.showCircle.value,
+                      child: CircularProgressIndicator()
+                  ),
+
+                ],
+              )
+              )
+                  : Container(
+                  height:300,alignment:Alignment.center,child:
+              Column(
+                children: [
+                  Visibility(
+                      visible: controller.showCircle.value,
+                      child: CircularProgressIndicator()
+                  ),
+
+                ],
+              )
+              )
           )
           ),
 
@@ -672,8 +695,31 @@ class StockReceiveView extends GetView<StockReceiveController>{
                     )
                   );
                 }),)
-                :Container(height:300,alignment:Alignment.center,child: CircularProgressIndicator(),)
-                :Container(height:300,alignment:Alignment.center,child: CircularProgressIndicator(),)
+                :
+            Container(
+                height:300,alignment:Alignment.center,child:
+            Column(
+              children: [
+                Visibility(
+                  visible: controller.showCircle.value,
+                    child: CircularProgressIndicator()
+                ),
+
+              ],
+            )
+            )
+                :Container(
+                height:300,alignment:Alignment.center,child:
+            Column(
+              children: [
+                Visibility(
+                    visible: controller.showCircle.value,
+                    child: CircularProgressIndicator()
+                ),
+
+              ],
+            )
+            )
             )
           ),
 

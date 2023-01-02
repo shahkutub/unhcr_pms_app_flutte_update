@@ -30,6 +30,7 @@ import '../login/controllers/after_login_controller.dart';
 class StockReceiveController extends GetxController{
   var isPending = true.obs;
   var isReceive = false.obs;
+  var progressVisibility = false.obs;
   static StockReceiveController get i => Get.find();
 
   var button = 1.obs;
@@ -41,7 +42,7 @@ class StockReceiveController extends GetxController{
   var stockReceiveResponse = StockReceiveResponse().obs;
   final stockReceiveMedicineResponse = StockReceiveMedicineListResponse().obs;
   final stockReceiveDetailsResponse = StockReceiveDetailsResponse().obs;
-  var showCircle = false.obs;
+  var showCircle = true.obs;
   final List<MediReceiveDetailsModel> stockReceiveSubmitList = <MediReceiveDetailsModel>[];
 
   @override
@@ -56,6 +57,7 @@ class StockReceiveController extends GetxController{
   getStockPending() async {
     //print("Calling API: $url");
 
+    showCircle.value = true;
     if(!await (Utils.checkConnection() as Future<bool>)){
       debugPrint('No internet connection');
       Get.back();
@@ -84,7 +86,9 @@ class StockReceiveController extends GetxController{
           stockReceiveResponse.value = StockReceiveResponse.fromJson(jsonResponse);
           if(stockReceiveResponse.value.distribution_list!.length == 0){
             //Get.back();
+            showCircle.value = false;
             Get.showSnackbar(Ui.defaultSnackBar(message: 'No data found'));
+
           }
 
           //return new StockReceiveResponse.fromJson(jsonResponse);
@@ -97,11 +101,12 @@ class StockReceiveController extends GetxController{
       }
       return responseJson;
     }
-
+    showCircle.value = false;
   }
   getStockReceived() async {
     //print("Calling API: $url");
 
+    showCircle.value = true;
     if(!await (Utils.checkConnection() as Future<bool>)){
       debugPrint('No internet connection');
       Get.back();
@@ -143,12 +148,12 @@ class StockReceiveController extends GetxController{
       }
       return responseJson;
     }
-
+    showCircle.value = false;
   }
 
   get_stock_Receive(String pendingORreceive) async {
     //Get.focusScope!.unfocus();
-
+    showCircle.value = true;
     //Ui.customLoaderDialogWithMessage();
     if(!await (Utils.checkConnection() as Future<bool>)){
       debugPrint('No internet connection');
@@ -162,7 +167,7 @@ class StockReceiveController extends GetxController{
           showCircle.value = false;
           print(druglistResonse.value.dispatch_items);
 
-          showCircle.value = false;
+         // showCircle.value = false;
         }else{
           Get.toNamed(Routes.LOGIN);
         }
@@ -186,7 +191,6 @@ class StockReceiveController extends GetxController{
         if(stockReceiveMedicineResponse.value != null){
           showCircle.value = false;
 
-          showCircle.value = false;
         }else{
           Get.toNamed(Routes.LOGIN);
         }
