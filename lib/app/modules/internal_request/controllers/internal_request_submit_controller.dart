@@ -94,7 +94,7 @@ class InternalRequestSubmitController extends GetxController{
     //Utils.currentDateBengali();
 
 
-    // getPSerialNo();
+     //getPSerialNo();
      get_drug_list();
     get_internal_request_list();
 
@@ -157,8 +157,10 @@ class InternalRequestSubmitController extends GetxController{
     Map<String, dynamic> row = {
       DatabaseHelper.internal_req_serial: serial,
       DatabaseHelper.internal_req_date: data.date,
+      DatabaseHelper.internal_req_receive_status: '0',
       DatabaseHelper.internal_req_med_name: data.medicine_name,
       DatabaseHelper.internal_req_med_id: data.medicine_id,
+      DatabaseHelper.drug_batch_no: data.batch_id,
       DatabaseHelper.internal_req_qty: data.medicine_qty,
       DatabaseHelper.internal_req_remark: data.remark
     };
@@ -166,7 +168,9 @@ class InternalRequestSubmitController extends GetxController{
     var localdataSize = await dbHelper.get_internal_request();
     print('internal_requestSize: ${localdataSize.length}');
 
-    get_internal_request_list();
+    //get_internal_request_list();
+
+
   }
 
   void updateDrugAvailableQty(int id,int qty ,int qtyConsume) async {
@@ -318,9 +322,10 @@ class InternalRequestSubmitController extends GetxController{
       var madeid = map[DatabaseHelper.internal_req_med_id];
       var requestQty = map[DatabaseHelper.internal_req_qty];
       var remark = map[DatabaseHelper.internal_req_remark];
+      var batchNo = map[DatabaseHelper.drug_batch_no];
       var date = map[DatabaseHelper.internal_req_date];
       var serial = map[DatabaseHelper.internal_req_serial];
-      var drug_info = InternalItemModel(madeid,requestQty,remark,date,serial);
+      var drug_info = InternalItemModel(madeid,requestQty,remark,batchNo,date,serial,'');
 
       internalReqList.add(drug_info);
       internalReqListDistinck.add(drug_info);
@@ -370,8 +375,9 @@ class InternalRequestSubmitController extends GetxController{
         var drug_info = InternalItemModel(element.medicine_id,
             element.medicine_qty,
             element.remark,
+            element.batch_id,
             formattedDate,
-            serial);
+            serial,'');
         internalRequestSubmitList.add(drug_info);
 
       });
@@ -390,50 +396,51 @@ class InternalRequestSubmitController extends GetxController{
 
 
        //stock insert/update
-        String existDrugName = '';
-        int availStock = 0;
-        try{
-          var data =  await dbHelper.querySingleDrug(element.medicine_id.toString(),element.batch_id.toString());
-          Map<String, dynamic> map = data[0];
-          availStock = int.parse(map[DatabaseHelper.drug_available_stock]);
-          existDrugName = map[DatabaseHelper.drug_stock_receive];
-          print('availStock: '+availStock.toString());
-        }catch (e){
 
-        }
-
-        String? recqtyStr = element.medicine_qty!.toString();
-        int receQuantity = int.parse(recqtyStr!);
-        availStock = availStock+receQuantity;
-
-        Map<String, dynamic> row = {
-          DatabaseHelper.drug_name: ''+element.medicine_name.toString(),
-          DatabaseHelper.drug_id: element.medicine_id.toString(),
-          //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
-          //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
-          //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
-          //DatabaseHelper.drug_generic_id: element.generic_id,
-
-          //DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
-          DatabaseHelper.drug_available_stock: availStock.toString(),
-          //DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
-          DatabaseHelper.drug_stock_receive: availStock.toString(),
-          DatabaseHelper.drug_stock_consume: '0',
-          //DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
-          //DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
-
-          DatabaseHelper.drug_batch_no: element.batch_id,
-          DatabaseHelper.drug_receive_type: '2',
-          //DatabaseHelper.stockout_master_id: stockout_master_id,
-          //DatabaseHelper.drug_stock: element.generic_id,
-        };
-
-
-        if(existDrugName.isNotEmpty){
-          await dbHelper.updateDrug(row);
-        }else{
-          await dbHelper.insert_drug(row);
-        }
+       //  String existDrugName = '';
+       //  int availStock = 0;
+       //  try{
+       //    var data =  await dbHelper.querySingleDrug(element.medicine_id.toString(),element.batch_id.toString());
+       //    Map<String, dynamic> map = data[0];
+       //    availStock = int.parse(map[DatabaseHelper.drug_available_stock]);
+       //    existDrugName = map[DatabaseHelper.drug_stock_receive];
+       //    print('availStock: '+availStock.toString());
+       //  }catch (e){
+       //
+       //  }
+       //
+       //  String? recqtyStr = element.medicine_qty!.toString();
+       //  int receQuantity = int.parse(recqtyStr!);
+       //  availStock = availStock+receQuantity;
+       //
+       //  Map<String, dynamic> row = {
+       //    DatabaseHelper.drug_name: ''+element.medicine_name.toString(),
+       //    DatabaseHelper.drug_id: element.medicine_id.toString(),
+       //    //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
+       //    //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
+       //    //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
+       //    //DatabaseHelper.drug_generic_id: element.generic_id,
+       //
+       //    //DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+       //    DatabaseHelper.drug_available_stock: availStock.toString(),
+       //    //DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+       //    DatabaseHelper.drug_stock_receive: availStock.toString(),
+       //    DatabaseHelper.drug_stock_consume: '0',
+       //    //DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
+       //    //DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
+       //
+       //    DatabaseHelper.drug_batch_no: element.batch_id,
+       //    DatabaseHelper.drug_receive_type: '2',
+       //    //DatabaseHelper.stockout_master_id: stockout_master_id,
+       //    //DatabaseHelper.drug_stock: element.generic_id,
+       //  };
+       //
+       //
+       //  if(existDrugName.isNotEmpty){
+       //    await dbHelper.updateDrug(row);
+       //  }else{
+       //    await dbHelper.insert_drug(row);
+       //  }
 
 
 

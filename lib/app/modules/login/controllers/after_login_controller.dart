@@ -204,7 +204,16 @@ class after_login_controller extends GetxController{
     String jsonTutorial = jsonEncode(medicinemain);
     print('postjson: '+jsonTutorial.toString());
     if(medicinemain.length>0){
-      postTally(jsonTutorial,context);
+      if(internalRequestSubmitList.length>0){
+        if(!await (Utils.checkConnection() as Future<bool>)){
+          debugPrint('No internet connection');
+          Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
+        }else{
+          postTally(jsonTutorial,context);
+        }
+
+      }
+
     }
 
     // tallyitemListDistincByMedName.addAll(uniquelist);
@@ -738,8 +747,9 @@ class after_login_controller extends GetxController{
       var drug_info = InternalItemModel(map[DatabaseHelper.internal_req_med_id],
           map[DatabaseHelper.internal_req_qty],
           map[DatabaseHelper.internal_req_remark],
+          map[DatabaseHelper.drug_batch_no],
           map[DatabaseHelper.internal_req_date],
-          map[DatabaseHelper.internal_req_serial]);
+          map[DatabaseHelper.internal_req_serial],'');
       internalRequestSubmitList.add(drug_info);
     }
     print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
@@ -749,7 +759,13 @@ class after_login_controller extends GetxController{
    print('internalRequestjson: '+jsonData.toString());
 
    if(internalRequestSubmitList.length>0){
-     postInternalRequest( jsonData,context);
+     if(!await (Utils.checkConnection() as Future<bool>)){
+       debugPrint('No internet connection');
+       Get.showSnackbar(Ui.internetCheckSnackBar(message: 'No internet connection'));
+     }else{
+       postInternalRequest( jsonData,context);
+     }
+
    }
 
 
@@ -914,15 +930,19 @@ class InternalItemModel {
   var item_id = 0;
   var req_qty = 0;
   var remark = '';
+  var bachNo = '';
   var date = '';
   var serial = '';
-  InternalItemModel(this.item_id, this.req_qty,this.remark,this.date,this.serial,);
+  var status = '';
+  InternalItemModel(this.item_id, this.req_qty,this.remark,this.bachNo,this.date,this.serial,this.status,);
   Map toJson() => {
     'item_id': item_id,
     'req_qty': req_qty,
     'remark': remark,
+    'bachNo': bachNo,
     'date': date,
     'serial': serial,
+    //'status': status,
   };
 
 }

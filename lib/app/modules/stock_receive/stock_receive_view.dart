@@ -49,7 +49,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
         appBar: PreferredSize(
           preferredSize: Size(60,55),
           child:  AppBar(
-              backgroundColor: Colors.blueAccent,
+            backgroundColor: Color(0xff03A1E0),
               elevation: 0,
               centerTitle: true,
               //title: Text('Item Dispatch')
@@ -68,8 +68,9 @@ class StockReceiveView extends GetView<StockReceiveController>{
         ),
       //resizeToAvoidBottomInset: true,
         body:Container(
+          color: Colors.white,
           height: Get.height,
-          margin: EdgeInsets.all(10),
+          //margin: EdgeInsets.all(10),
           // child: Container(
           //   //height: 200,
           //   //width: Get.width-24,
@@ -84,7 +85,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox( height:10),
+               // SizedBox( height:10),
                 // Row(
                 //   children: <Widget>[
                 //     Expanded(child:  Text("SL",style: TextStyle(color: Colors.blueAccent,fontSize: 12),), flex: 1,),
@@ -105,10 +106,11 @@ class StockReceiveView extends GetView<StockReceiveController>{
                 Obx(() =>
                     Container(
                         margin: EdgeInsets.only(left: 0,right: 0),
+                        color: Colors.blue.withOpacity(0.2),
                         //alignment: Alignment.center,
                         child: Row(
-                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          // crossAxisAlignment: CrossAxisAlignment.center,
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             //Flexible(child:
                             controller.CustomRadioButton("Pending", 1,context),
@@ -130,7 +132,10 @@ class StockReceiveView extends GetView<StockReceiveController>{
             visible: controller.isPending.value,
               child:  controller.stockReceiveResponse.value.distribution_list != null ?
               controller.stockReceiveResponse.value.distribution_list!.length! > 0 ?
-              Expanded(child: ListView.builder(
+              Container(
+                color: Colors.white,
+                height: height-150,
+                child: ListView.builder(
                   itemCount:  controller.stockReceiveResponse.value.distribution_list?.length,
                   //itemCount: 15,
                   //primary: false,
@@ -272,7 +277,9 @@ class StockReceiveView extends GetView<StockReceiveController>{
                         visible: controller.isReceive.value,
                         child:  controller.stockReceiveResponse.value.distribution_list != null ?
                         controller.stockReceiveResponse.value.distribution_list!.length! > 0 ?
-                        Expanded(child: ListView.builder(
+                        Container(
+                          height: height-150,
+                          child: ListView.builder(
                             itemCount:  controller.stockReceiveResponse.value.distribution_list?.length,
                             //itemCount: 15,
                             //primary: false,
@@ -479,7 +486,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
           appBar: PreferredSize(
             preferredSize: Size(60,55),
             child:  AppBar(
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: Color(0xff03A1E0),
               elevation: 0,
               centerTitle: true,
               //title: Text('Item Dispatch')
@@ -497,14 +504,18 @@ class StockReceiveView extends GetView<StockReceiveController>{
             ),
           ),
           body: Container(
-
-            height: context.height,
-            width: context.width,
+              color: Colors.white,
+              height: context.height,
+              width: context.width,
             child: Obx(() =>
 
             controller.stockReceiveMedicineResponse.value.medicine_list != null ?
             controller.stockReceiveMedicineResponse.value.medicine_list!.length! > 0 ?
-            Expanded(child: ListView.builder(
+            Container(
+              color: Colors.white,
+              height: context.height,
+              width: context.width,
+              child: ListView.builder(
                 itemCount: controller.stockReceiveMedicineResponse.value.medicine_list?.length,
                 primary: false,
                 shrinkWrap: true,
@@ -763,7 +774,7 @@ class StockReceiveView extends GetView<StockReceiveController>{
       transitionDuration: Duration(milliseconds: 100),
       pageBuilder: (_, __, ___) {
         return Scaffold(
-            backgroundColor: Colors.white,
+          backgroundColor: Color(0xff03A1E0),
             appBar: PreferredSize(
               preferredSize: Size(60,55),
               child:  AppBar(
@@ -786,13 +797,17 @@ class StockReceiveView extends GetView<StockReceiveController>{
             ),
             body: Container(
 
+                color: Colors.white,
                 height: context.height,
                 width: context.width,
                 child: Obx(() =>
 
                 controller.stockReceiveDetailsResponse.value.medicine_list != null?
                 controller.stockReceiveDetailsResponse.value.medicine_list!.length! > 0 ?
-                Expanded(
+                Container(
+                    color: Colors.white,
+                    height: context.height,
+                    width: context.width,
                   child: ListView.builder(
                       itemCount:controller.stockReceiveDetailsResponse.value.medicine_list!.length,
                       primary: true,

@@ -95,7 +95,7 @@ class InternalRequestController extends GetxController{
 
 
     // getPSerialNo();
-     get_drug_list();
+     //get_drug_list();
     get_internal_request_list();
 
     //submit_dispatch();
@@ -152,22 +152,23 @@ class InternalRequestController extends GetxController{
   }
 
   // insert item_dispatch
-  Future<void> insert_internal_request(ItemDispatchModel data ,String serial) async {
-
-    Map<String, dynamic> row = {
-      DatabaseHelper.internal_req_serial: serial,
-      DatabaseHelper.internal_req_date: data.date,
-      DatabaseHelper.internal_req_med_name: data.medicine_name,
-      DatabaseHelper.internal_req_med_id: data.medicine_id,
-      DatabaseHelper.internal_req_qty: data.medicine_qty,
-      DatabaseHelper.internal_req_remark: data.remark
-    };
-    await dbHelper.insert_internal_request(row);
-    var localdataSize = await dbHelper.get_internal_request();
-    print('internal_requestSize: ${localdataSize.length}');
-
-    get_internal_request_list();
-  }
+  // Future<void> insert_internal_request(ItemDispatchModel data ,String serial) async {
+  //
+  //   Map<String, dynamic> row = {
+  //     DatabaseHelper.internal_req_serial: serial,
+  //     DatabaseHelper.internal_req_date: data.date,
+  //     DatabaseHelper.internal_req_med_name: data.medicine_name,
+  //     DatabaseHelper.internal_req_med_id: data.medicine_id,
+  //     DatabaseHelper.drug_batch_no: data.batch_id,
+  //     DatabaseHelper.internal_req_qty: data.medicine_qty,
+  //     DatabaseHelper.internal_req_remark: data.remark
+  //   };
+  //   await dbHelper.insert_internal_request(row);
+  //   var localdataSize = await dbHelper.get_internal_request();
+  //   print('internal_requestSize: ${localdataSize.length}');
+  //
+  //   get_internal_request_list();
+  // }
 
   void updateDrugAvailableQty(int id,int qty ,int qtyConsume) async {
 
@@ -224,7 +225,7 @@ class InternalRequestController extends GetxController{
   //   // print('localdataDrugSize: ${localdataSize.length}');
   // }
 
-  void approveStockReceive(BuildContext context, String stockout_master_id){
+  void approveStockReceive(BuildContext context, String stockout_master_id,String serial){
     print('stockout_master_id: ${stockout_master_id}');
     //dbHelper.deleteALlDrugs();
       internal_receive_medicine_list!.forEach((element2) async{
@@ -248,6 +249,7 @@ class InternalRequestController extends GetxController{
         Map<String, dynamic> row = {
           DatabaseHelper.drug_name: ''+element2.drug_name.toString(),
           DatabaseHelper.drug_id: element2.drug_id,
+          DatabaseHelper.drug_batch_no: element2.batch_no,
           //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
           //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
           //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
@@ -261,7 +263,7 @@ class InternalRequestController extends GetxController{
           DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
           DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
 
-          DatabaseHelper.drug_batch_no: element2.batch_no,
+
           DatabaseHelper.drug_receive_type: '1',
           DatabaseHelper.stockout_master_id: stockout_master_id,
           //DatabaseHelper.drug_stock: element.generic_id,
@@ -273,6 +275,16 @@ class InternalRequestController extends GetxController{
         }else{
           await dbHelper.insert_drug(row);
         }
+
+        Map<String, dynamic> row_internal_req = {
+        DatabaseHelper.internal_req_receive_status: '1',
+        DatabaseHelper.internal_req_serial: serial
+        };
+
+        await dbHelper.update_internal_request(row_internal_req);
+
+        get_internal_request_list();
+
 
       });
 
@@ -305,11 +317,12 @@ class InternalRequestController extends GetxController{
       var serialNo = map[DatabaseHelper.internal_req_serial];
       if(serialNo == serial){
         var madeid = map[DatabaseHelper.internal_req_med_id];
+        var batch_no = map[DatabaseHelper.drug_batch_no];
         var madename = map[DatabaseHelper.internal_req_med_name];
         var requestQty = map[DatabaseHelper.internal_req_qty];
         var remark = map[DatabaseHelper.internal_req_remark];
         var date = map[DatabaseHelper.internal_req_date];
-        var drug_info = StockoutDetail(drug_name:madename ,drug_id: madeid.toString(),receive_qty:requestQty.toString());
+        var drug_info = StockoutDetail(drug_name:madename ,drug_id: madeid.toString(),batch_no: batch_no,receive_qty:requestQty.toString());
 
         internal_receive_medicine_list.add(drug_info);
       }
@@ -319,27 +332,34 @@ class InternalRequestController extends GetxController{
   }
 
   get_internal_request_list() async {
-    internalReqList.clear();
-    internalReqListDistinck.clear();
-    var localdataSize2 = await dbHelper.get_internal_request();
-    print('internal_requestSize: ${localdataSize2.length}');
-    for (var i = 0; i < localdataSize2.length; i++) {
-      Map<String, dynamic> map = localdataSize2[i];
-      var madeid = map[DatabaseHelper.internal_req_med_id];
-      var requestQty = map[DatabaseHelper.internal_req_qty];
-      var remark = map[DatabaseHelper.internal_req_remark];
-      var date = map[DatabaseHelper.internal_req_date];
-      var serial = map[DatabaseHelper.internal_req_serial];
-      var drug_info = InternalItemModel(madeid,requestQty,remark,date,serial);
+    //try{
+      internalReqList.clear();
+      internalReqListDistinck.clear();
+      var localdataSize2 = await dbHelper.get_internal_request();
+      print('internal_requestSize: ${localdataSize2.length}');
+      for (var i = 0; i < localdataSize2.length; i++) {
+        Map<String, dynamic> map = localdataSize2[i];
+        var madeid = map[DatabaseHelper.internal_req_med_id];
+        var requestQty = map[DatabaseHelper.internal_req_qty];
+        var remark = map[DatabaseHelper.internal_req_remark];
+        var batchNo = map[DatabaseHelper.drug_batch_no];
+        var date = map[DatabaseHelper.internal_req_date];
+        var serial = map[DatabaseHelper.internal_req_serial];
+        var status = map[DatabaseHelper.internal_req_receive_status];
+        var drug_info = InternalItemModel(madeid,requestQty,remark,batchNo,date,serial,status);
 
-      internalReqList.add(drug_info);
-      internalReqListDistinck.add(drug_info);
-    }
+        internalReqList.add(drug_info);
+        internalReqListDistinck.add(drug_info);
+      }
 
-    final ids = Set();
-    internalReqListDistinck.retainWhere((x) => ids.add(x.serial));
-    internalRequestNumber = internalReqListDistinck.length +1;
-    print("drugList: "+drugList.length.toString());
+      final ids = Set();
+      internalReqListDistinck.retainWhere((x) => ids.add(x.serial));
+      internalRequestNumber = internalReqListDistinck.length +1;
+      print("drugList: "+drugList.length.toString());
+    //}catch(e){
+
+   // }
+
   }
 
   get_drug_list() async {
@@ -363,97 +383,100 @@ class InternalRequestController extends GetxController{
 
 
 
-  internalRequestSubmitLocalOnline(BuildContext context, String serial) async {
-
-    var now = new DateTime.now();
-    var formatter = new DateFormat('yyyy-MM-dd');
-    String formattedDate = formatter.format(now);
-    print(formattedDate);
-
-    if(await (Utils.checkConnection() as Future<bool>)){
-      debugPrint('No internet connection');
-      //Get.showSnackbar(Ui.internetCheckSnackBar(message: 'Internet connection found, internal request is submitting to online DB '));
-
-      itemList.forEach((element) {
-
-        var drug_info = InternalItemModel(element.medicine_id,
-            element.medicine_qty,
-            element.remark,
-            formattedDate,
-            serial);
-        internalRequestSubmitList.add(drug_info);
-
-      });
-
-      print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
-
-      InternalRequestSubmitModel submitDispatchModel = InternalRequestSubmitModel( int.parse(dispensaryId ), int.parse(facilityId),int.parse(partnerId),formattedDate,internalRequestSubmitList,"online");
-      String jsonData = jsonEncode(submitDispatchModel);
-      print('internalRequestjson: '+jsonData.toString());
-
-      postInternalRequest( jsonData,context);
-
-    }else{
-      itemList.forEach((element) async {
-        insert_internal_request(element,serial);
-
-
-       //stock insert/update
-        String existDrugName = '';
-        int availStock = 0;
-        try{
-          var data =  await dbHelper.querySingleDrug(element.medicine_id.toString(),element.batch_id.toString());
-          Map<String, dynamic> map = data[0];
-          availStock = int.parse(map[DatabaseHelper.drug_available_stock]);
-          existDrugName = map[DatabaseHelper.drug_stock_receive];
-          print('availStock: '+availStock.toString());
-        }catch (e){
-
-        }
-
-        String? recqtyStr = element.medicine_qty!.toString();
-        int receQuantity = int.parse(recqtyStr!);
-        availStock = availStock+receQuantity;
-
-        Map<String, dynamic> row = {
-          DatabaseHelper.drug_name: ''+element.medicine_name.toString(),
-          DatabaseHelper.drug_id: element.medicine_id.toString(),
-          //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
-          //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
-          //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
-          //DatabaseHelper.drug_generic_id: element.generic_id,
-
-          //DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
-          DatabaseHelper.drug_available_stock: availStock.toString(),
-          //DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
-          DatabaseHelper.drug_stock_receive: availStock.toString(),
-          DatabaseHelper.drug_stock_consume: '0',
-          //DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
-          //DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
-
-          DatabaseHelper.drug_batch_no: element.batch_id,
-          DatabaseHelper.drug_receive_type: '2',
-          //DatabaseHelper.stockout_master_id: stockout_master_id,
-          //DatabaseHelper.drug_stock: element.generic_id,
-        };
-
-
-        if(existDrugName.isNotEmpty){
-          await dbHelper.updateDrug(row);
-        }else{
-          await dbHelper.insert_drug(row);
-        }
-
-
-
-      });
-
-      itemList.clear();
-
-    }
-
-
-  }
+  // internalRequestSubmitLocalOnline(BuildContext context, String serial) async {
+  //
+  //   var now = new DateTime.now();
+  //   var formatter = new DateFormat('yyyy-MM-dd');
+  //   String formattedDate = formatter.format(now);
+  //   print(formattedDate);
+  //
+  //   if(await (Utils.checkConnection() as Future<bool>)){
+  //     debugPrint('No internet connection');
+  //     //Get.showSnackbar(Ui.internetCheckSnackBar(message: 'Internet connection found, internal request is submitting to online DB '));
+  //
+  //     itemList.forEach((element) {
+  //
+  //       var drug_info = InternalItemModel(element.medicine_id,
+  //           element.medicine_qty,
+  //           element.remark,
+  //           element.batch_id,
+  //           formattedDate,
+  //           serial);
+  //       internalRequestSubmitList.add(drug_info);
+  //
+  //     });
+  //
+  //     print("internalRequestSubmitList: "+internalRequestSubmitList.length.toString());
+  //
+  //     InternalRequestSubmitModel submitDispatchModel = InternalRequestSubmitModel( int.parse(dispensaryId ), int.parse(facilityId),int.parse(partnerId),formattedDate,internalRequestSubmitList,"online");
+  //     String jsonData = jsonEncode(submitDispatchModel);
+  //     print('internalRequestjson: '+jsonData.toString());
+  //
+  //     postInternalRequest( jsonData,context);
+  //
+  //   }else{
+  //     itemList.forEach((element) async {
+  //       print('batch:'+element.batch_id.toString());
+  //       insert_internal_request(element,serial);
+  //
+  //
+  //      //stock insert/update
+  //
+  //       // String existDrugName = '';
+  //       // int availStock = 0;
+  //       // try{
+  //       //   var data =  await dbHelper.querySingleDrug(element.medicine_id.toString(),element.batch_id.toString());
+  //       //   Map<String, dynamic> map = data[0];
+  //       //   availStock = int.parse(map[DatabaseHelper.drug_available_stock]);
+  //       //   existDrugName = map[DatabaseHelper.drug_stock_receive];
+  //       //   print('availStock: '+availStock.toString());
+  //       // }catch (e){
+  //       //
+  //       // }
+  //       //
+  //       // String? recqtyStr = element.medicine_qty!.toString();
+  //       // int receQuantity = int.parse(recqtyStr!);
+  //       // availStock = availStock+receQuantity;
+  //       //
+  //       // Map<String, dynamic> row = {
+  //       //   DatabaseHelper.drug_name: ''+element.medicine_name.toString(),
+  //       //   DatabaseHelper.drug_id: element.medicine_id.toString(),
+  //       //   //DatabaseHelper.drug_pstrength_name: ''+element.strength_name.toString(),
+  //       //   //DatabaseHelper.drug_pstrength_id: element.pstrength_id,
+  //       //   //DatabaseHelper.drug_generic_name: ''+element.generic_name.toString(),
+  //       //   //DatabaseHelper.drug_generic_id: element.generic_id,
+  //       //
+  //       //   //DatabaseHelper.drug_available_stock: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+  //       //   DatabaseHelper.drug_available_stock: availStock.toString(),
+  //       //   //DatabaseHelper.drug_stock_receive: element2.receive_qty!.isNotEmpty?element2.receive_qty:element2.supplied_qty!,
+  //       //   DatabaseHelper.drug_stock_receive: availStock.toString(),
+  //       //   DatabaseHelper.drug_stock_consume: '0',
+  //       //   //DatabaseHelper.drug_stock_lose: element2.reject_qty!=null?element2.reject_qty:'0',
+  //       //   //DatabaseHelper.drug_reject_reason: element2.reject_reason!=null?element2.reject_reason:'',
+  //       //
+  //       //   DatabaseHelper.drug_batch_no: element.batch_id,
+  //       //   DatabaseHelper.drug_receive_type: '2',
+  //       //   //DatabaseHelper.stockout_master_id: stockout_master_id,
+  //       //   //DatabaseHelper.drug_stock: element.generic_id,
+  //       // };
+  //       //
+  //       //
+  //       // if(existDrugName.isNotEmpty){
+  //       //  // await dbHelper.updateDrug(row);
+  //       // }else{
+  //       //  // await dbHelper.insert_drug(row);
+  //       // }
+  //
+  //
+  //
+  //     });
+  //
+  //     itemList.clear();
+  //
+  //   }
+  //
+  //
+  // }
 
 
   Future<dynamic> postInternalRequest(String data,BuildContext context) async {

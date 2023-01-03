@@ -71,10 +71,12 @@ class StockoutDetail {
     String? receive_qty;
     String? reject_qty;
     String? reject_reason;
+    String? status;
 
     StockoutDetail({this.approved_supply_qty, this.batch_no, this.category_id,
         this.drug_id, this.drug_name, this.expire_date, this.facility_stockout_id,
-        this.mfg_date, this.supplied_qty ,this.receive_qty,this.reject_qty,this.reject_reason});
+        this.mfg_date, this.supplied_qty ,this.receive_qty,this.reject_qty,
+        this.reject_reason,this.status});
 
     factory StockoutDetail.fromJson(Map<String, dynamic> json) {
         return StockoutDetail(

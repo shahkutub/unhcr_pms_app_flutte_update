@@ -118,9 +118,11 @@ class InternalRequestSubmitView extends GetView<InternalRequestSubmitController>
                             controller.itemName.value = value.toString();
 
                             print('medname : '+controller.itemName.value);
+                           // print('batchid : '+controller.batchId.value);
 
                             controller.drugList.forEach((element) {
                               if(element.drug_name == value){
+                                print('batchid : '+element.batch_no.toString());
                                 controller.itemId.value = element.drug_id.toString();
                                 controller.batchId.value = element.batch_no.toString();
                                 controller.remarkEditController.value.text = '';

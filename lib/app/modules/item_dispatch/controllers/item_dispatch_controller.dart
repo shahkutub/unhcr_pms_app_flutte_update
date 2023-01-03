@@ -195,11 +195,13 @@ class ItemDispatchController extends GetxController{
       var drug_info = DispatchItem();
       drug_info.drug_name = map[DatabaseHelper.drug_name];
       drug_info.drug_id = map[DatabaseHelper.drug_id];
+      drug_info.batch_no = map[DatabaseHelper.drug_batch_no];
+      print("batch_no: "+ drug_info.batch_no.toString());
       //drug_info.generic_id = map[DatabaseHelper.drug_generic_id];
       //drug_info.generic_name = map[DatabaseHelper.drug_generic_name];
       drug_info.available_stock = map[DatabaseHelper.drug_available_stock];
       drug_info.dispatch_stock = map[DatabaseHelper.drug_stock_consume];
-      drug_info.batch_no = map[DatabaseHelper.drug_batch_no];
+
       //drug_info.pstrength_id = map[DatabaseHelper.drug_pstrength_id];
       drugList.add(drug_info);
     }
@@ -207,7 +209,9 @@ class ItemDispatchController extends GetxController{
 
 
 
-    print("avalstock: "+drugList[0].available_stock.toString());
+    // print("avalstock: "+drugList[0].available_stock.toString());
+    // print("dispatch_stock: "+drugList[0].dispatch_stock.toString());
+    // print("batch_no: "+drugList[0].batch_no.toString());
 
 
   }

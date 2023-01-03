@@ -42,7 +42,7 @@ class CurrentStockView extends GetView<CurrentStockController>{
         appBar: PreferredSize(
           preferredSize: Size(60,55),
           child:  AppBar(
-              backgroundColor: Colors.blueAccent,
+            backgroundColor: Color(0xff03A1E0),
               elevation: 0,
               centerTitle: true,
               //title: Text('Item Dispatch')
@@ -168,15 +168,15 @@ class CurrentStockView extends GetView<CurrentStockController>{
           //),
 
         ),
-        floatingActionButton: !controller.isStockSubmitted.value ?
-        FloatingActionButton.extended(
-        onPressed: () {
-          Get.find<AuthService>().setIsCurrentStockSubmitted(true);
-        },
-        label: Text('Submit'),
-        //icon: Icon(Icons.thumb_up),
-        backgroundColor: Colors.blue,
-      ) : null,
+      //   floatingActionButton: !controller.isStockSubmitted.value ?
+      //   FloatingActionButton.extended(
+      //   onPressed: () {
+      //     Get.find<AuthService>().setIsCurrentStockSubmitted(true);
+      //   },
+      //   label: Text('Submit'),
+      //   //icon: Icon(Icons.thumb_up),
+      //   backgroundColor: Colors.blue,
+      // ) : null,
 
         
     );

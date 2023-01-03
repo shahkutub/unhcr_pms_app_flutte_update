@@ -48,8 +48,9 @@ class DatabaseHelper {
   static final table_internal_request = 'table_internal_request';
 
   static final internal_req_serial = 'internal_req_serial';
-  static final internal_req_batch_no = 'internal_req_batch_no';
+  //static final internal_req_batch_no = 'internal_req_batch_no';
   static final internal_req_date = 'internal_req_date';
+  static final internal_req_receive_status = 'internal_req_receive_status';
   static final internal_req_med_name = 'internal_req_med_name';
   static final internal_req_med_id = 'internal_req_med_id';
   static final internal_req_qty = 'internal_req_qty';
@@ -160,10 +161,12 @@ class DatabaseHelper {
           CREATE TABLE $table_internal_request (
             $columnId INTEGER PRIMARY KEY,
             $internal_req_date TEXT,
+            $internal_req_receive_status TEXT,
             $internal_req_serial TEXT,
             $internal_req_med_name TEXT,
             $internal_req_med_id INT,
             $internal_req_qty INT,
+            $drug_batch_no TEXT,
             $internal_req_remark TEXT
           )
           ''');
@@ -356,6 +359,12 @@ Future<int> deletePserialAll() async {
 
     return await db.insert(table_internal_request, row,
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<int> update_internal_request(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    String id = row[internal_req_serial];
+    return await db.update(table_internal_request, row, where: '$internal_req_serial = ?', whereArgs: [id]);
   }
 
  // get internal request
